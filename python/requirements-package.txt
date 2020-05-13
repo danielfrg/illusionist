@@ -1,0 +1,4 @@
+# These are the library requirements
+nbconvert
+nbclient
+nbformat
