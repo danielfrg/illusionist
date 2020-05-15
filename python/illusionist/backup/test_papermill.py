@@ -2,13 +2,13 @@ import asyncio
 import queue
 
 import nbformat
+
 # import papermill
 # from jupyter_client.manager import start_new_async_kernel, start_new_kernel
 from nbclient import NotebookClient
-from papermill.iorw import load_notebook_node
 from papermill.clientwrap import PapermillNotebookClient
 from papermill.engines import NotebookExecutionManager
-
+from papermill.iorw import load_notebook_node
 
 
 # def main():
@@ -24,7 +24,6 @@ async def main():
     km, kc = nbc.km, nbc.km.client()
     # print(km.has_kernel)
     print(km, kc)
-    
 
     async def execute(cmd):
         kc.execute(cmd)

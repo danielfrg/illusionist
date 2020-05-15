@@ -1,50 +1,53 @@
 import asyncio
-import queue
 
-from illusionist.client import IllusionistNotebookClient
+from illusionist.client import Illusionist
+
+
+def get_output(reply):
+    content = reply["content"]
+    if "data" in content:
+        return content["data"]["text/plain"]
+    if "name" in content and content["name"] == "stdout":
+        return content["text"]
+
+
+def get_source(func):
+    import inspect
+
+    return inspect.getsource(func)
+
+
+def filter_widgets(var_names):
+    import ipywidgets as widgets
+
+    return [item for item in var_names if isinstance(eval(item), widgets.Widget)]
 
 
 async def main():
     notebook_path = "./notebooks/slider-label.ipynb"
-    nbc = IllusionistNotebookClient.from_nb_file(notebook_path, progress_bar=False, nest_asyncio=True)
+    illusionist = Illusionist.from_nb_file(notebook_path)
+    client = illusionist
+    # client.log_level = "DEBUG"
 
-    nbc.execute(reset_kc=False)
+    client.execute(reset_kc=False)
 
-    # km, kc = nbc.km, nbc.km.client()
-    # async def execute(cmd):
-    #     kc.execute(cmd)
-    #     reply = await kc.get_shell_msg(timeout=1)
-    #     print("reply content")
-    #     print(reply["content"])
-
-    #     output = None
-    #     while True:
-    #         try:
-    #             io = await kc.get_iopub_msg(timeout=1)
-    #             print("io content")
-    #             print(io["content"])
-    #             if (
-    #                 "execution_state" in io["content"]
-    #                 and io["content"]["execution_state"] == "idle"
-    #             ):
-    #                 break
-    #             output = io
-    #         except queue.Empty:
-    #             print("timeout!")
-    #             break
-    #     return output
     # print("--")
-    # print(await execute("print(1)"))
+    # print(client.run_cmd("print(1)"))
+    # print("--")
+    # print(client.run_cmd("a = 1"))
+    # print(client.run_cmd("from ipywidgets import Widget"))
+    # print("--")
+    # print(client.run_cmd("%who_ls Widget"))
 
-    print("--")
-    print("!!!", nbc.run_cmd("print(1)"))
-    print(nbc.run_cmd("print(1)"))
-    print("--")
-    print(await nbc.async_run_cmd("a = 1"))
-    print("--")
-    print(await nbc.async_run_cmd("%who_ls"))
+    all_vars = get_output(client.run_cmd("%who_ls"))
+    _ = client.run_cmd(f"all_vars = {all_vars}")
 
-    nbc._cleanup_kernel()
+    _ = client.run_cmd(get_source(filter_widgets))
+    _ = client.run_cmd("widget_vars = filter_widgets(all_vars)")
+    _ = client.run_cmd("print(widget_vars)")
+    print(get_output(_))
+
+    client._cleanup_kernel()
 
 
 if __name__ == "__main__":

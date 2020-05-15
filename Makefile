@@ -59,15 +59,15 @@ package:  ## Build Python package (sdist)
 
 .PHONY: check
 check:  ## Check linting
-	@flake8
-	@isort --check-only --diff --recursive --project illusionist --section-default THIRDPARTY .
-	@black --check .
+	@cd python && flake8
+	@cd python && isort --check-only --diff --recursive --project illusionist --section-default THIRDPARTY .
+	@cd python && black --check .
 
 
 .PHONY: fmt
 fmt:  ## Format source
-	@isort --recursive --project illusionist --section-default THIRDPARTY .
-	@black .
+	@cd python && isort --recursive --project illusionist --section-default THIRDPARTY .
+	@cd python && black .
 
 
 .PHONY: upload-pypi
