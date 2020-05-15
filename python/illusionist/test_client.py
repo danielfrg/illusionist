@@ -1,26 +1,52 @@
 import asyncio
+import queue
 
-import nbformat
-from IPython.utils.capture import capture_output
-from nbclient import NotebookClient
+from illusionist.client import IllusionistNotebookClient
 
 
 async def main():
-    nb_fname = "../../notebooks/slider-label.ipynb"
+    notebook_path = "./notebooks/slider-label.ipynb"
+    nbc = IllusionistNotebookClient.from_nb_file(notebook_path, progress_bar=False, nest_asyncio=True)
 
-    with open(nb_fname) as f:
-        nb = nbformat.read(f, as_version=4)
+    nbc.execute(reset_kc=False)
 
-    client = NotebookClient(nb)
-    _ = client.execute()
+    # km, kc = nbc.km, nbc.km.client()
+    # async def execute(cmd):
+    #     kc.execute(cmd)
+    #     reply = await kc.get_shell_msg(timeout=1)
+    #     print("reply content")
+    #     print(reply["content"])
 
-    kc = client.km.client()
+    #     output = None
+    #     while True:
+    #         try:
+    #             io = await kc.get_iopub_msg(timeout=1)
+    #             print("io content")
+    #             print(io["content"])
+    #             if (
+    #                 "execution_state" in io["content"]
+    #                 and io["content"]["execution_state"] == "idle"
+    #             ):
+    #                 break
+    #             output = io
+    #         except queue.Empty:
+    #             print("timeout!")
+    #             break
+    #     return output
+    # print("--")
+    # print(await execute("print(1)"))
 
-    with capture_output() as io:
-        reply = kc.execute_interactive("print('hello')")
+    print("--")
+    print("!!!", nbc.run_cmd("print(1)"))
+    print(nbc.run_cmd("print(1)"))
+    print("--")
+    print(await nbc.async_run_cmd("a = 1"))
+    print("--")
+    print(await nbc.async_run_cmd("%who_ls"))
 
-    print(io.stdout)
+    nbc._cleanup_kernel()
 
 
 if __name__ == "__main__":
+    # main()
     asyncio.run(main())

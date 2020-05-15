@@ -2,6 +2,7 @@
 requires = ["setuptools", "setuptools_scm", "wheel"]
 
 [tool.setuptools_scm]
+root = "../"
 write_to = "python/illusionist/_generated_version.py"
 
 [tool.coverage.run]
