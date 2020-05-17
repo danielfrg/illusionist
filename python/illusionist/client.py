@@ -25,13 +25,23 @@ class Illusionist(PapermillNotebookClient, Application):
         inst = cls(nb_man=nb_man, nest_asyncio=True, **kwargs)
         return inst
 
-    async def async_run_cmd(self, cmd, timeout=3):
+    @staticmethod
+    def get_output(reply):
+        content = reply["content"]
+        if "data" in content:
+            return content["data"]["text/plain"]
+        if "name" in content and content["name"] == "stdout":
+            return content["text"]
+
+    async def async_run_cmd(self, cmd, timeout=3, ret_output=False):
         self.log.debug("Running command: %s", cmd)
         parent_msg_id = await ensure_async(
             self.kc.execute(cmd, stop_on_error=not self.allow_errors)
         )
 
         exec_reply = await self._async_poll_for_cmd_reply(parent_msg_id, timeout)
+        if ret_output:
+            return self.get_output(exec_reply)
         return exec_reply
 
     run_cmd = run_sync(async_run_cmd)
