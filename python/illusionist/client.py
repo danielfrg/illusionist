@@ -19,9 +19,9 @@ class Illusionist(PapermillNotebookClient, Application):
         super().__init__(**kwargs)
 
     @classmethod
-    def from_nb_file(cls, fpath, **kwargs):
+    def from_nb_file(cls, fpath, progress_bar=True, **kwargs):
         nb = load_notebook_node(fpath)
-        nb_man = NotebookExecutionManager(nb,)
+        nb_man = NotebookExecutionManager(nb, progress_bar=progress_bar)
         inst = cls(nb_man=nb_man, nest_asyncio=True, **kwargs)
         return inst
 
