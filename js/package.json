@@ -1,0 +1,30 @@
+{
+  "name": "illusionist",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --build",
+    "build:watch": "tsc --build -w",
+    "fmt": "prettier --write \"src/**/*.{js,jsx,css,json}\"",
+    "fmt:check": "prettier --list-different \"src/**/*.{js,jsx,css,json}\"",
+    "lint": "eslint \"src/**/*.{js,jsx }\"",
+    "dev": "parcel src/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel Rodriguez",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "eslint": "^7.0.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-react": "^7.20.0",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^2.0.5",
+    "tslint": "^6.1.2",
+    "typescript": "^3.9.2"
+  }
+}

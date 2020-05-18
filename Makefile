@@ -18,6 +18,7 @@ clean:  ## Clean build files
 	@find . -type f -name '*.py[co]' -delete
 	@find . -type d -name __pycache__ -exec rm -rf {} +
 	@find . -type d -name .ipynb_checkpoints -exec rm -rf {} +
+	@rm -rf js/.cache js/dist
 
 
 .PHONY: cleanall
@@ -48,7 +49,7 @@ develop-deps:  ## Install other development deps
 	jupyter labextension install @jupyter-widgets/jupyterlab-manager
 
 
-.PHONY: cleanall build
+.PHONY: build
 build: package  ## Build everything
 
 
@@ -107,3 +108,22 @@ netlify:  ## Build docs on Netlify
 
 # ------------------------------------------------------------------------------
 # Project specific
+
+.PHONY: npm-build
+npm-build: clean-js
+	@cd js; npm run build
+
+
+.PHONY: npm-build-watch
+npm-build-watch: clean-js
+	@cd js; npm run build:watch
+
+
+.PHONY: clean-js
+clean-js:
+	rm -rf js/.cache js/.dist
+
+
+.PHONY: nbs
+nbs:
+	jupyter nbconvert ./notebooks/slider-label.ipynb --to illusionist

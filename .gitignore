@@ -109,4 +109,25 @@ dmypy.json
 # setuptools_scm
 _generated_version.py
 
+### JS ###
+
+# Optional npm cache directory
+.npm
+
+# Dependency directories
+node_modules
+
+# Yarn Integrity file
+.yarn-integrity
+
+# Optional eslint cache
+.eslintcache
+
+# Build generated
+dist/
+build/
+.cache
+
 ### Project specific ###
+
+notebooks/*.html
