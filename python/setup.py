@@ -40,7 +40,9 @@ setup(
     # package_data={"illusionist": ["includes/*"]},
     # data_files=data_files,
     # cmdclass={"install": InstallCmd},
-    # entry_points = {},
+    entry_points={
+        "nbconvert.exporters": ["illusionist = illusionist:IllusionistNBConvertExporter"],
+    },
     options={"bdist_wheel": {"universal": "1"}},
     python_requires=">=3.6",
     setup_requires=["setuptools_scm"],

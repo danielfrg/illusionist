@@ -20,3 +20,6 @@ except ImportError:
         __version__ = setuptools_scm.get_version("./", parse=parse_git)
     except ImportError:
         __version__ = None
+
+
+from .nbconvert_exporter import IllusionistNBConvertExporter  # noqa
