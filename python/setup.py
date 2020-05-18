@@ -41,7 +41,9 @@ setup(
     # data_files=data_files,
     # cmdclass={"install": InstallCmd},
     entry_points={
-        "nbconvert.exporters": ["illusionist = illusionist:IllusionistNBConvertExporter"],
+        "nbconvert.exporters": [
+            "illusionist = illusionist:IllusionistNBConvertExporter"
+        ],
     },
     options={"bdist_wheel": {"universal": "1"}},
     python_requires=">=3.6",
