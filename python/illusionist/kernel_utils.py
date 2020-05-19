@@ -64,7 +64,7 @@ def generate_json():
 
     all_widgets = get_all_widgets()
 
-    out = {}
+    out = {"version_major": 1, "version_minor": 0, "onchange": {}}
 
     value_widgets = {}
     input_widgets = {}
@@ -74,7 +74,7 @@ def generate_json():
         if isinstance(obj, INPUT_WIDGETS):
             input_widgets[model_id] = obj
 
-    out["widgets"] = {i: str(w) for i, w in value_widgets.items()}
+    out["onchange"]["targets"] = [mid for mid, w in value_widgets.items()]
 
     # Iterate combinations and get output values
     input_widgets_product = list(iterate_widgets(input_widgets))
@@ -82,7 +82,8 @@ def generate_json():
     for combination in input_widgets_product:
         set_widget_values(combination)
         product[hash_fn(combination)] = {i: w.value for i, w in value_widgets.items()}
-    out["combinations"] = product
+
+    out["onchange"]["values"] = product
 
     return json.dumps(out)
 

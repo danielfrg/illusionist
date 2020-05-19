@@ -22,8 +22,7 @@ class IllusionistClient(NotebookClient, Application):
 
     def set_widgets_onchange_metadata(self, values):
         mime_type = "application/vnd.illusionist.widget-onchange+json"
-        if self.widget_state:
-            self.nb.metadata.widgets = {mime_type: values}
+        self.nb.metadata.widgets.update({mime_type: values})
 
     @staticmethod
     def get_output(reply):

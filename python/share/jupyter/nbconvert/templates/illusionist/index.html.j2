@@ -6,3 +6,14 @@
 {%- endif -%}
 {% endblock ipywidgets %}
 
+
+{%- block footer %}
+{{ super() }}
+
+{% set mimetype = "application/vnd.illusionist.widget-onchange+json" %}
+{% if mimetype in nb.metadata.get("widgets", {}) %}
+<script type="{{ mimetype }}">
+{{ nb.metadata.widgets[mimetype] | json_dumps }}
+</script>
+{% endif %}
+{%- endblock footer-%}
