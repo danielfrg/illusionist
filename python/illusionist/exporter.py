@@ -36,17 +36,12 @@ def include_external_base64_img(ctx, name):
 
 
 class IllusionistExporter(HTMLExporter):
-    # Name for the "File -> Download as" menu in the notebook
+    # Name for the menu item under "File -> Download as" in the IDE
     export_from_notebook = "Illusionist"
 
     extra_loaders = [jinja2.PackageLoader(__name__, "")]
 
     preprocessors = [IllusionistPreprocessor]
-
-    # @default("template_file")
-    # def _template_file_default(self):
-    #     if self.template_extension:
-    #         return "illusionist" + self.template_extension
 
     @default("template_name")
     def _template_name_default(self):
@@ -64,17 +59,6 @@ class IllusionistExporter(HTMLExporter):
         globals_["include_external_file"] = include_external_file
         globals_["include_external_base64_img"] = include_external_base64_img
         self.environment.globals.update(globals_)
-
-    # def _init_resources(self, resources):
-    #     resources = super()._init_resources(resources)
-
-    #     def resources_include_widget_state(name):
-    #         env = self.environment
-    #         code = """THIS IS MY COOOODE"""
-    #         return jinja2.Markup(code)
-
-    #     resources["illusionist_widget_state"] = resources_include_widget_state
-    #     return resources
 
     def default_filters(self):
         for pair in super().default_filters():
