@@ -36,7 +36,7 @@ help:  ## Show this help menu
 
 .PHONY: env  ## Create dev environment
 env:
-	conda env create
+	cd python; conda env create
 
 
 .PHONY: develop

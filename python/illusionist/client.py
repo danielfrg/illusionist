@@ -7,23 +7,23 @@ from nbclient.exceptions import (
     CellExecutionError,
     CellTimeoutError,
 )
+from nbclient import NotebookClient
 from nbclient.util import ensure_async, run_sync
-from papermill.clientwrap import PapermillNotebookClient
-from papermill.engines import NotebookExecutionManager
-from papermill.iorw import load_notebook_node
 from traitlets.config.application import Application
 
 
-class Illusionist(PapermillNotebookClient, Application):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+class IllusionistClient(NotebookClient, Application):
+    """
+    Extends NBClient
+    Adds utilities to run commands in the kernel
+    """
 
-    @classmethod
-    def from_nb_file(cls, fpath, progress_bar=True, **kwargs):
-        nb = load_notebook_node(fpath)
-        nb_man = NotebookExecutionManager(nb, progress_bar=progress_bar)
-        inst = cls(nb_man=nb_man, nest_asyncio=True, **kwargs)
-        return inst
+    store_widget_state = True
+
+    def set_widgets_onchange_metadata(self, values):
+        mime_type = "application/vnd.illusionist.widget-onchange+json"
+        if self.widget_state:
+            self.nb.metadata.widgets = {mime_type: values}
 
     @staticmethod
     def get_output(reply):

@@ -1,0 +1,8 @@
+{%- extends 'classic/index.html.j2' -%}
+
+{% block ipywidgets %}
+{%- if "widgets" in nb.metadata -%}
+{{ resources.illusionist_resource }}
+{%- endif -%}
+{% endblock ipywidgets %}
+

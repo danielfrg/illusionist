@@ -22,4 +22,4 @@ except ImportError:
         __version__ = None
 
 
-from .nbconvert_exporter import IllusionistNBConvertExporter  # noqa
+from .exporter import IllusionistExporter  # noqa

@@ -19,7 +19,7 @@ dependencies:
 
   # This project conda deps
   - nbconvert
-  # - nbclient
+  # - nbclient  # installing from master until release
   - nbformat
   - ipywidgets
   - jupyterlab
@@ -34,5 +34,5 @@ dependencies:
     - pymdown-extensions
 
     # This project pip deps
-    - papermill
     - git+https://github.com/jupyter/nbclient.git
+    - git+https://github.com/jupyter/nbconvert.git

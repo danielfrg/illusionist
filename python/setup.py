@@ -1,6 +1,7 @@
 import os
 
 from setuptools import find_packages, setup
+from setuptools.command.develop import develop
 
 
 setup_dir = os.path.abspath(os.path.dirname(__file__))
@@ -24,6 +25,46 @@ def parse_git(root, **kwargs):
     return parse(root, **kwargs)
 
 
+def get_data_files():
+    # Add the templates
+    data_files = []
+    for (dirpath, dirnames, filenames) in os.walk("share/jupyter/nbconvert/templates/"):
+        if filenames:
+            data_files.append(
+                (dirpath, [os.path.join(dirpath, filename) for filename in filenames])
+            )
+    return data_files
+
+
+class DevelopCmd(develop):
+    """The DevelopCmd will create symlinks for nbconvert under:
+        sys.prefix/share/jupyter/
+    """
+
+    prefix_targets = [
+        ("share/jupyter/nbconvert/templates", "illusionist"),
+    ]
+
+    def run(self):
+        import sys
+        import shutil
+
+        for parent, name in self.prefix_targets:
+            source = os.path.join(os.path.abspath(parent), name)
+            target = os.path.join(sys.prefix, parent, name)
+            target = target.rstrip(os.path.sep)
+            print(source, target)
+
+            if os.path.islink(target):
+                print("Removing link:", target)
+                os.remove(target)
+
+            print("Linking", source, "->", target)
+            os.symlink(source, target)
+
+        super(DevelopCmd, self).run()
+
+
 setup(
     name="illusionist",
     use_scm_version={
@@ -38,12 +79,10 @@ setup(
     zip_safe=False,
     include_package_data=True,
     # package_data={"illusionist": ["includes/*"]},
-    # data_files=data_files,
-    # cmdclass={"install": InstallCmd},
+    data_files=get_data_files(),
+    cmdclass={"develop": DevelopCmd},
     entry_points={
-        "nbconvert.exporters": [
-            "illusionist = illusionist:IllusionistNBConvertExporter"
-        ],
+        "nbconvert.exporters": ["illusionist = illusionist:IllusionistExporter"],
     },
     options={"bdist_wheel": {"universal": "1"}},
     python_requires=">=3.6",

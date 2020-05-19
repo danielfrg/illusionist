@@ -6,7 +6,7 @@
     "moduleResolution": "node",
     "sourceMap": true,
     // "outDir": "dist"
-    "outDir": "../python/illusionist/nbconvert_templates/static/"
+    "outDir": "../python/share/jupyter/nbconvert/templates/illusionist/static/"
   },
   "lib": ["es2015"]
 }
