@@ -3,7 +3,7 @@
 from ipywidgets import *  # noqa
 
 
-INPUT_NUMERIC_WIDGETS = (
+CONTROL_NUMERIC_WIDGETS = (
     IntSlider,
     FloatSlider,
     FloatLogSlider,
@@ -16,10 +16,10 @@ INPUT_NUMERIC_WIDGETS = (
 )
 OUTPUT_NUMERIC_WIDGETS = (IntProgress, FloatProgress)
 
-INPUT_BOOLEAN_WIDGETS = (ToggleButton, Checkbox)
+CONTROL_BOOLEAN_WIDGETS = (ToggleButton, Checkbox)
 OUTPUT_BOOLEAN_WIDGETS = (Valid,)
 
-INPUT_SELECTION_WIDGETS = (
+CONTROL_SELECTION_WIDGETS = (
     Dropdown,
     RadioButtons,
     Select,
@@ -30,16 +30,16 @@ INPUT_SELECTION_WIDGETS = (
 )
 OUTPUT_SELECTION_WIDGETS = ()
 
-INPUT_STRING_WIDGETS = (Text, Textarea)
+CONTROL_STRING_WIDGETS = (Text, Textarea)
 OUTPUT_STRING_WIDGETS = (Label, HTML, HTMLMath, Image)
 
-OTHER_INPUT_WIDGETS = (Button, Play, DatePicker, ColorPicker)
+OTHER_CONTROL_WIDGETS = (Button, Play, DatePicker, ColorPicker)
 
-INPUT_WIDGETS = (
-    INPUT_NUMERIC_WIDGETS
-    + INPUT_BOOLEAN_WIDGETS
-    + INPUT_SELECTION_WIDGETS
-    + INPUT_STRING_WIDGETS
+CONTROL_WIDGETS = (
+    CONTROL_NUMERIC_WIDGETS
+    + CONTROL_BOOLEAN_WIDGETS
+    + CONTROL_SELECTION_WIDGETS
+    + CONTROL_STRING_WIDGETS
 )
 OUTPUT_WIDGETS = (
     (Output,)
@@ -48,7 +48,7 @@ OUTPUT_WIDGETS = (
     + OUTPUT_SELECTION_WIDGETS
     + OUTPUT_STRING_WIDGETS
 )
-VALUE_WIDGETS = INPUT_WIDGETS + OUTPUT_WIDGETS
+VALUE_WIDGETS = CONTROL_WIDGETS + OUTPUT_WIDGETS
 
 LAYOUT_WIDGETS = Box, HBox, VBox, Accordion, Tab
 
@@ -64,26 +64,27 @@ def generate_json():
 
     all_widgets = get_all_widgets()
 
-    out = {"version_major": 1, "version_minor": 0, "onchange": {}}
+    out = {"version_major": 1, "version_minor": 0}
 
     value_widgets = {}
-    input_widgets = {}
+    control_widgets = {}
     for model_id, obj in all_widgets.items():
         if isinstance(obj, VALUE_WIDGETS):
             value_widgets[model_id] = obj
-        if isinstance(obj, INPUT_WIDGETS):
-            input_widgets[model_id] = obj
+        if isinstance(obj, CONTROL_WIDGETS):
+            control_widgets[model_id] = obj
 
-    out["onchange"]["targets"] = [mid for mid, w in value_widgets.items()]
+    out["controls"] = [mid for mid, w in control_widgets.items()]
+    # out["targets"] = [mid for mid, w in value_widgets.items()]
 
     # Iterate combinations and get output values
-    input_widgets_product = list(iterate_widgets(input_widgets))
+    control_widgets_product = list(iterate_widgets(control_widgets))
     product = {}
-    for combination in input_widgets_product:
-        set_widget_values(combination)
-        product[hash_fn(combination)] = {i: w.value for i, w in value_widgets.items()}
+    for one_set in control_widgets_product:
+        set_widget_values(one_set)
+        product[hash_fn(one_set)] = {i: w.value for i, w in value_widgets.items()}
 
-    out["onchange"]["values"] = product
+    out["values"] = product
 
     return json.dumps(out)
 

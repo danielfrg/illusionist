@@ -1,12 +1,27 @@
 {
+  "include": ["src/*"],
   "compilerOptions": {
-    "module": "commonjs",
-    "esModuleInterop": true,
     "target": "es6",
+    "esModuleInterop": true,
     "moduleResolution": "node",
+    "rootDir": "src",
     "sourceMap": true,
-    // "outDir": "dist"
-    "outDir": "../python/share/jupyter/nbconvert/templates/illusionist/static/"
-  },
-  "lib": ["es2015"]
+    // Dev
+    "outDir": "../notebooks/static",
+    // Build
+    // "outDir": "../python/share/jupyter/nbconvert/templates/illusionist/static/"
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": true,
+    "jsx": "react",
+    "module": "esnext",
+    "noEmitOnError": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "preserveWatchOutput": true,
+    "resolveJsonModule": true,
+    "strictNullChecks": true
+  }
 }

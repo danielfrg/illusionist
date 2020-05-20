@@ -121,7 +121,7 @@ npm-build-watch: clean-js
 
 .PHONY: clean-js
 clean-js:
-	rm -rf js/.cache js/.dist
+	rm -rf js/.cache js/.dist notebooks/static
 
 
 .PHONY: nbs

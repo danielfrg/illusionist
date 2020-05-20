@@ -7,7 +7,8 @@
   function addWidgetsRenderer() {
     var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
     var scriptElement = document.createElement('script');
-    var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';
+    var widgetRendererSrc = './static/embed-amd.js';
+    //var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';
     var widgetState;
 
     scriptElement.src = widgetRendererSrc;
@@ -17,5 +18,12 @@
   document.addEventListener('DOMContentLoaded', addWidgetsRenderer);
 }());
 </script>
+{%- endif -%}
+{% endblock ipywidgets %}
+
+{% block ipywidgets %}
+{%- if "widgets" in nb.metadata -%}
+<script>{{ include_template("nbconvert_templates/static/app.js") }}</script>
+illusionist_resource
 {%- endif -%}
 {% endblock ipywidgets %}

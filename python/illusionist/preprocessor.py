@@ -1,6 +1,7 @@
 import asyncio
 import json
 
+from illusionist.utils import DEV_MODE
 from illusionist import kernel_utils
 from illusionist.client import IllusionistClient
 
@@ -26,9 +27,10 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         self.km = km
 
         resources = resources if resources else {}
-        resources["illusionist_resource"] = "from preprocessor"
+        resources["illusionist_devmode"] = DEV_MODE
+        resources["illusionist_devmode"] = False
 
-        try :
+        try:
             self.reset_execution_trackers()
             self.execute(cleanup_kc=False)
 

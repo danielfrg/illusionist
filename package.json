@@ -1,0 +1,50 @@
+{
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "lerna run build --ignore \"@jupyter-widgets/example-*\"",
+    "build:examples": "lerna run build --scope \"@jupyter-widgets/example-*\" --include-filtered-dependencies",
+    "build:test": "lerna run build:test --ignore \"@jupyter-widgets/example-*\"",
+    "clean": "lerna run clean",
+    "eslint": "eslint . --fix --ignore-path .gitignore --ext .ts,.tsx",
+    "eslint:check": "eslint . --ignore-path .gitignore --ext .ts,.tsx",
+    "integrity": "node scripts/package-integrity.js",
+    "integrity2": "node buildutils/lib/integrity.js",
+    "lint": "yarn && yarn run prettier && yarn run eslint",
+    "lint:check": "yarn run prettier:check && yarn run eslint:check",
+    "prettier": "prettier --ignore-path .gitignore --write \"**/*{.ts,.tsx,.js,.jsx,.css,.json}\"",
+    "prettier:check": "prettier --ignore-path .gitignore --check \"**/*{.ts,.tsx,.js,.jsx,.css,.json}\"",
+    "publish": "yarn run clean && yarn run build && lerna publish --pre-dist-tag next from-git",
+    "sort-package-json": "lerna exec --parallel sort-package-json && sort-package-json",
+    "update-dependency": "update-dependency --lerna",
+    "updated": "lerna updated",
+    "version": "yarn run clean && yarn run build && lerna version --no-push -m \"Bump version\" "
+  },
+  "devDependencies": {
+    "@jupyterlab/buildutils": "^2.0.2",
+    "@typescript-eslint/eslint-plugin": "^2.14.0",
+    "@typescript-eslint/parser": "^2.14.0",
+    "eslint": "^6.5.0",
+    "eslint-config-prettier": "^6.9.0",
+    "husky": "^2.3.0",
+    "lerna": "^3.20.2",
+    "lint-staged": "^9.5.0",
+    "prettier": "^1.19.1",
+    "sort-package-json": "~1.35"
+  },
+  "engines": {
+    "node": ">=10.15.3",
+    "npm": "please-use-yarn",
+    "yarn": ">=1.15.0"
+  },
+  "dependencies": {
+    "@jupyterlab/services": "^5.1.0",
+    "@lumino/widgets": "^1.12.2",
+    "@types/backbone": "^1.4.2",
+    "@types/lodash": "^4.14.152",
+    "@types/mathjax": "0.0.36",
+    "backbone": "^1.4.0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "extends": "../../../tsconfigbase",
+  "compilerOptions": {
+    "types": ["mocha"],
+    "outDir": "build",
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"],
+  "references": [
+    {
+      "path": ".."
+    }
+  ]
+}

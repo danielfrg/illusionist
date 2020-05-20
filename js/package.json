@@ -9,12 +9,14 @@
     "fmt": "prettier --write \"src/**/*.{js,jsx,css,json}\"",
     "fmt:check": "prettier --list-different \"src/**/*.{js,jsx,css,json}\"",
     "lint": "eslint \"src/**/*.{js,jsx }\"",
-    "dev": "parcel src/index.html",
+    "dev": "npm run build:watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Daniel Rodriguez",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@jupyter-widgets/html-manager": "^0.19.0",
+    "commonjs": "0.0.1",
     "eslint": "^7.0.0",
     "eslint-config-airbnb": "^18.1.0",
     "eslint-config-prettier": "^6.11.0",
