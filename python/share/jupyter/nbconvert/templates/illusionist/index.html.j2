@@ -3,7 +3,7 @@
 {% block ipywidgets %}
 {%- if "widgets" in nb.metadata -%}
   {%- if resources.illusionist_devmode -%}
-      <script src="./static/index.js"></script>
+      <script src="./static/embed-amd.js"></script>
   {%- else -%}
       <script>{{ include_template("./static/embed-amd.js") }}</script>
   {%- endif -%}

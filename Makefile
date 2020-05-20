@@ -109,6 +109,12 @@ netlify:  ## Build docs on Netlify
 # ------------------------------------------------------------------------------
 # Project specific
 
+
+.PHONY: env-js
+env-js:
+	cd js; yarn install
+
+
 .PHONY: npm-build
 npm-build: clean-js
 	@cd js; npm run build

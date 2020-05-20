@@ -28,7 +28,7 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
 
         resources = resources if resources else {}
         resources["illusionist_devmode"] = DEV_MODE
-        resources["illusionist_devmode"] = False
+        # resources["illusionist_devmode"] = False
 
         try:
             self.reset_execution_trackers()
