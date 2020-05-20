@@ -104,7 +104,7 @@ export function renderWidgets(
     moduleVersion: string
   ) => Promise<any> = requireLoader
 ): void {
-  requirePromise(['@danielfrg/illusionist-html-manager']).then(htmlmanager => {
+  requirePromise(['@jupyter-widgets/html-manager']).then(htmlmanager => {
     const managerFactory = (): any => {
       return new htmlmanager.IllusionistHTMLManager({ loader: loader });
     };

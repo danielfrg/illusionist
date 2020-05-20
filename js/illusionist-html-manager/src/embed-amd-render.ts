@@ -2,7 +2,7 @@
 // Distributed under the terms of the Modified BSD License.
 
 (window as any).require(
-  ['@danielfrg/illusionist-html-manager/dist/libembed-amd'],
+  ['@jupyter-widgets/html-manager/dist/libembed-amd'],
   function(embed: { renderWidgets: { (): void; (): void } }) {
     if (document.readyState === 'complete') {
       embed.renderWidgets();
