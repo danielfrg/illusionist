@@ -110,26 +110,27 @@ netlify:  ## Build docs on Netlify
 # Project specific
 
 
+.PHONY: nbs  ## Render the nodebooks
+nbs:
+	jupyter nbconvert ./notebooks/widget-gallery.ipynb --to illusionist
+	# jupyter nbconvert ./notebooks/simple-operations.ipynb --to illusionist
+
+
 .PHONY: env-js
-env-js:
-	cd js; yarn install
+env-js:  ## Install JS dependencies
+	cd js/illusionist-html-manager; yarn install
 
 
 .PHONY: npm-build
 npm-build: clean-js
-	@cd js; npm run build
+	@cd js/illusionist-html-manager; npm run build
 
 
 .PHONY: npm-build-watch
 npm-build-watch: clean-js
-	@cd js; npm run build:watch
+	@cd js/illusionist-html-manager; npm run build:watch
 
 
 .PHONY: clean-js
 clean-js:
 	rm -rf js/.cache js/.dist notebooks/static
-
-
-.PHONY: nbs
-nbs:
-	jupyter nbconvert ./notebooks/slider-label.ipynb --to illusionist

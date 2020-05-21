@@ -18,8 +18,8 @@ dependencies:
   - pytest-cov
 
   # This project conda deps
-  - nbconvert
-  # - nbclient  # installing from master until release
+  # - nbconvert # Installing from master until >6.0.0 release
+  # - nbclient  # installing from master until release with my PR
   - nbformat
   - ipywidgets
   - jupyterlab

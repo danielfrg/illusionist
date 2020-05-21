@@ -39,8 +39,8 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
 
             _ = self.run_cmd("widget_vars = generate_json()")
             output_json = self.run_cmd("print(widget_vars)", ret_output=True)
-            onchange_values = json.loads(output_json)
-            # print(onchange_values)
+            print(output_json)
+            # onchange_values = json.loads(output_json)
 
             # print(self.widget_state)
             self.set_widgets_onchange_metadata(onchange_values)
