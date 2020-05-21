@@ -11,7 +11,6 @@ export class IllusionistHTMLManager extends HTMLManager {
 
   setOnChangeValues(values: {}) {
     this.onChangeValues = values;
-    // console.log(this.onChangeValues);
   }
 
   /**
@@ -38,22 +37,22 @@ export class IllusionistHTMLManager extends HTMLManager {
    */
   async onWidgetChange() {
     var currentState = await this.get_state();
+    for (var output_id in this.onChangeValues["onchange"]) {
+      console.log(output_id)
+      var this_info = this.onChangeValues["onchange"][output_id]
+      var affected_by_ids = this_info["affected_by"]
+      console.log(affected_by_ids)
 
-    // Change state
-    const a = [];
-    for (var control_widget_id of this.onChangeValues["controls"]) {
-      // console.log(control_widget_id);
-      var widget_value =
-        currentState["state"][control_widget_id]["state"]["value"];
-      a.push(control_widget_id + "=" + widget_value);
-    }
-    var hash = a.join(",");
-    // console.log(hash);
-    var widgetValues = this.onChangeValues["values"][hash];
-    // console.log(widgetValues);
+      var a = [];
+      for (var input_id of affected_by_ids) {
+        a.push(currentState["state"][input_id]["state"]["value"])
+      }
+      var hash = a.join(",");
+      console.log(hash)
 
-    for (var key of Object.keys(widgetValues)) {
-      currentState["state"][key]["state"]["value"] = widgetValues[key];
+      var output_value = this_info["values"][hash]
+      console.log(output_value)
+      currentState["state"][output_id]["state"]["value"] = output_value;
     }
 
     this.set_state(currentState);

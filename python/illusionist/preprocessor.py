@@ -34,15 +34,19 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
             self.reset_execution_trackers()
             self.execute(cleanup_kc=False)
 
-            # Source helper code
+            # Source helper code to the kernel
             _ = self.run_cmd(get_source(kernel_utils))
 
-            _ = self.run_cmd("widget_vars = generate_json()")
-            output_json = self.run_cmd("print(widget_vars)", ret_output=True)
-            print(output_json)
-            # onchange_values = json.loads(output_json)
+            # _ = self.run_cmd(f"get_widgets(kind='value')", ret_output=True)
+            # print(_)
+            # print()
 
-            # print(self.widget_state)
+            # w_state = self.nb.metadata.widgets["application/vnd.jupyter.widget-state+json"]["state"]
+            _ = self.run_cmd("onchange_values = generate_onchange()")
+            output = self.run_cmd("print(onchange_values)", ret_output=True)
+            # print(output)
+            onchange_values = json.loads(output)
+
             self.set_widgets_onchange_metadata(onchange_values)
         finally:
             # Clean up

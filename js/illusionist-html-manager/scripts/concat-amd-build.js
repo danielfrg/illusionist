@@ -27,3 +27,4 @@ var output = files
   })
   .join(';\n\n');
 fs.writeFileSync('./dist/embed-amd.js', output);
+fs.writeFileSync('../../notebooks/static/embed-amd.js', output);
