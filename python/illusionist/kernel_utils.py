@@ -1,5 +1,6 @@
 # This code is executed on the Kernel that also executes the notebook
 import json
+import itertools
 from ipywidgets import *  # noqa
 
 
@@ -19,16 +20,15 @@ NUMERIC_OUPUT_WIDGETS = (IntProgress, FloatProgress)
 BOOLEAN_CONTROL_WIDGETS = (ToggleButton, Checkbox)
 BOOLEAN_OUTPUT_WIDGETS = (Valid,)
 
-# SELECTION_CONTROL_WIDGETS = (
-#     Dropdown,
-#     RadioButtons,
-#     Select,
-#     SelectionSlider,
-#     # SelectionRangeSlider,
-#     ToggleButtons,
-#     SelectMultiple,
-# )
-SELECTION_CONTROL_WIDGETS = ()
+SELECTION_CONTROL_WIDGETS = (
+    Dropdown,
+    RadioButtons,
+    Select,
+    SelectionSlider,
+    ToggleButtons,
+    SelectMultiple,
+    # SelectionRangeSlider,  # TODO
+)
 SELECTION_OUTPUT_WIDGETS = ()
 
 STRING_CONTROL_WIDGETS = ()
@@ -65,10 +65,8 @@ def get_widgets(widgets=None, kind=None):
     Returns a dictionary with
         {model_id: widget_object}
     """
-    import ipywidgets
-
     # The `Widgets` class has a registry of all the widgets that were used
-    all_widgets = widgets if widgets else ipywidgets.Widget.widgets
+    all_widgets = widgets if widgets else Widget.widgets
 
     if kind is None:
         return all_widgets
@@ -92,8 +90,6 @@ def possible_values(widget):
     """
     Returns a list with the possible values for a widget
     """
-    import itertools
-
     if isinstance(widget, (IntSlider, BoundedIntText)):
         return list(range(widget.min, widget.max + widget.step, widget.step))
     if isinstance(widget, (IntRangeSlider,)):
@@ -103,11 +99,28 @@ def possible_values(widget):
         return list_
     elif isinstance(widget, BOOLEAN_CONTROL_WIDGETS):
         return [True, False]
-    elif isinstance(widget, SELECTION_CONTROL_WIDGETS):
-        return widget.options
+    elif isinstance(
+        widget, (Dropdown, RadioButtons, Select, SelectionSlider, ToggleButtons)
+    ):
+        if isinstance(widget.options[0], (list, tuple)):
+            return [v for k, v in widget.options]
+        else:
+            return widget.options
+    elif isinstance(widget, SelectMultiple):
+        return list(powerset(widget.options))
     else:
         widget_type = type(widget)
         raise Exception(f"Widget type 'f{widget_type}' not supported.")
+
+
+def powerset(iterable):
+    """
+    Example: powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
+    """
+    s = list(iterable)
+    return itertools.chain.from_iterable(
+        itertools.combinations(s, r) for r in range(len(s) + 1)
+    )
 
 
 def frange(x, y, z):
@@ -143,10 +156,14 @@ def generate_onchange(widgets=None):
 
     for w_id, widget in control_widgets.items():
         initial_values = get_state(value_widgets)
-        w_values = possible_values(widget)
+        pos_widget_values = possible_values(widget)
         affects = []
-        for value in w_values:
-            widget.value = value  # Change widget value
+        for new_value in pos_widget_values:
+            try:
+                widget.value = new_value  # Change widget value
+            except:
+                raise Exception((widget, pos_widget_values, new_value))
+
             new_values = get_state(get_widgets(widgets=widgets, kind="value"))
             affects.extend(diff_state(initial_values, new_values, my_id=w_id))
 
@@ -219,28 +236,68 @@ def widgets_matrix(input_widgets, output_widget):
         possible_values_by_widget[model_id] = possible_values(widget)
 
     list_ = possible_values_by_widget.values()
+    # Prodcut is a list of lists, each item is a combination of possible
+    # input widget values
     product = itertools.product(*list_)
+    # print(list(product))
 
     # 2. Now we iterate the combinations of possible values
     # To create the matrix
 
     matrix = {}
-    input_ids = list(input_widgets.keys())
+    input_ids = list()
     for inputs_set in product:
+
         # Update values of input widgets
-        for i, value in enumerate(inputs_set):
-            model_id = input_ids[i]
+        for i, (model_id, value) in enumerate(zip(input_widgets.keys(), inputs_set)):
+            # print(i, model_id, value)
             input_widgets[model_id].value = value
 
-        # Get the value of the output widget
+        # Save the new value of the output widget
+        # print(hash_fn(input_widgets))
         matrix[hash_fn(input_widgets)] = output_widget.value
 
     return matrix
 
 
 def hash_fn(widgets):
-    list_ = []
+    values = []
     for model_id, widget in widgets.items():
-        value = json.dumps(widget.value)
-        list_.append(value)
-    return "|".join(list_).replace(" ", "")
+        if isinstance(widget, NUMERIC_CONTROL_WIDGETS):
+            value = widget.value
+        if isinstance(widget, BOOLEAN_CONTROL_WIDGETS):
+            value = widget.value
+        elif isinstance(widget, SELECTION_CONTROL_WIDGETS):
+            value = widget.index
+
+        if isinstance(value, str):
+            value = json.dumps(value)
+        elif isinstance(value, bool):
+            value = json.dumps(value)
+        elif isinstance(value, tuple):
+            value = list(value)
+            value = json.dumps(value, separators=(",", ":"))
+        # print(value, json.dumps(value))
+        # print(type(value), type(json.dumps(value)))
+        values.append(value)
+    # print(values)
+    return dumps(values)
+
+
+def dumps(values):
+    import io
+    import csv
+
+    output = io.StringIO()
+    writer = csv.writer(
+        output,
+        skipinitialspace=True,
+        delimiter=",",
+        quotechar='"',
+        quoting=csv.QUOTE_NONNUMERIC,
+    )
+    writer.writerow(values)
+    contents = output.getvalue()
+    output.close()
+    return contents.strip()
+    # return json.dumps(obj, separators=(",", ":"))

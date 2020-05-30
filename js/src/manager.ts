@@ -1,6 +1,7 @@
 import { HTMLManager } from "@jupyter-widgets/html-manager";
-
 import { DOMWidgetModel } from "@jupyter-widgets/base";
+
+import Papa from "papaparse";
 
 const WIDGET_STATE_MIMETYPE = "application/vnd.jupyter.widget-state+json";
 const WIDGET_VIEW_MIMETYPE = "application/vnd.jupyter.widget-view+json";
@@ -28,8 +29,8 @@ export class WidgetManager extends HTMLManager {
                 const widgetViewObject = JSON.parse(viewtag.innerHTML);
                 const { model_id } = widgetViewObject;
                 const model = await this.get_model(model_id);
-                console.log(model_id);
-                console.log(model);
+                // console.log(model_id);
+                // console.log(model);
                 const widgetEl = document.createElement("div");
                 if (model && viewtag && viewtag.parentElement) {
                     // console.log(model_id);
@@ -45,15 +46,6 @@ export class WidgetManager extends HTMLManager {
                 }
             } catch (error) {
                 console.error(error);
-                // Each widget view tag rendering is wrapped with a try-catch statement.
-                //
-                // This fixes issues with widget models that are explicitely "closed"
-                // but are still referred to in a previous cell output.
-                // Without the try-catch statement, this error interupts the loop and
-                // prevents the rendering of further cells.
-                //
-                // This workaround may not be necessary anymore with templates that make use
-                // of progressive rendering.
             }
         }
     }
@@ -91,39 +83,89 @@ export class WidgetManager extends HTMLManager {
      * It will trigger the update of the Widget Views.
      */
     public async onWidgetChange() {
-        const currentState = await this.get_state();
-        // console.log(currentState);
+        const state = await this.get_state();
+        // console.log(state);
+        const onChange = this.onChangeValues["onchange"];
 
-        for (let output_id in this.onChangeValues["onchange"]) {
-            // console.log(output_id);
-            const this_info = this.onChangeValues["onchange"][output_id];
+        let i = 1;
+        for (let output_id in onChange) {
+            console.log("----");
+            console.log("Output ID:");
+            console.log(output_id);
+            const this_info = onChange[output_id];
             const affected_by_ids = this_info["affected_by"];
+
+            // if (model.)
 
             let inputs = [];
             for (let input_id of affected_by_ids) {
-                let input_value =
-                    currentState["state"][input_id]["state"]["value"];
-                if (input_value) {
-                    input_value = input_value.toString();
-                    // console.log("Input:");
+                const widget_state = state["state"][input_id]["state"];
+                console.log("Input ID:");
+                console.log(input_id);
+                let input_value = widget_state["value"];
+                let index_value = widget_state["index"];
+                console.log("Input/index Value:");
+                if (input_value !== undefined) {
+                    // Ints and Booleans
                     // console.log(input_value);
-                    // console.log(input_value.indexOf(","));
-                    // If there are multiple values (Range Sliders) make them a list
-                    if (input_value.indexOf(",") > 0) {
-                        input_value = `[${input_value}]`;
+                    if (
+                        typeof input_value === "number" ||
+                        typeof input_value === "boolean"
+                    ) {
+                        inputs.push(input_value);
+                    } else if (input_value instanceof Array) {
+                        // IntRangeSlider
+                        inputs.push(`[${input_value.toString()}]`);
+                    }
+                } else if (index_value !== undefined) {
+                    // Selection widgets
+                    // console.log(index_value);
+                    if (typeof index_value === "number") {
+                        inputs.push(index_value);
+                    } else if (index_value instanceof Array) {
+                        // SelectMultiple
+                        inputs.push(`[${index_value.toString()}]`);
                     }
                 }
-                inputs.push(input_value);
             }
-            let hash = inputs.join("|");
+            if (i == 2) {
+                // break;
+            }
+            i = i + 1;
+
+            console.log("Inputs final:");
+            console.log(inputs);
+            let hash = this.hash_fn(inputs);
+            console.log("Hash:");
+            console.log(hash);
 
             const output_value = this_info["values"][hash];
-            // console.log("hash:");
-            // console.log(hash);
-            // console.log(output_value);
-            currentState["state"][output_id]["state"]["value"] = output_value;
+            console.log("Output value");
+            console.log(output_value);
+            if (output_value !== undefined) {
+                state["state"][output_id]["state"]["value"] = output_value;
+            }
         }
 
-        this.set_state(currentState);
+        this.set_state(state);
+    }
+
+    public hash_fn(inputs: Array<any>) {
+        let quotes = [];
+        for (let input of inputs) {
+            if (typeof input === "number") {
+                quotes.push(false);
+            }
+            quotes.push(true);
+        }
+        // console.log(quotes);
+
+        var results = Papa.unparse([inputs], {
+            quotes: quotes,
+            quoteChar: '"',
+        });
+        // console.log("!!!!");
+        // console.log(results);
+        return results;
     }
 }
