@@ -6,7 +6,7 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
 PWD := $(shell pwd)
-TEST_FILTER ?= ""
+PYTEST_K ?= ""
 
 
 first: help
@@ -84,7 +84,7 @@ upload-test:  ## Upload package to test PyPI
 
 .PHONY: test
 test:  ## Run tests
-	cd python && pytest -k $(TEST_FILTER)
+	cd python && pytest -k $(PYTEST_K)
 
 
 .PHONY: report
@@ -131,7 +131,6 @@ build-js:  ## Build JS
 dev-js:  ## Build JS with watch
 	mkdir -p notebooks/static;
 	cd js/; npm run dev
-
 
 
 .PHONY: clean-js

@@ -29,7 +29,7 @@ SELECTION_CONTROL_WIDGETS = (
     SelectMultiple,
     # SelectionRangeSlider,  # TODO
 )
-SELECTION_OUTPUT_WIDGETS = ()
+SELECTION_OUTPUT_WIDGETS = SELECTION_CONTROL_WIDGETS
 
 STRING_CONTROL_WIDGETS = ()
 # STRING_CONTROL_WIDGETS = (Text, Textarea)
@@ -86,6 +86,25 @@ def get_widgets(widgets=None, kind=None):
         return control_widgets
 
 
+def get_widget_output(widget):
+    """
+    Get the Output value that we will serialize in the matrix
+    """
+    if isinstance(widget, NUMERIC_OUPUT_WIDGETS):
+        return widget.value
+    elif isinstance(widget, BOOLEAN_OUTPUT_WIDGETS):
+        return widget.value
+    elif isinstance(widget, SELECTION_OUTPUT_WIDGETS):
+        if isinstance(widget.index, tuple):
+            return list(widget.index)
+        return widget.index
+    elif isinstance(widget, STRING_OUTPUT_WIDGETS):
+        return widget.value
+    else:
+        widget_type = type(widget)
+        raise Exception(f"Output Widget type 'f{widget_type}' not supported.")
+
+
 def possible_values(widget):
     """
     Returns a list with the possible values for a widget
@@ -125,7 +144,7 @@ def powerset(iterable):
 
 def frange(x, y, z):
     """
-    Like `range` but with floats as inputs
+    Like `range` but for floats as inputs
 
     This is stupid and i bet its broken in a lot of ways
     From: https://stackoverflow.com/questions/7267226/range-for-floats
@@ -226,8 +245,6 @@ def widgets_matrix(input_widgets, output_widget):
     ------
         dictionary of { "[... inputs_value ... ]": output_value, ... }
     """
-    import itertools
-
     # 1. We generate a product of all the possible widget values
 
     # For each input_widgets, get all possible values they can have
@@ -255,7 +272,7 @@ def widgets_matrix(input_widgets, output_widget):
 
         # Save the new value of the output widget
         # print(hash_fn(input_widgets))
-        matrix[hash_fn(input_widgets)] = output_widget.value
+        matrix[hash_fn(input_widgets)] = get_widget_output(output_widget)
 
     return matrix
 
@@ -285,6 +302,9 @@ def hash_fn(widgets):
 
 
 def dumps(values):
+    """
+    CSV Serialization
+    """
     import io
     import csv
 

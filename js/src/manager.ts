@@ -94,16 +94,17 @@ export class WidgetManager extends HTMLManager {
             console.log(output_id);
             const this_info = onChange[output_id];
             const affected_by_ids = this_info["affected_by"];
+            const output_model = state["state"][output_id]["state"];
 
             // if (model.)
 
             let inputs = [];
             for (let input_id of affected_by_ids) {
-                const widget_state = state["state"][input_id]["state"];
+                const input_model = state["state"][input_id]["state"];
                 console.log("Input ID:");
                 console.log(input_id);
-                let input_value = widget_state["value"];
-                let index_value = widget_state["index"];
+                let input_value = input_model["value"];
+                let index_value = input_model["index"];
                 console.log("Input/index Value:");
                 if (input_value !== undefined) {
                     // Ints and Booleans
@@ -143,11 +144,30 @@ export class WidgetManager extends HTMLManager {
             console.log("Output value");
             console.log(output_value);
             if (output_value !== undefined) {
-                state["state"][output_id]["state"]["value"] = output_value;
+                const key = this.getWidgetKey(
+                    output_model["_model_name"] as string
+                );
+                state["state"][output_id]["state"][key] = output_value;
             }
         }
-
+        // console.log(state);
         this.set_state(state);
+    }
+
+    public getWidgetKey(model_name: string) {
+        const selection_widgets = [
+            "DropdownModel",
+            "RadioButtonsModel",
+            "SelectModel",
+            "SelectionSliderModel",
+            "SelectionRangeSliderModel",
+            "ToggleButtons",
+            "SelectMultipleModel",
+        ];
+        if (selection_widgets.includes(model_name)) {
+            return "index";
+        }
+        return "value";
     }
 
     public hash_fn(inputs: Array<any>) {
