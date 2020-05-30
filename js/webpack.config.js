@@ -2,31 +2,48 @@ var path = require("path");
 
 var rules = [
     { test: /\.css$/, use: ["style-loader", "css-loader"] },
+    {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        use: {
+            loader: "url-loader",
+            options: {
+                limit: 10000,
+                mimetype: "image/svg+xml",
+            },
+        },
+    },
     // required to load font-awesome
     {
         test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-        use:
-            "url-loader?limit=10000&mimetype=application/font-woff&publicPath=/static/",
+        use: {
+            loader: "url-loader",
+            options: {
+                limit: 10000,
+                mimetype: "application/font-woff",
+            },
+        },
     },
     {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-        use:
-            "url-loader?limit=10000&mimetype=application/font-woff&publicPath=/static/",
+        use: {
+            loader: "url-loader",
+            options: {
+                limit: 10000,
+                mimetype: "application/font-woff",
+            },
+        },
     },
     {
         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        use:
-            "url-loader?limit=10000&mimetype=application/octet-stream&publicPath=/static/",
+        use: {
+            loader: "url-loader",
+            options: {
+                limit: 10000,
+                mimetype: "application/octet-stream",
+            },
+        },
     },
-    {
-        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: "file-loader&publicPath=/static/",
-    },
-    {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        use:
-            "url-loader?limit=10000&mimetype=image/svg+xml&publicPath=/static/",
-    },
+    { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, use: "file-loader" },
 ];
 
 var distRoot = path.resolve(
