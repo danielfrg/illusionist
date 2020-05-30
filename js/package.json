@@ -1,0 +1,56 @@
+{
+    "name": "@danielfrg/illusionist",
+    "version": "1.0.0",
+    "description": "",
+    "author": "Daniel Rodriguez",
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/danielfrg/illusionist",
+    "bugs": {
+        "url": "https://github.com/danielfrg/illusionist/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/danielfrg/illusionist"
+    },
+    "scripts": {
+        "build": "npm run build:src && webpack",
+        "build:src": "tsc --build",
+        "dev": "npm-run-all -p dev:*",
+        "dev:lib": "tsc --build --watch",
+        "dev:bundle": "webpack --watch --mode=development",
+        "clean": "rimraf docs && rimraf lib && rimraf tsconfig.tsbuildinfo",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "main": "lib/index.js",
+    "typings": "lib/index.d.ts",
+    "browserslist": ">0.8%, not ie 11, not op_mini all, not dead",
+    "dependencies": {
+        "@fortawesome/fontawesome-free": "^5.12.0",
+        "@jupyter-widgets/base": "^4.0.0-alpha.0",
+        "@jupyter-widgets/controls": "^3.0.0-alpha.0",
+        "@jupyter-widgets/output": "^4.0.0-alpha.0",
+        "@jupyter-widgets/html-manager": "^0.20.0-alpha.0",
+        "@lumino/widgets": "^1.13.0",
+        "core-js": "^3.6.5",
+        "font-awesome": "^4.7.0",
+        "mathjax-full": "^3.0.5"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.10.1",
+        "@babel/core": "^7.10.1",
+        "@babel/plugin-proposal-class-properties": "^7.10.1",
+        "@babel/preset-env": "^7.10.1",
+        "babel-loader": "^8.1.0",
+        "css-loader": "^3.5.3",
+        "file-loader": "^4.3.0",
+        "npm-run-all": "^4.1.5",
+        "p-limit": "^2.3.0",
+        "rimraf": "^2.6.1",
+        "style-loader": "^0.23.1",
+        "tslint": "^6.1.2",
+        "typescript": "~3.7.4",
+        "url-loader": "^1.0.0",
+        "webpack": "^4.43.0",
+        "webpack-cli": "^3.3.11"
+    }
+}

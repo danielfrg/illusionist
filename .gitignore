@@ -133,4 +133,3 @@ build/
 
 ### Project specific ###
 notebooks/*.html
-notebooks/static

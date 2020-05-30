@@ -1,13 +1,44 @@
-This is a fork of the `@jupyter-widgets` packages that we change
+Jupyter Widgets JupyterLab Extension
+====================================
 
-The structure is similar to make it easy to use other modules if needed.
+A JupyterLab extension for Jupyter/IPython widgets.
 
-# illusionist-html-manager
+Package Install
+---------------
 
-Fork of `@jupyter-widgets/html-manager`.
+**Prerequisites**
 
-Changes:
+* JupyterLab (see package.json for appropriate version, currently [JupyterLab 1.0](https://github.com/jupyterlab/jupyterlab/releases/tag/v1.0.2))
 
-- Creates `htmlmanager.IllusionistHTMLManager` that extends `@jupyter-widgets/html-manager/HTMLManager`
-- Other files just change the reference class to use the new `IllusionistHTMLManager`
-- `package.json` adds `@jupyter-widgets/html-manager` as dependency
+
+```bash
+jupyter labextension install @jupyter-widgets/jupyterlab-manager
+```
+
+### Version compatibility
+
+Use the appropriate command from the following list to install a compatible
+JupyterLab extension.
+
+* For JupyterLab 1.0.x and 1.1.x, use `jupyter labextension install @jupyter-widgets/jupyterlab-manager@1.0`
+* For JupyterLab 1.2.x, use `jupyter labextension install @jupyter-widgets/jupyterlab-manager@1.1`
+* For JupyterLab 2.x, use `jupyter labextension install @jupyter-widgets/jupyterlab-manager@2.0`
+
+Source Build
+------------
+
+**Prerequisites**
+- [git](http://git-scm.com/)
+- [node](http://nodejs.org/)
+
+```bash
+git clone https://github.com/jupyter-widgets/ipywidgets.git
+cd ipywidgets/packages/jupyterlab-manager
+npm install
+npm run build
+jupyter labextension link .
+```
+
+**Rebuild**
+
+If you want to pull in changes to Jupyter widgets, run `npm run build` at the ipywidgets repo root to update the version of Jupyter widgets in the `node_modules` directory and rebuild the JupyterLab extension.
