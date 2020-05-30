@@ -1,6 +1,6 @@
 {%- extends 'classic/index.html.j2' -%}
 
-{% block ipywidgets %}
+{% block jupyter_widgets %}
 {%- if "widgets" in nb.metadata -%}
   {%- if resources.illusionist_devmode -%}
       <script src="./static/embed-amd.js"></script>
@@ -8,8 +8,7 @@
       <script>{{ include_template("./static/embed-amd.js") }}</script>
   {%- endif -%}
 {%- endif -%}
-{% endblock ipywidgets %}
-
+{% endblock jupyter_widgets %}
 
 {%- block footer %}
 {{ super() }}

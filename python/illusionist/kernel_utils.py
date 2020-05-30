@@ -7,12 +7,12 @@ NUMERIC_CONTROL_WIDGETS = (
     IntSlider,
     # FloatSlider,  # floats suck
     # FloatLogSlider,  # floats suck
-    # IntRangeSlider,
+    IntRangeSlider,
     # FloatRangeSlider,  # floats suck
     BoundedIntText,
-    BoundedFloatText,
-    # IntText,
-    # FloatText,  # floats suck
+    # BoundedFloatText,  # Floats suck
+    # IntText,  # No open ended
+    # FloatText,  # No open ended
 )
 NUMERIC_OUPUT_WIDGETS = (IntProgress, FloatProgress)
 
@@ -59,16 +59,16 @@ VALUE_WIDGETS = CONTROL_WIDGETS + OUTPUT_WIDGETS
 LAYOUT_WIDGETS = Box, HBox, VBox, Accordion, Tab
 
 
-def get_widgets(kind=None):
+def get_widgets(widgets=None, kind=None):
     """
     Return all widgets that are used in the notebook
     Returns a dictionary with
         {model_id: widget_object}
     """
-    import ipywidgets as widgets
+    import ipywidgets
 
     # The `Widgets` class has a registry of all the widgets that were used
-    all_widgets = widgets.Widget.widgets
+    all_widgets = widgets if widgets else ipywidgets.Widget.widgets
 
     if kind is None:
         return all_widgets
@@ -92,15 +92,15 @@ def possible_values(widget):
     """
     Returns a list with the possible values for a widget
     """
-    # model_id = widget.model_id
+    import itertools
 
-    if isinstance(widget, (IntSlider, IntRangeSlider, BoundedIntText)):
+    if isinstance(widget, (IntSlider, BoundedIntText)):
         return list(range(widget.min, widget.max + widget.step, widget.step))
-    elif isinstance(widget, (FloatSlider, FloatRangeSlider, BoundedFloatText)):
-        return frange(widget.min, widget.max, widget.step)
-    elif isinstance(widget, FloatLogSlider):
-        # TODO: quick maths
-        return []
+    if isinstance(widget, (IntRangeSlider,)):
+        range_ = range(widget.min, widget.max + widget.step, widget.step)
+        list_ = itertools.product(range_, range_)
+        list_ = [[i, j] for i, j in list_ if i <= j]
+        return list_
     elif isinstance(widget, BOOLEAN_CONTROL_WIDGETS):
         return [True, False]
     elif isinstance(widget, SELECTION_CONTROL_WIDGETS):
@@ -125,21 +125,20 @@ def frange(x, y, z):
     return [x / multiplier for x in range(min_, max_ + step_, step_)]
 
 
-def generate_onchange():
-    all_widgets = get_widgets()
-    value_widgets = get_widgets(kind="value")
-    control_widgets = get_widgets(kind="control")
+def generate_onchange(widgets=None):
+    all_widgets = get_widgets(widgets=widgets)
+    value_widgets = get_widgets(widgets=widgets, kind="value")
+    control_widgets = get_widgets(widgets=widgets, kind="control")
 
     out = {"version_major": 1, "version_minor": 0}
     out["all"] = [m_id for m_id, w in value_widgets.items()]
     out["controls"] = [m_id for m_id, w in control_widgets.items()]
 
-    # What we do is a product(matrix) per widget with only the ones it affects
-    # a big matrix is insane lol
+    # What we do is a product(matrix) per output widget
+    # with only the ones it affects
 
     # 1. Iterate the widgets and list which ones it affects
 
-    # affected_by = {output_widget_id: {input_widget_ids...} }
     affected_by = {m_id: set() for m_id, w in value_widgets.items()}
 
     for w_id, widget in control_widgets.items():
@@ -148,12 +147,11 @@ def generate_onchange():
         affects = []
         for value in w_values:
             widget.value = value  # Change widget value
-            new_values = get_state(get_widgets(kind="value"))
+            new_values = get_state(get_widgets(widgets=widgets, kind="value"))
             affects.extend(diff_state(initial_values, new_values, my_id=w_id))
 
         for affected in affects:
             affected_by[affected] = affected_by[affected] | {w_id}
-    # return affected_by
 
     # 2. Iterate affected_by and generate one matrix per output widget
 
@@ -187,10 +185,12 @@ def get_state(widgets):
 
 def diff_state(initial, new, my_id=None):
     """
-    Return a list od widget model_ids that have changed based on the states
+    Return a list of widget model_ids that have changed based on the states
     """
     diff = []
-    for (initial_id, initial_value), (new_id, new_value) in zip(initial.items(), new.items()):
+    for (initial_id, initial_value), (new_id, new_value) in zip(
+        initial.items(), new.items()
+    ):
         assert initial_id == new_id
         if initial_value != new_value:
             diff.append(initial_id)
@@ -204,6 +204,10 @@ def widgets_matrix(input_widgets, output_widget):
     """
     Takes a list of input_widgets (model_id, widget_obj)
     and return a matrix of all possible possible values per widget
+
+    Returns
+    ------
+        dictionary of { "[... inputs_value ... ]": output_value, ... }
     """
     import itertools
 
@@ -218,21 +222,20 @@ def widgets_matrix(input_widgets, output_widget):
     product = itertools.product(*list_)
 
     # 2. Now we iterate the combinations of possible values
+    # To create the matrix
 
-    ret = {}
+    matrix = {}
     input_ids = list(input_widgets.keys())
-    # widgets = get_widgets(filter=input_ud)
-    for one_set in product:
-
+    for inputs_set in product:
         # Update values of input widgets
-        for i, value in enumerate(one_set):
+        for i, value in enumerate(inputs_set):
             model_id = input_ids[i]
             input_widgets[model_id].value = value
 
         # Get the value of the output widget
-        ret[hash_fn(input_widgets)] = output_widget.value
+        matrix[hash_fn(input_widgets)] = output_widget.value
 
-    return ret
+    return matrix
 
 
 def hash_fn(widgets):
@@ -240,10 +243,4 @@ def hash_fn(widgets):
     for model_id, widget in widgets.items():
         value = json.dumps(widget.value)
         list_.append(value)
-    return ",".join(list_)
-
-    # list_ = []
-    # for model_id, widget in widgets.items():
-    #     value = widget.value
-    #     list_.append(f"{model_id}={value}")
-    # return ",".join(list_)
+    return "|".join(list_).replace(" ", "")

@@ -1,4 +1,4 @@
 # These are the library requirements
-nbconvert>=6.0.0
+# nbconvert>=6.0.0
 nbclient
 nbformat

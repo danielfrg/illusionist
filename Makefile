@@ -41,7 +41,8 @@ env:
 
 .PHONY: develop
 develop:  ## Install package for development
-	cd python && python -m pip install --no-build-isolation -e .
+	cd python && python -m pip install --no-build-isolation -e . ;
+	jupyter labextension install @jupyter-widgets/jupyterlab-manager
 
 
 .PHONY: develop-deps
@@ -109,28 +110,24 @@ netlify:  ## Build docs on Netlify
 # ------------------------------------------------------------------------------
 # Project specific
 
-
 .PHONY: nbs  ## Render the nodebooks
 nbs:
 	jupyter nbconvert ./notebooks/widget-gallery.ipynb --to illusionist
 	# jupyter nbconvert ./notebooks/simple-operations.ipynb --to illusionist
 
 
-.PHONY: env-js
-env-js:  ## Install JS dependencies
+.PHONY: js-install
+js-install:  ## Install JS dependencies
 	cd js/illusionist-html-manager; yarn install
 
 
-.PHONY: npm-build
-npm-build: clean-js
-	@cd js/illusionist-html-manager; npm run build
-
-
-.PHONY: npm-build-watch
-npm-build-watch: clean-js
-	@cd js/illusionist-html-manager; npm run build:watch
+.PHONY: build-js
+build-js:  ## Build JS
+	mkdir -p notebooks/static;
+	cd js/illusionist-html-manager; yarn run build
 
 
 .PHONY: clean-js
-clean-js:
-	rm -rf js/.cache js/.dist notebooks/static
+clean-js:  # Clean JS
+	rm -rf notebooks/static/*;
+	cd js/illusionist-html-manager; rm -rf .cache dist lib node_modules

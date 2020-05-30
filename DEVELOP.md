@@ -18,3 +18,11 @@ make fmt
 # Run tests
 make test
 ```
+
+## JS
+
+```
+make js-install
+
+make build-js
+```

@@ -21,7 +21,7 @@ export class IllusionistHTMLManager extends HTMLManager {
     view: Promise<DOMWidgetView> | DOMWidgetView,
     el: HTMLElement
   ): Promise<void> {
-    var widgetView = await view;
+    let widgetView = await view;
     LuminoWidget.Widget.attach(widgetView.pWidget, el);
 
     // Added
@@ -32,26 +32,39 @@ export class IllusionistHTMLManager extends HTMLManager {
   }
 
   /**
-   * Handles the update of the state of the Manager.
+   * Handles the state update
    * It will trigger the update of the Widget Views.
    */
   async onWidgetChange() {
-    var currentState = await this.get_state();
-    for (var output_id in this.onChangeValues["onchange"]) {
-      console.log(output_id)
-      var this_info = this.onChangeValues["onchange"][output_id]
-      var affected_by_ids = this_info["affected_by"]
-      console.log(affected_by_ids)
+    const currentState = await this.get_state();
+    // console.log(currentState);
 
-      var a = [];
-      for (var input_id of affected_by_ids) {
-        a.push(currentState["state"][input_id]["state"]["value"])
+    for (let output_id in this.onChangeValues["onchange"]) {
+      // console.log(output_id);
+      const this_info = this.onChangeValues["onchange"][output_id];
+      const affected_by_ids = this_info["affected_by"];
+
+      let inputs = [];
+      for (let input_id of affected_by_ids) {
+        let input_value = currentState["state"][input_id]["state"]["value"];
+        if (input_value) {
+          input_value = input_value.toString();
+          // console.log("Input:");
+          // console.log(input_value);
+          // console.log(input_value.indexOf(","));
+          // If there are multiple values (Range Sliders) make them a list
+          if (input_value.indexOf(",") > 0) {
+            input_value = `[${input_value}]`;
+          }
+        }
+        inputs.push(input_value);
       }
-      var hash = a.join(",");
-      console.log(hash)
+      let hash = inputs.join("|");
 
-      var output_value = this_info["values"][hash]
-      console.log(output_value)
+      const output_value = this_info["values"][hash];
+      // console.log("hash:");
+      // console.log(hash);
+      // console.log(output_value);
       currentState["state"][output_id]["state"]["value"] = output_value;
     }
 
