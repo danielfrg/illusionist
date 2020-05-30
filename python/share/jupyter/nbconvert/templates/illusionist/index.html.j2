@@ -4,9 +4,7 @@
 {%- if "widgets" in nb.metadata -%}
   <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css" />
   {%- if resources.illusionist_devmode -%}
-      <script>
-          requirejs(["static/main"])
-      </script>
+      <script src="./static/main.js"></script>
   {%- else -%}
       <script>{{ include_template("./static/main.js") }}</script>
   {%- endif -%}

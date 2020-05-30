@@ -118,16 +118,23 @@ nbs:
 
 .PHONY: js-install
 js-install:  ## Install JS dependencies
-	cd js/illusionist-html-manager; yarn install
+	cd js/; npm install
 
 
 .PHONY: build-js
 build-js:  ## Build JS
 	mkdir -p notebooks/static;
-	cd js/illusionist-html-manager; yarn run build
+	cd js/; npm run build
+
+
+.PHONY: dev-js
+dev-js:  ## Build JS with watch
+	mkdir -p notebooks/static;
+	cd js/; npm run dev
+
 
 
 .PHONY: clean-js
 clean-js:  # Clean JS
 	rm -rf notebooks/static/*;
-	cd js/illusionist-html-manager; rm -rf .cache dist lib node_modules
+	cd js/; rm -rf .cache dist lib node_modules

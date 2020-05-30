@@ -1,16 +1,6 @@
 import { HTMLManager } from "@jupyter-widgets/html-manager";
 
-import { DOMWidgetModel, DOMWidgetView } from "@jupyter-widgets/base";
-import * as LuminoWidget from "@lumino/widgets";
-
-// if (
-//     typeof window !== "undefined" &&
-//     typeof (window as any).define !== "undefined"
-// ) {
-//     (window as any).define("@jupyter-widgets/base", base);
-//     (window as any).define("@jupyter-widgets/controls", controls);
-//     // (window as any).define("@jupyter-widgets/output", output);
-// }
+import { DOMWidgetModel } from "@jupyter-widgets/base";
 
 const WIDGET_STATE_MIMETYPE = "application/vnd.jupyter.widget-state+json";
 const WIDGET_VIEW_MIMETYPE = "application/vnd.jupyter.widget-view+json";
@@ -19,15 +9,14 @@ const WIDGET_ONCHANGE_MIMETYPE =
 
 export class WidgetManager extends HTMLManager {
     public onChangeValues: any = {};
-    // public models_ids: String[] = [];
 
     /**
      * Main entry point to build the widgets to the DOM
      */
     public async build_widgets() {
         // Set state
-        this.load_state();
-        this.load_onchange();
+        await this.load_state();
+        await this.load_onchange();
 
         // Display models
         const viewTags = document.body.querySelectorAll(
@@ -39,6 +28,8 @@ export class WidgetManager extends HTMLManager {
                 const widgetViewObject = JSON.parse(viewtag.innerHTML);
                 const { model_id } = widgetViewObject;
                 const model = await this.get_model(model_id);
+                console.log(model_id);
+                console.log(model);
                 const widgetEl = document.createElement("div");
                 if (model && viewtag && viewtag.parentElement) {
                     // console.log(model_id);
