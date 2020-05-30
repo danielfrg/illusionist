@@ -28,7 +28,6 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
 
         resources = resources if resources else {}
         resources["illusionist_devmode"] = DEV_MODE
-        # resources["illusionist_devmode"] = False
 
         try:
             self.reset_execution_trackers()
@@ -41,7 +40,6 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
             # print(_)
             # print()
 
-            # w_state = self.nb.metadata.widgets["application/vnd.jupyter.widget-state+json"]["state"]
             _ = self.run_cmd("onchange_values = generate_onchange()")
             output = self.run_cmd("print(onchange_values)", ret_output=True)
             # print(output)

@@ -44,12 +44,9 @@ def test_possible_values_selection_single_value(class_):
     assert ku.possible_values(w) == [1, 2, 3]
 
 
-@pytest.mark.parametrize(
-    "class_", [ipywidgets.SelectMultiple],
-)
-def test_possible_values_selection_multi_value(class_):
+def test_possible_values_SelectMultiple():
     options = ["a"]
-    w = class_(options=options)
+    w = ipywidgets.SelectMultiple(options=options)
     assert ku.possible_values(w) == [(), ("a",)]
 
     options = ["a", "b"]
@@ -68,3 +65,9 @@ def test_possible_values_selection_multi_value(class_):
         ("b", "c"),
         ("a", "b", "c"),
     ]
+
+
+def test_possible_values_SelectionRangeSlider():
+    options = [("a", 0), ("b", 2), ("c", 5)]
+    w = SelectionRangeSlider(options=options)
+    assert

@@ -26,8 +26,8 @@ SELECTION_CONTROL_WIDGETS = (
     Select,
     SelectionSlider,
     ToggleButtons,
+    SelectionRangeSlider,
     SelectMultiple,
-    # SelectionRangeSlider,  # TODO
 )
 SELECTION_OUTPUT_WIDGETS = SELECTION_CONTROL_WIDGETS
 
@@ -113,9 +113,9 @@ def possible_values(widget):
         return list(range(widget.min, widget.max + widget.step, widget.step))
     if isinstance(widget, (IntRangeSlider,)):
         range_ = range(widget.min, widget.max + widget.step, widget.step)
-        list_ = itertools.product(range_, range_)
-        list_ = [[i, j] for i, j in list_ if i <= j]
-        return list_
+        ret = itertools.product(range_, range_)
+        ret = [[i, j] for i, j in ret if i <= j]
+        return ret
     elif isinstance(widget, BOOLEAN_CONTROL_WIDGETS):
         return [True, False]
     elif isinstance(
@@ -125,6 +125,11 @@ def possible_values(widget):
             return [v for k, v in widget.options]
         else:
             return widget.options
+    elif isinstance(widget, SelectionRangeSlider):
+        range_ = range(0, len(widget.options) + 1)
+        ret = itertools.product(range_, range_)
+        ret = [[i, j] for i, j in ret if i <= j]
+        return ret
     elif isinstance(widget, SelectMultiple):
         return list(powerset(widget.options))
     else:
@@ -320,4 +325,3 @@ def dumps(values):
     contents = output.getvalue()
     output.close()
     return contents.strip()
-    # return json.dumps(obj, separators=(",", ":"))
