@@ -112,9 +112,9 @@ netlify:  ## Build docs on Netlify
 
 .PHONY: nbs  ## Render the nodebooks
 nbs:
-	jupyter nbconvert ./notebooks/test-jslink.ipynb --to html --execute
-	# jupyter nbconvert ./notebooks/widget-gallery.ipynb --to illusionist
-	jupyter nbconvert ./notebooks/simple-operations.ipynb --to illusionist
+	jupyter nbconvert ./notebooks/widget-gallery.ipynb --to illusionist
+	jupyter nbconvert ./notebooks/multiplier.ipynb --to illusionist
+	jupyter nbconvert ./notebooks/linked.ipynb --to illusionist
 
 
 .PHONY: js-install

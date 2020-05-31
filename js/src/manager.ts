@@ -1,5 +1,5 @@
 import { HTMLManager } from "@jupyter-widgets/html-manager";
-import { DOMWidgetModel } from "@jupyter-widgets/base";
+import { DOMWidgetModel, WidgetModel } from "@jupyter-widgets/base";
 
 import Papa from "papaparse";
 
@@ -41,7 +41,7 @@ export class WidgetManager extends HTMLManager {
                     await this.display_view(view, widgetEl);
 
                     view.listenTo(view.model, "change", () => {
-                        this.onWidgetChange();
+                        this.onWidgetChange(view.model);
                     });
                 }
             } catch (error) {
@@ -82,7 +82,8 @@ export class WidgetManager extends HTMLManager {
      * Handles the state update
      * It will trigger the update of the Widget Views.
      */
-    public async onWidgetChange() {
+    public async onWidgetChange(model: WidgetModel) {
+        const { model_id } = model;
         const state = await this.get_state();
         const onChange = this.onChangeValues["onchange"];
 
@@ -95,19 +96,25 @@ export class WidgetManager extends HTMLManager {
             const affected_by_ids = this_info["affected_by"];
             const output_model = state["state"][output_id]["state"];
 
-            // if (model.)
+            if (!affected_by_ids.includes(model_id)) {
+                // Only update if this output is affected by the widget
+                continue;
+            }
 
             let inputs = [];
             for (let input_id of affected_by_ids) {
                 const input_model = state["state"][input_id]["state"];
                 // console.log("Input ID:");
                 // console.log(input_id);
-                let input_value = input_model["value"];
-                let index_value = input_model["index"];
+                const key = this.getWidgetKey(
+                    input_model["_model_name"] as string
+                );
+                let input_value = input_model[key];
                 // console.log("Input/index Value:");
+                // console.log(input_value);
+
                 if (input_value !== undefined) {
                     // Ints and Booleans
-                    // console.log(input_value);
                     if (
                         typeof input_value === "number" ||
                         typeof input_value === "boolean"
@@ -116,15 +123,6 @@ export class WidgetManager extends HTMLManager {
                     } else if (input_value instanceof Array) {
                         // IntRangeSlider
                         inputs.push(`[${input_value.toString()}]`);
-                    }
-                } else if (index_value !== undefined) {
-                    // Selection widgets
-                    // console.log(index_value);
-                    if (typeof index_value === "number") {
-                        inputs.push(index_value);
-                    } else if (index_value instanceof Array) {
-                        // SelectMultiple
-                        inputs.push(`[${index_value.toString()}]`);
                     }
                 }
             }
@@ -145,7 +143,6 @@ export class WidgetManager extends HTMLManager {
                 state["state"][output_id]["state"][key] = output_value;
             }
         }
-        // console.log(state);
         this.set_state(state);
     }
 
@@ -170,17 +167,17 @@ export class WidgetManager extends HTMLManager {
         for (let input of inputs) {
             if (typeof input === "number") {
                 quotes.push(false);
+            } else {
+                quotes.push(true);
             }
-            quotes.push(true);
         }
+        // console.log("quotes:");
         // console.log(quotes);
 
         var results = Papa.unparse([inputs], {
             quotes: quotes,
             quoteChar: '"',
         });
-        // console.log("!!!!");
-        // console.log(results);
         return results;
     }
 }
