@@ -59,7 +59,7 @@ export class WidgetManager extends HTMLManager {
         );
         for (let stateTag of tags) {
             const widgetState = JSON.parse(stateTag.innerHTML);
-            console.log(widgetState);
+            // console.log(widgetState);
             await this.set_state(widgetState);
         }
     }
@@ -75,7 +75,7 @@ export class WidgetManager extends HTMLManager {
             const tag = onChangeTags[i];
             this.onChangeValues = JSON.parse(tag.innerHTML);
         }
-        console.log(this.onChangeValues);
+        // console.log(this.onChangeValues);
     }
 
     /**
@@ -84,14 +84,13 @@ export class WidgetManager extends HTMLManager {
      */
     public async onWidgetChange() {
         const state = await this.get_state();
-        // console.log(state);
         const onChange = this.onChangeValues["onchange"];
 
         let i = 1;
         for (let output_id in onChange) {
-            console.log("----");
-            console.log("Output ID:");
-            console.log(output_id);
+            // console.log("----");
+            // console.log("Output ID:");
+            // console.log(output_id);
             const this_info = onChange[output_id];
             const affected_by_ids = this_info["affected_by"];
             const output_model = state["state"][output_id]["state"];
@@ -101,11 +100,11 @@ export class WidgetManager extends HTMLManager {
             let inputs = [];
             for (let input_id of affected_by_ids) {
                 const input_model = state["state"][input_id]["state"];
-                console.log("Input ID:");
-                console.log(input_id);
+                // console.log("Input ID:");
+                // console.log(input_id);
                 let input_value = input_model["value"];
                 let index_value = input_model["index"];
-                console.log("Input/index Value:");
+                // console.log("Input/index Value:");
                 if (input_value !== undefined) {
                     // Ints and Booleans
                     // console.log(input_value);
@@ -129,20 +128,16 @@ export class WidgetManager extends HTMLManager {
                     }
                 }
             }
-            if (i == 2) {
-                // break;
-            }
-            i = i + 1;
 
-            console.log("Inputs final:");
-            console.log(inputs);
+            // console.log("Inputs final:");
+            // console.log(inputs);
             let hash = this.hash_fn(inputs);
-            console.log("Hash:");
-            console.log(hash);
+            // console.log("Hash:");
+            // console.log(hash);
 
             const output_value = this_info["values"][hash];
-            console.log("Output value");
-            console.log(output_value);
+            // console.log("Output value");
+            // console.log(output_value);
             if (output_value !== undefined) {
                 const key = this.getWidgetKey(
                     output_model["_model_name"] as string
@@ -161,7 +156,7 @@ export class WidgetManager extends HTMLManager {
             "SelectModel",
             "SelectionSliderModel",
             "SelectionRangeSliderModel",
-            "ToggleButtons",
+            "ToggleButtonsModel",
             "SelectMultipleModel",
         ];
         if (selection_widgets.includes(model_name)) {

@@ -112,8 +112,9 @@ netlify:  ## Build docs on Netlify
 
 .PHONY: nbs  ## Render the nodebooks
 nbs:
-	# jupyter nbconvert ./notebooks/test-jslink.ipynb --to html --execute --ExecutePreprocessor.store_widget_state=True
-	jupyter nbconvert ./notebooks/widget-gallery.ipynb --to illusionist
+	jupyter nbconvert ./notebooks/test-jslink.ipynb --to html --execute
+	# jupyter nbconvert ./notebooks/widget-gallery.ipynb --to illusionist
+	jupyter nbconvert ./notebooks/simple-operations.ipynb --to illusionist
 
 
 .PHONY: js-install
@@ -135,5 +136,5 @@ dev-js:  ## Build JS with watch
 
 .PHONY: clean-js
 clean-js:  # Clean JS
-	rm -rf notebooks/static/*;
+	rm -rf notebooks/static/dist;
 	cd js/; rm -rf .cache dist lib node_modules

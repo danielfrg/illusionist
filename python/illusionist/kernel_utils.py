@@ -11,14 +11,14 @@ NUMERIC_CONTROL_WIDGETS = (
     IntRangeSlider,
     # FloatRangeSlider,  # floats suck
     BoundedIntText,
-    # BoundedFloatText,  # Floats suck
+    # BoundedFloatText,  # floats suck
     # IntText,  # No open ended
     # FloatText,  # No open ended
 )
-NUMERIC_OUPUT_WIDGETS = (IntProgress, FloatProgress)
+NUMERIC_OUPUT_WIDGETS = NUMERIC_CONTROL_WIDGETS + (IntProgress, FloatProgress)
 
 BOOLEAN_CONTROL_WIDGETS = (ToggleButton, Checkbox)
-BOOLEAN_OUTPUT_WIDGETS = (Valid,)
+BOOLEAN_OUTPUT_WIDGETS = BOOLEAN_CONTROL_WIDGETS + (Valid,)
 
 SELECTION_CONTROL_WIDGETS = (
     Dropdown,
@@ -31,13 +31,24 @@ SELECTION_CONTROL_WIDGETS = (
 )
 SELECTION_OUTPUT_WIDGETS = SELECTION_CONTROL_WIDGETS
 
-STRING_CONTROL_WIDGETS = ()
-# STRING_CONTROL_WIDGETS = (Text, Textarea)
+STRING_CONTROL_WIDGETS = (
+    # Text,  # No open ended
+    # Textarea,  # No opeen ended
+)
 STRING_OUTPUT_WIDGETS = (Label,)
-# STRING_OUTPUT_WIDGETS = (Label, HTML, HTMLMath, Image)
+STRING_OUTPUT_WIDGETS = (
+    Label,
+    # HTML,  # TODO
+    # HTMLMath,  # TODO
+    # Image,  # TODO
+)
 
-OTHER_CONTROL_WIDGETS = ()
-# OTHER_CONTROL_WIDGETS = (Button, Play, DatePicker, ColorPicker)
+OTHER_CONTROL_WIDGETS = (
+    # Button,  # TODO
+    # Play,  # TODO
+    # DatePicker,  # TODO
+    # ColorPicker  # TODO
+)
 
 CONTROL_WIDGETS = (
     NUMERIC_CONTROL_WIDGETS
@@ -139,17 +150,20 @@ def possible_values(widget):
     elif isinstance(
         widget, (Dropdown, RadioButtons, Select, SelectionSlider, ToggleButtons)
     ):
-        if isinstance(widget.options[0], (list, tuple)):
-            return [v for k, v in widget.options]
-        else:
-            return widget.options
+        range_ = range(0, len(widget.options))
+        return list(range_)
+        # if isinstance(widget.options[0], (list, tuple)):
+        #     return [v for k, v in widget.options]
+        # else:
+        #     return widget.options
     elif isinstance(widget, SelectionRangeSlider):
         range_ = range(0, len(widget.options))
         ret = itertools.product(range_, range_)
         ret = [[i, j] for i, j in ret if i <= j]
         return ret
     elif isinstance(widget, SelectMultiple):
-        return list(powerset(widget.options))
+        range_ = range(0, len(widget.options))
+        return list(powerset(range_))
     else:
         widget_type = type(widget)
         raise Exception(f"Widget type 'f{widget_type}' not supported.")
@@ -201,8 +215,9 @@ def generate_onchange(widgets=None):
         pos_widget_values = possible_values(widget)
         affects = []
         for new_value in pos_widget_values:
-            # try:
             set_widget_output(widget, new_value)
+            # try:
+            #     set_widget_output(widget, new_value)
             # except:
             #     raise Exception((widget, pos_widget_values, new_value))
 

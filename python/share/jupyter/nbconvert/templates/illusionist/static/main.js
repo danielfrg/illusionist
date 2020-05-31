@@ -1,5 +1,5 @@
 // NOTE: this file is not transpiled, async/await is the only modern feature we use here
-require(["static/illusionist"], function (illusionist) {
+require(["static/dist/illusionist"], function (illusionist) {
     // requirejs doesn't like to be passed an async function, so create one inside
     (async function () {
         var widgetManager = new illusionist.WidgetManager();

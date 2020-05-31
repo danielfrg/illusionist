@@ -55,7 +55,8 @@ var distRoot = path.resolve(
     "nbconvert",
     "templates",
     "illusionist",
-    "static"
+    "static",
+    "dist"
 );
 
 module.exports = [

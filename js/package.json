@@ -13,7 +13,7 @@
         "url": "https://github.com/danielfrg/illusionist"
     },
     "scripts": {
-        "build": "npm run build:src && webpack",
+        "build": "npm run build:src && webpack --mode=production",
         "build:src": "tsc --build",
         "dev": "npm-run-all -p dev:*",
         "dev:lib": "tsc --build --watch",
@@ -53,6 +53,7 @@
         "typescript": "~3.7.4",
         "url-loader": "^1.0.0",
         "webpack": "^4.43.0",
-        "webpack-cli": "^3.3.11"
+        "webpack-cli": "^3.3.11",
+        "webpack-merge": "^4.2.2"
     }
 }
