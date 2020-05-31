@@ -105,6 +105,23 @@ def get_widget_output(widget):
         raise Exception(f"Output Widget type 'f{widget_type}' not supported.")
 
 
+def set_widget_output(widget, value):
+    """
+    Set the value of a widget, based on a possible value
+    """
+    if isinstance(widget, NUMERIC_OUPUT_WIDGETS):
+        widget.value = value
+    elif isinstance(widget, BOOLEAN_OUTPUT_WIDGETS):
+        widget.value = value
+    elif isinstance(widget, SELECTION_OUTPUT_WIDGETS):
+        widget.index = value
+    elif isinstance(widget, STRING_OUTPUT_WIDGETS):
+        return widget.value
+    else:
+        widget_type = type(widget)
+        raise Exception(f"Output Widget type 'f{widget_type}' not supported.")
+
+
 def possible_values(widget):
     """
     Returns a list with the possible values for a widget
@@ -112,6 +129,7 @@ def possible_values(widget):
     if isinstance(widget, (IntSlider, BoundedIntText)):
         return list(range(widget.min, widget.max + widget.step, widget.step))
     if isinstance(widget, (IntRangeSlider,)):
+        # Return all combinations that are possible: low < high
         range_ = range(widget.min, widget.max + widget.step, widget.step)
         ret = itertools.product(range_, range_)
         ret = [[i, j] for i, j in ret if i <= j]
@@ -126,7 +144,7 @@ def possible_values(widget):
         else:
             return widget.options
     elif isinstance(widget, SelectionRangeSlider):
-        range_ = range(0, len(widget.options) + 1)
+        range_ = range(0, len(widget.options))
         ret = itertools.product(range_, range_)
         ret = [[i, j] for i, j in ret if i <= j]
         return ret
@@ -183,10 +201,10 @@ def generate_onchange(widgets=None):
         pos_widget_values = possible_values(widget)
         affects = []
         for new_value in pos_widget_values:
-            try:
-                widget.value = new_value  # Change widget value
-            except:
-                raise Exception((widget, pos_widget_values, new_value))
+            # try:
+            set_widget_output(widget, new_value)
+            # except:
+            #     raise Exception((widget, pos_widget_values, new_value))
 
             new_values = get_state(get_widgets(widgets=widgets, kind="value"))
             affects.extend(diff_state(initial_values, new_values, my_id=w_id))
@@ -273,7 +291,7 @@ def widgets_matrix(input_widgets, output_widget):
         # Update values of input widgets
         for i, (model_id, value) in enumerate(zip(input_widgets.keys(), inputs_set)):
             # print(i, model_id, value)
-            input_widgets[model_id].value = value
+            set_widget_output(input_widgets[model_id], value)
 
         # Save the new value of the output widget
         # print(hash_fn(input_widgets))

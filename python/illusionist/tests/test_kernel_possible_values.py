@@ -50,11 +50,11 @@ def test_possible_values_SelectMultiple():
     assert ku.possible_values(w) == [(), ("a",)]
 
     options = ["a", "b"]
-    w = class_(options=options)
+    w = ipywidgets.SelectMultiple(options=options)
     assert ku.possible_values(w) == [(), ("a",), ("b",), ("a", "b")]
 
     options = ["a", "b", "c"]
-    w = class_(options=options)
+    w = ipywidgets.SelectMultiple(options=options)
     assert ku.possible_values(w) == [
         (),
         ("a",),
@@ -68,6 +68,7 @@ def test_possible_values_SelectMultiple():
 
 
 def test_possible_values_SelectionRangeSlider():
-    options = [("a", 0), ("b", 2), ("c", 5)]
-    w = SelectionRangeSlider(options=options)
-    assert
+    options = ["a", "b", "c"]
+    w = ipywidgets.SelectionRangeSlider(options=options)
+    a = [[0, 0], [0, 1], [0, 2], [0, 3], [1, 1], [1, 2], [1, 3], [2, 2], [2, 3], [3, 3]]
+    assert ku.possible_values(w) == a
