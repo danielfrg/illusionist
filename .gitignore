@@ -111,25 +111,31 @@ _generated_version.py
 
 ### JS ###
 
-# Optional npm cache directory
-.npm
+# Build generated
+lib/
+dist/
+build/
+.cache/
+docs/
+test/build
+test/coverage
 
 # Dependency directories
 node_modules
 
-# Yarn Integrity file
+# npm
+.npm
+npm-debug.log
+
+# yarn
 .yarn-integrity
 
 # Optional eslint cache
 .eslintcache
 
-# Build generated
-dist/
-build/
-.cache
-
 # Typescript
 *.tsbuildinfo
+typings/tsd.d.ts
 
 ### Project specific ###
 notebooks/*.html
