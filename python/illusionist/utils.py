@@ -1,7 +1,13 @@
 import os
+import pkg_resources
+from pip._internal.utils.misc import dist_is_editable
 
-ROOT = os.path.dirname(__file__)
-DEV_MODE = os.path.exists(os.path.join(ROOT, "../setup.py")) and os.path.exists(
-    os.path.join(ROOT, "../share")
-)
-# DEV_MODE = False
+distributions = {v.key: v for v in pkg_resources.working_set}
+DEV_MODE = dist_is_editable(distributions["illusionist"])
+del distributions
+
+
+def get_source(code):
+    import inspect
+
+    return inspect.getsource(code)

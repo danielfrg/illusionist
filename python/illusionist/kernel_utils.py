@@ -15,7 +15,7 @@ NUMERIC_CONTROL_WIDGETS = (
     # IntText,  # No open ended
     # FloatText,  # No open ended
 )
-NUMERIC_OUPUT_WIDGETS = NUMERIC_CONTROL_WIDGETS + (IntProgress, FloatProgress)
+NUMERIC_OUTPUT_WIDGETS = NUMERIC_CONTROL_WIDGETS + (IntProgress, FloatProgress)
 
 BOOLEAN_CONTROL_WIDGETS = (ToggleButton, Checkbox)
 BOOLEAN_OUTPUT_WIDGETS = BOOLEAN_CONTROL_WIDGETS + (Valid,)
@@ -35,7 +35,6 @@ STRING_CONTROL_WIDGETS = (
     # Text,  # No open ended
     # Textarea,  # No opeen ended
 )
-STRING_OUTPUT_WIDGETS = (Label,)
 STRING_OUTPUT_WIDGETS = (
     Label,
     # HTML,  # TODO
@@ -59,7 +58,7 @@ CONTROL_WIDGETS = (
 )
 
 OUTPUT_WIDGETS = (
-    NUMERIC_OUPUT_WIDGETS
+    NUMERIC_OUTPUT_WIDGETS
     + BOOLEAN_OUTPUT_WIDGETS
     + SELECTION_OUTPUT_WIDGETS
     + STRING_OUTPUT_WIDGETS
@@ -95,6 +94,33 @@ def frange(x, y, z):
     return [x / multiplier for x in range(min_, max_ + step_, step_)]
 
 
+def get_widgets_ids(widgets=None, kind=None):
+    """
+    Return all widgets that are used in the notebook
+    Returns a dictionary with
+        {model_id: widget_object}
+    """
+    # The `Widgets` class has a registry of all the widgets that were used
+    all_widgets = widgets if widgets else Widget.widgets
+
+    if kind is None:
+        return list(all_widgets.keys())
+
+    if kind == "value":
+        value_widgets = []
+        for model_id, obj in all_widgets.items():
+            if isinstance(obj, VALUE_WIDGETS):
+                value_widgets.append(model_id)
+        return value_widgets
+
+    if kind == "control":
+        control_widgets = []
+        for model_id, obj in all_widgets.items():
+            if isinstance(obj, CONTROL_WIDGETS) and not obj.disabled:
+                control_widgets.append(model_id)
+        return control_widgets
+
+
 def get_widgets(widgets=None, kind=None):
     """
     Return all widgets that are used in the notebook
@@ -126,7 +152,7 @@ def get_widget_output(widget):
     """
     Get the Output value of a widget that we will serialize in the matrix
     """
-    if isinstance(widget, NUMERIC_OUPUT_WIDGETS):
+    if isinstance(widget, NUMERIC_OUTPUT_WIDGETS):
         return widget.value
     elif isinstance(widget, BOOLEAN_OUTPUT_WIDGETS):
         return widget.value
@@ -143,11 +169,12 @@ def get_widget_output(widget):
         raise Exception(f"Output Widget type 'f{widget_type}' not supported.")
 
 
-def set_widget_value(widget, value):
+def set_widget_value(widget_id, value):
     """
     Set the value of a widget, based on a possible value
     """
-    if isinstance(widget, NUMERIC_OUPUT_WIDGETS):
+    widget = Widget.widgets[widget_id]
+    if isinstance(widget, NUMERIC_OUTPUT_WIDGETS):
         widget.value = value
         # raise Exception(widget, value, widget.value)
     elif isinstance(widget, BOOLEAN_OUTPUT_WIDGETS):
@@ -161,10 +188,11 @@ def set_widget_value(widget, value):
         raise Exception(f"Cannot set value on widget type: 'f{widget_type}'")
 
 
-def possible_values(widget):
+def possible_values(widget_id):
     """
     Returns a list with the possible values for a widget
     """
+    widget = Widget.widgets[widget_id]
     if isinstance(widget, (IntSlider, BoundedIntText)):
         return list(range(widget.min, widget.max + widget.step, widget.step))
     if isinstance(widget, (IntRangeSlider,)):
@@ -286,7 +314,7 @@ def generate_onchange(widgets=None):
     return json.dumps(ret)
 
 
-def widgets_matrix(input_widgets, output_widget):
+def widgets_matrix(output_widget_id, input_widget_ids):
     """
     Takes a list of input_widgets (model_id, widget_obj)
     and return a matrix of all possible possible values per widget
@@ -295,6 +323,10 @@ def widgets_matrix(input_widgets, output_widget):
     ------
         dictionary of { "[... inputs_value ... ]": output_value, ... }
     """
+    all_widgets = Widget.widgets
+    output_widget = all_widgets[output_widget_id]
+    input_widgets = {m_id: all_widgets[m_id] for m_id in input_widget_ids}
+
     # 1. We generate a product of all the possible widget values
 
     # For each input_widgets, get all possible values they can have
@@ -326,48 +358,3 @@ def widgets_matrix(input_widgets, output_widget):
         matrix[hash_fn(input_widgets)] = get_widget_output(output_widget)
 
     return matrix
-
-
-def hash_fn(widgets):
-    values = []
-    for model_id, widget in widgets.items():
-        if isinstance(widget, NUMERIC_CONTROL_WIDGETS):
-            value = widget.value
-        if isinstance(widget, BOOLEAN_CONTROL_WIDGETS):
-            value = widget.value
-        elif isinstance(widget, SELECTION_CONTROL_WIDGETS):
-            value = widget.index
-
-        if isinstance(value, str):
-            value = json.dumps(value)
-        elif isinstance(value, bool):
-            value = json.dumps(value)
-        elif isinstance(value, tuple):
-            value = list(value)
-            value = json.dumps(value, separators=(",", ":"))
-        # print(value, json.dumps(value))
-        # print(type(value), type(json.dumps(value)))
-        values.append(value)
-    # print(values)
-    return dumps(values)
-
-
-def dumps(values):
-    """
-    CSV Serialization
-    """
-    import io
-    import csv
-
-    output = io.StringIO()
-    writer = csv.writer(
-        output,
-        skipinitialspace=True,
-        delimiter=",",
-        quotechar='"',
-        quoting=csv.QUOTE_NONNUMERIC,
-    )
-    writer.writerow(values)
-    contents = output.getvalue()
-    output.close()
-    return contents.strip()

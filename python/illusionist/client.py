@@ -13,6 +13,9 @@ from nbclient.util import ensure_async, run_sync
 from traitlets.config.application import Application
 
 
+from illusionist.utils import DEV_MODE
+
+
 WIDGET_ONCHANGE_MIMETYPE = "application/vnd.illusionist.widget-onchange+json"
 
 
@@ -35,7 +38,7 @@ class IllusionistClient(NotebookClient, Application):
         not being updated if i run code in the kernel after.
         Not sure why :D
         """
-        print("!!!!!!!!!")
+        # print("!!!!!!!!!")
         if reset_kc and self.km:
             await self._async_cleanup_kernel()
         self.reset_execution_trackers()
@@ -45,13 +48,13 @@ class IllusionistClient(NotebookClient, Application):
             for index, cell in enumerate(self.nb.cells):
                 # Ignore `'execution_count' in content` as it's always 1
                 # when store_history is False
-                print(cell)
+                # print(cell)
                 await self.async_execute_cell(
                     cell, index, execution_count=self.code_cells_executed + 1
                 )
 
             # added
-            await ensure_async(self.exec_after_notebook())
+            await ensure_async(self.post_exec())
             # end add
 
             msg_id = await ensure_async(self.kc.kernel_info())
@@ -63,15 +66,14 @@ class IllusionistClient(NotebookClient, Application):
 
     execute = run_sync(async_execute)
 
-    def exec_after_notebook(self):
+    def post_exec(self):
         """
         Overwrite this to execute something after the notebook has been executed
         """
         pass
 
-    async def async_run_code(self, source, write_cell=True):
-        import nbformat
-
+    async def async_run_code(self, source, write_cell=None):
+        write_cell = write_cell if write_cell is not None else DEV_MODE
         cell = nbformat.NotebookNode()
         cell.cell_type = "code"
         cell.execution_count = self.code_cells_executed + 1
@@ -81,7 +83,7 @@ class IllusionistClient(NotebookClient, Application):
 
         self.nb["cells"].append(cell)
         cell_index = len(self.nb["cells"]) - 1
-        print(cell)
+        # print(cell)
         cell = await self.async_execute_cell(
             cell, cell_index, execution_count=cell.execution_count
         )
@@ -93,6 +95,11 @@ class IllusionistClient(NotebookClient, Application):
         return cell
 
     run_code = run_sync(async_run_code)
+
+    def run_code_eval(self, source):
+        output = self.run_code(source)
+        text_plain = output["outputs"][0]["data"]["text/plain"]
+        return eval(text_plain)
 
     # @staticmethod
     # def get_output(reply):

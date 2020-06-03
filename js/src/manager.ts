@@ -2,11 +2,53 @@ import { HTMLManager } from "@jupyter-widgets/html-manager";
 import { DOMWidgetModel, WidgetModel } from "@jupyter-widgets/base";
 
 import Papa from "papaparse";
-
+import {
+    put_buffers,
+    remove_buffers,
+    resolvePromisesDict,
+    reject,
+    uuid,
+    PROTOCOL_VERSION,
+} from "@jupyter-widgets/base";
 const WIDGET_STATE_MIMETYPE = "application/vnd.jupyter.widget-state+json";
 const WIDGET_VIEW_MIMETYPE = "application/vnd.jupyter.widget-view+json";
 const WIDGET_ONCHANGE_MIMETYPE =
     "application/vnd.illusionist.widget-onchange+json";
+
+const NUMERIC_WIDGETS = [
+    "IntSliderModel",
+    "FloatSlider",
+    "FloatLogSlider",
+    "IntRangeSliderModel",
+    "FloatRangeSlider",
+    "BoundedIntTextModel",
+    "BoundedFloatText",
+    "IntText",
+    "FloatText",
+    "IntProgressModel",
+    "FloatProgressModel",
+];
+
+const BOOLEAN_WIDGETS = ["ToggleButtonModel", "CheckboxModel", "ValidModel"];
+
+const SELECTION_WIDGETS = [
+    "DropdownModel",
+    "RadioButtonsModel",
+    "SelectModel",
+    "SelectionSliderModel",
+    "SelectionRangeSliderModel",
+    "ToggleButtonsModel",
+    "SelectMultipleModel",
+];
+
+const STRING_WIDGETS = [
+    "TextModel",
+    "TextAreaModel",
+    "LabelModel",
+    "HTMModelL",
+    "HTMLMathModel",
+    "ImageModel",
+];
 
 export class WidgetManager extends HTMLManager {
     public onChangeValues: any = {};
@@ -16,50 +58,25 @@ export class WidgetManager extends HTMLManager {
      */
     public async build_widgets() {
         // Set state
-        await this.load_state();
+        console.log(this._models);
+        await this.load_initial_state();
         await this.load_onchange();
 
         // Display models
-        const viewTags = document.body.querySelectorAll(
-            `script[type="${WIDGET_VIEW_MIMETYPE}"]`
-        );
-        for (let i = 0; i != viewTags.length; ++i) {
-            try {
-                const viewtag = viewTags[i];
-                const widgetViewObject = JSON.parse(viewtag.innerHTML);
-                const { model_id } = widgetViewObject;
-                const model = await this.get_model(model_id);
-                // console.log(model_id);
-                // console.log(model);
-                const widgetEl = document.createElement("div");
-                if (model && viewtag && viewtag.parentElement) {
-                    // console.log(model_id);
-                    // console.log(model);
-                    viewtag.parentElement.insertBefore(widgetEl, viewtag);
-                    let dommodel: DOMWidgetModel = model as DOMWidgetModel;
-                    const view = await this.create_view(dommodel);
-                    await this.display_view(view, widgetEl);
-
-                    view.listenTo(view.model, "change", () => {
-                        this.onWidgetChange(view.model);
-                    });
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
+        await this.display_models();
+        console.log(this);
     }
 
     /**
      * Loads the widget state.
      */
-    public async load_state() {
+    public async load_initial_state() {
         const tags = document.body.querySelectorAll(
             `script[type="${WIDGET_STATE_MIMETYPE}"]`
         );
         for (let stateTag of tags) {
             const widgetState = JSON.parse(stateTag.innerHTML);
-            // console.log(widgetState);
+            console.log(widgetState);
             await this.set_state(widgetState);
         }
     }
@@ -75,7 +92,45 @@ export class WidgetManager extends HTMLManager {
             const tag = onChangeTags[i];
             this.onChangeValues = JSON.parse(tag.innerHTML);
         }
-        // console.log(this.onChangeValues);
+        console.log(this.onChangeValues);
+    }
+
+    public async display_models(filter: String = "") {
+        const viewTags = document.body.querySelectorAll(
+            `script[type="${WIDGET_VIEW_MIMETYPE}"]`
+        );
+        for (let i = 0; i != viewTags.length; ++i) {
+            try {
+                const viewtag = viewTags[i];
+                const widgetViewObject = JSON.parse(viewtag.innerHTML);
+                const { model_id } = widgetViewObject;
+                const model = await this.get_model(model_id);
+                // console.log(model_id);
+                // console.log(model);
+                if (filter) {
+                    if (model?.name != filter) {
+                        continue;
+                    }
+                }
+                const widgetEl = document.createElement("div");
+                if (model && viewtag && viewtag.parentElement) {
+                    // console.log(model_id);
+                    // console.log(model);
+                    viewtag.parentElement.insertBefore(widgetEl, viewtag);
+                    let dommodel: DOMWidgetModel = model as DOMWidgetModel;
+                    const view = await this.create_view(dommodel);
+                    // console.log("View");
+                    // console.log(view);
+                    await this.display_view(view, widgetEl);
+
+                    view.listenTo(view.model, "change", () => {
+                        this.onWidgetChange(view.model);
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
     }
 
     /**
@@ -87,17 +142,17 @@ export class WidgetManager extends HTMLManager {
         const state = await this.get_state();
         const onChange = this.onChangeValues["onchange"];
 
-        let i = 1;
         for (let output_id in onChange) {
-            // console.log("----");
+            console.log("----");
             // console.log("Output ID:");
             // console.log(output_id);
-            const this_info = onChange[output_id];
-            const affected_by_ids = this_info["affected_by"];
+            const output_onchange_data = onChange[output_id];
+            const affected_by_ids = output_onchange_data["affected_by"];
             const output_model = state["state"][output_id]["state"];
 
             if (!affected_by_ids.includes(model_id)) {
                 // Only update if this output is affected by the widget
+                // console.log("Ignored");
                 continue;
             }
 
@@ -106,7 +161,7 @@ export class WidgetManager extends HTMLManager {
                 const input_model = state["state"][input_id]["state"];
                 // console.log("Input ID:");
                 // console.log(input_id);
-                const key = this.getWidgetKey(
+                const key = this.getWidgetValueKey(
                     input_model["_model_name"] as string
                 );
                 let input_value = input_model[key];
@@ -133,31 +188,65 @@ export class WidgetManager extends HTMLManager {
             // console.log("Hash:");
             // console.log(hash);
 
-            const output_value = this_info["values"][hash];
+            const output_value = output_onchange_data["values"][hash];
             // console.log("Output value");
             // console.log(output_value);
             if (output_value !== undefined) {
-                const key = this.getWidgetKey(
+                const key = this.getWidgetValueKey(
                     output_model["_model_name"] as string
                 );
                 state["state"][output_id]["state"][key] = output_value;
+                // await this.get_state();
+
+                // clear_state() {
+                await resolvePromisesDict(this._models).then((models) => {
+                    Object.keys(models).forEach((id) => {
+                        // (models as any)[id].close();
+                        // this._models = Object.create(null);
+
+                        let model = models[id] as any;
+                        if (model.name == "OutputModel") {
+                            (models as any)[id].close();
+                            this._models[model.model_id] = null;
+
+                            // console.log(id);
+                            // const modelCreate = {
+                            //     model_id: model.model_id,
+                            //     model_name: model.name,
+                            //     model_module: model.module,
+                            //     model_module_version:
+                            //         model.attributes._model_module_version,
+                            // };
+                            // console.log(modelCreate);
+
+                            // const modelState =
+                            //     state["state"][output_id]["state"];
+
+                            // const modelPromise = this.new_model(
+                            //     modelCreate,
+                            //     modelState
+                            // );
+                            // this._models[model.model_id] = modelPromise;
+                        }
+                    });
+                });
+
+                // console.log(this._models);
+                // this._models[
+                //     "a3b8fd18b4bc4ee2bc73cbcdc514cce7"
+                // ] = Object.create(null);
+                // console.log(this._models);
+                await this.set_state(state);
+                this.display_models("OutputModel");
             }
         }
-        this.set_state(state);
     }
 
-    public getWidgetKey(model_name: string) {
-        const selection_widgets = [
-            "DropdownModel",
-            "RadioButtonsModel",
-            "SelectModel",
-            "SelectionSliderModel",
-            "SelectionRangeSliderModel",
-            "ToggleButtonsModel",
-            "SelectMultipleModel",
-        ];
-        if (selection_widgets.includes(model_name)) {
+    public getWidgetValueKey(model_name: string) {
+        if (SELECTION_WIDGETS.includes(model_name)) {
             return "index";
+        } else if (model_name == "OutputModel") {
+            return "outputs";
         }
         return "value";
     }
