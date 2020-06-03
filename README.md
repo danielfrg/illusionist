@@ -4,8 +4,6 @@
 [![Testing](https://github.com/danielfrg/illusionist/workflows/test/badge.svg)](https://github.com/danielfrg/illusionist/actions)
 [![License](http://img.shields.io/:license-Apache%202-blue.svg)](https://github.com/danielfrg/illusionist/blob/master/LICENSE.txt)
 
-Interactive client-only reports based on Jupyter Notebooks and Jupyter widgets.
-
 Status: experimentation
 
 Illusionist takes a Jupyter Notebooks with widgets and converts it to a

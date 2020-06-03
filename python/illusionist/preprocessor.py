@@ -7,7 +7,7 @@ import json
 
 from nbconvert.preprocessors import Preprocessor
 
-from illusionist import kernel_utils, utils
+from illusionist import widgets, kernel_utils, utils
 from illusionist.client import IllusionistClient
 from illusionist.utils import DEV_MODE
 
@@ -121,6 +121,7 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         This gets executed as part for self.execute()
         """
         # Load helper code to the kernel
+        _ = self.run_code(utils.get_source(widgets))
         _ = self.run_code(utils.get_source(kernel_utils))
 
         # _ = self.run_code("print(out.outputs)")
@@ -155,7 +156,7 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
 
         for widget_id in control_widgets:
             init_state = copy.deepcopy(self.widget_state)
-            possible_values = self.run_code_eval(f"possible_values('{widget_id}')")
+            possible_values = self.possible_values(widget_id)
             widget_affects = []
 
             for value in possible_values[:2]:

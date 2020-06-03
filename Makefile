@@ -56,20 +56,20 @@ build: package  ## Build everything
 
 .PHONY: package
 package:  ## Build Python package (sdist)
-	python setup.py sdist
+	cd python; python setup.py sdist
 
 
 .PHONY: check
 check:  ## Check linting
-	@cd python && flake8
-	@cd python && isort --check-only --diff --recursive --project illusionist --section-default THIRDPARTY .
-	@cd python && black --check .
+	@cd python; flake8
+	@cd python; isort --check-only --diff --recursive --project illusionist --section-default THIRDPARTY .
+	@cd python; black --check .
 
 
 .PHONY: fmt
 fmt:  ## Format source
-	@cd python && isort --recursive --project illusionist --section-default THIRDPARTY .
-	@cd python && black .
+	@cd python; isort --recursive --project illusionist --section-default THIRDPARTY .
+	@cd python; black .
 
 
 .PHONY: upload-pypi
@@ -112,9 +112,9 @@ netlify:  ## Build docs on Netlify
 
 .PHONY: nbs  ## Render the nodebooks
 nbs:
-	# jupyter nbconvert ./notebooks/widget-gallery.ipynb --to illusionist
-	# jupyter nbconvert ./notebooks/multiplier.ipynb --to illusionist
-	# jupyter nbconvert ./notebooks/linked.ipynb --to illusionist
+	jupyter nbconvert ./notebooks/widget-gallery.ipynb --to illusionist
+	jupyter nbconvert ./notebooks/multiplier.ipynb --to illusionist
+	jupyter nbconvert ./notebooks/linked.ipynb --to illusionist
 	jupyter nbconvert ./notebooks/matplotlib.ipynb --to illusionist
 
 
