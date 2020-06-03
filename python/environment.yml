@@ -18,6 +18,8 @@ dependencies:
     - pytest-cov
 
     # This project conda deps
+    # Examples
+    - matplotlib
     - pip:
           # Base pip deps: Docs
           - mkdocs

@@ -25,6 +25,7 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         # self.log_level = "DEBUG"
         self.nb = nb
         self.km = km
+        self.onchange_values = {}
 
         resources = resources if resources else {}
         resources["illusionist_devmode"] = DEV_MODE
@@ -33,19 +34,7 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
             self.reset_execution_trackers()
             self.execute(cleanup_kc=False)
 
-            # Source helper code to the kernel
-            _ = self.run_cmd(get_source(kernel_utils))
-
-            # _ = self.run_cmd(f"get_widgets(kind='value')", ret_output=True)
-            # print(_)
-            # print()
-
-            _ = self.run_cmd("onchange_values = generate_onchange()")
-            output = self.run_cmd("print(onchange_values)", ret_output=True)
-            # print(output)
-            onchange_values = json.loads(output)
-
-            self.set_widgets_onchange_metadata(onchange_values)
+            self.set_widgets_onchange_metadata(self.onchange_values)
         finally:
             # Clean up
             self._cleanup_kernel()
@@ -53,6 +42,36 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         # self.resources = resources
         # print(resources)
         return nb, resources
+
+    def exec_after_notebook(self):
+        print("??????????")
+        # Source helper code to the kernel
+        # _ = self.run_code(get_source(kernel_utils))
+
+        # _ = self.run_code("print(out.outputs)")
+        # print(_)
+        # _ = self.run_code("f.value = 1")
+        _ = self.run_code("f.value = 1\nout.get_state()")
+        # _ = self.run_code("out.get_state()")
+        # print(_)
+        # print(self.widget_state)
+        # _ = self.run_code("print(out.outputs)")
+
+        # print(self.run_code("f.value"))
+        # _ = self.run_cmd(f"f.value = 1")
+        # _ = self.run_cmd(f"print(f.value)", ret_output=True)
+        # print(_)
+        # _ = self.run_cmd(f"out", ret_output=True)
+        # print(_)
+
+        ####
+
+        # _ = self.run_code("onchange_values = generate_onchange()")
+        # print(_)
+        # output = self.run_code("print(onchange_values)")
+        # jsont_str = output.outputs[0].text
+        # self.onchange_values = json.loads(jsont_str)
+        # print(self.onchange_values)
 
 
 def get_source(code):

@@ -63,11 +63,36 @@ OUTPUT_WIDGETS = (
     + BOOLEAN_OUTPUT_WIDGETS
     + SELECTION_OUTPUT_WIDGETS
     + STRING_OUTPUT_WIDGETS
-    # + (Output,)
+    + (Output,)
 )
 
 VALUE_WIDGETS = CONTROL_WIDGETS + OUTPUT_WIDGETS
 LAYOUT_WIDGETS = Box, HBox, VBox, Accordion, Tab
+
+
+def powerset(iterable):
+    """
+    Example: powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
+    """
+    s = list(iterable)
+    return itertools.chain.from_iterable(
+        itertools.combinations(s, r) for r in range(len(s) + 1)
+    )
+
+
+def frange(x, y, z):
+    """
+    Like `range` but for floats as inputs
+
+    This is stupid and i bet its broken in a lot of ways
+    From: https://stackoverflow.com/questions/7267226/range-for-floats
+    """
+    multiplier = 10 * (y - x) / z
+    min_ = int(x * multiplier)
+    max_ = int(y * multiplier)
+    step_ = int(z * multiplier)
+    # print(min_, max_, step_)
+    return [x / multiplier for x in range(min_, max_ + step_, step_)]
 
 
 def get_widgets(widgets=None, kind=None):
@@ -99,7 +124,7 @@ def get_widgets(widgets=None, kind=None):
 
 def get_widget_output(widget):
     """
-    Get the Output value that we will serialize in the matrix
+    Get the Output value of a widget that we will serialize in the matrix
     """
     if isinstance(widget, NUMERIC_OUPUT_WIDGETS):
         return widget.value
@@ -111,17 +136,20 @@ def get_widget_output(widget):
         return widget.index
     elif isinstance(widget, STRING_OUTPUT_WIDGETS):
         return widget.value
+    elif isinstance(widget, Output):
+        return widget.get_state()["outputs"]
     else:
         widget_type = type(widget)
         raise Exception(f"Output Widget type 'f{widget_type}' not supported.")
 
 
-def set_widget_output(widget, value):
+def set_widget_value(widget, value):
     """
     Set the value of a widget, based on a possible value
     """
     if isinstance(widget, NUMERIC_OUPUT_WIDGETS):
         widget.value = value
+        # raise Exception(widget, value, widget.value)
     elif isinstance(widget, BOOLEAN_OUTPUT_WIDGETS):
         widget.value = value
     elif isinstance(widget, SELECTION_OUTPUT_WIDGETS):
@@ -130,7 +158,7 @@ def set_widget_output(widget, value):
         return widget.value
     else:
         widget_type = type(widget)
-        raise Exception(f"Output Widget type 'f{widget_type}' not supported.")
+        raise Exception(f"Cannot set value on widget type: 'f{widget_type}'")
 
 
 def possible_values(widget):
@@ -152,10 +180,6 @@ def possible_values(widget):
     ):
         range_ = range(0, len(widget.options))
         return list(range_)
-        # if isinstance(widget.options[0], (list, tuple)):
-        #     return [v for k, v in widget.options]
-        # else:
-        #     return widget.options
     elif isinstance(widget, SelectionRangeSlider):
         range_ = range(0, len(widget.options))
         ret = itertools.product(range_, range_)
@@ -169,29 +193,34 @@ def possible_values(widget):
         raise Exception(f"Widget type 'f{widget_type}' not supported.")
 
 
-def powerset(iterable):
+def get_state(widgets, b=False):
     """
-    Example: powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
+    Get the state of all widgets
     """
-    s = list(iterable)
-    return itertools.chain.from_iterable(
-        itertools.combinations(s, r) for r in range(len(s) + 1)
-    )
+    ret = {}
+    for model_id, widget in widgets.items():
+        if isinstance(widget, Output):
+            if b:
+                raise Exception(widget.outputs)
+            ret[model_id] = widget.outputs
+        else:
+            ret[model_id] = widget.value
+    return ret
 
 
-def frange(x, y, z):
+def diff_state(initial, new, my_id=None):
     """
-    Like `range` but for floats as inputs
+    Return a list of widget model_ids that have changed based on the two widget states
+    """
+    diff = []
+    for (init_id, init_state), (new_id, new_state) in zip(initial.items(), new.items()):
+        assert init_id == new_id
+        if init_state != new_state:
+            diff.append(init_id)
 
-    This is stupid and i bet its broken in a lot of ways
-    From: https://stackoverflow.com/questions/7267226/range-for-floats
-    """
-    multiplier = 10 * (y - x) / z
-    min_ = int(x * multiplier)
-    max_ = int(y * multiplier)
-    step_ = int(z * multiplier)
-    # print(min_, max_, step_)
-    return [x / multiplier for x in range(min_, max_ + step_, step_)]
+    if my_id and my_id in diff:
+        diff.remove(my_id)
+    return diff
 
 
 def generate_onchange(widgets=None):
@@ -199,9 +228,9 @@ def generate_onchange(widgets=None):
     value_widgets = get_widgets(widgets=widgets, kind="value")
     control_widgets = get_widgets(widgets=widgets, kind="control")
 
-    out = {"version_major": 1, "version_minor": 0}
-    out["all"] = [m_id for m_id, w in value_widgets.items()]
-    out["controls"] = [m_id for m_id, w in control_widgets.items()]
+    ret = {"version_major": 1, "version_minor": 0}
+    ret["all"] = [m_id for m_id, w in value_widgets.items()]
+    ret["controls"] = [m_id for m_id, w in control_widgets.items()]
 
     # What we do is a product(matrix) per output widget
     # with only the ones it affects
@@ -211,26 +240,36 @@ def generate_onchange(widgets=None):
     affected_by = {m_id: set() for m_id, w in value_widgets.items()}
 
     for w_id, widget in control_widgets.items():
-        initial_values = get_state(value_widgets)
-        pos_widget_values = possible_values(widget)
+        init_state = get_state(value_widgets)
+        widget_possible_values = possible_values(widget)
         affects = []
-        for new_value in pos_widget_values:
-            set_widget_output(widget, new_value)
+        # raise Exception(widget)
+        for possible_value in widget_possible_values:
+            set_widget_value(widget, 1)
+            raise Exception(out.outputs)
+            # raise Exception(widget)
+            # set_widget_value(widget, possible_value)
             # try:
-            #     set_widget_output(widget, new_value)
+            #     set_widget_value(widget, possible_value)
             # except:
-            #     raise Exception((widget, pos_widget_values, new_value))
+            #     raise Exception((widget, widget_possible_values, possible_value))
 
-            new_values = get_state(get_widgets(widgets=widgets, kind="value"))
-            affects.extend(diff_state(initial_values, new_values, my_id=w_id))
+            new_state = get_state(value_widgets, b=True)
+            diff = diff_state(init_state, new_state, my_id=w_id)
+            # raise Exception(widget, diff)
+            raise Exception(diff, init_state, new_state)
+            # if isinstance(widget, Output):
+            #     raise Exception(diff, init_state, new_state)
+            # raise Exception(widget_possible_values)
+            affects.extend(diff)
 
         for affected in affects:
             affected_by[affected] = affected_by[affected] | {w_id}
 
-    # 2. Iterate affected_by and generate one matrix per output widget
+    # 2. Iterate affected_by and add matrix (per output widget) to the matrix
 
-    # matrix = {output_id: [[ ... matrix ... ]] }
-    matrix = {}
+    # matrices = {output_id: [[ ... matrix ... ]] }
+    matrices = {}
 
     for output_widget_id, input_widget_ids in affected_by.items():
         output_widget = all_widgets[output_widget_id]
@@ -239,39 +278,12 @@ def generate_onchange(widgets=None):
             input_ids = list(input_widgets.keys())
             # return input_widgets
             values = widgets_matrix(input_widgets, output_widget)
-            matrix[output_widget_id] = {"affected_by": input_ids, "values": values}
+            matrices[output_widget_id] = {"affected_by": input_ids, "values": values}
 
-    # return matrix
+    # return matrices
 
-    out["onchange"] = matrix
-    return json.dumps(out)
-
-
-def get_state(widgets):
-    """
-    Get the state of the widgets
-    """
-    ret = {}
-    for model_id, widget in widgets.items():
-        ret[model_id] = widget.value
-    return ret
-
-
-def diff_state(initial, new, my_id=None):
-    """
-    Return a list of widget model_ids that have changed based on the states
-    """
-    diff = []
-    for (initial_id, initial_value), (new_id, new_value) in zip(
-        initial.items(), new.items()
-    ):
-        assert initial_id == new_id
-        if initial_value != new_value:
-            diff.append(initial_id)
-
-    if my_id and my_id in diff:
-        diff.remove(my_id)
-    return diff
+    ret["onchange"] = matrices
+    return json.dumps(ret)
 
 
 def widgets_matrix(input_widgets, output_widget):
@@ -300,13 +312,14 @@ def widgets_matrix(input_widgets, output_widget):
     # To create the matrix
 
     matrix = {}
+    outputs = []
     input_ids = list()
     for inputs_set in product:
 
         # Update values of input widgets
         for i, (model_id, value) in enumerate(zip(input_widgets.keys(), inputs_set)):
             # print(i, model_id, value)
-            set_widget_output(input_widgets[model_id], value)
+            set_widget_value(input_widgets[model_id], value)
 
         # Save the new value of the output widget
         # print(hash_fn(input_widgets))
