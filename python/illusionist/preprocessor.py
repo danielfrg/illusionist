@@ -33,13 +33,13 @@ BOOLEAN_CONTROL_WIDGETS = ("ToggleButtonModel", "CheckboxModel")
 BOOLEAN_OUTPUT_WIDGETS = BOOLEAN_CONTROL_WIDGETS + ("ValidModel",)
 
 SELECTION_CONTROL_WIDGETS = (
-    "ModelDropdownModel",
-    "ModelRadioButtonsModel",
-    "ModelSelectModel",
-    "ModelSelectionSliderModel",
-    "ModelToggleButtonsModel",
-    "ModelSelectionRangeSliderModel",
-    "ModelSelectMultipleModel",
+    "DropdownModel",
+    "RadioButtonsModel",
+    "SelectModel",
+    "SelectionSliderModel",
+    "ToggleButtonsModel",
+    "SelectionRangeSliderModel",
+    "SelectMultipleModel",
 )
 SELECTION_OUTPUT_WIDGETS = SELECTION_CONTROL_WIDGETS
 
@@ -90,6 +90,8 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
 
     def __init__(self, **kw):
         nb = kw.get("nb")
+        if nb:
+            del kw["nb"]
         Preprocessor.__init__(self, nb=nb, **kw)
         IllusionistClient.__init__(self, nb, **kw)
 
@@ -119,8 +121,7 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         """
         This gets executed as part for self.execute()
         """
-        # print("exec_after_notebook", self.kc)
-        # Source helper code to the kernel
+        # Load helper code to the kernel
         _ = self.run_code(utils.get_source(kernel_utils))
 
         # _ = self.run_code("print(out.outputs)")
@@ -142,10 +143,7 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
 
         ####
 
-        # output = self.run_code("print(onchange_values)")
-        # jsont_str = output.outputs[0].text
-        # self.onchange_values = json.loads(jsont_str)
-        # print(self.onchange_values)
+        state_after_nb_exec = copy.deepcopy(self.widget_state)
 
         value_widgets = self.run_code_eval("get_widgets_ids(kind='value')")
         control_widgets = self.run_code_eval("get_widgets_ids(kind='control')")
@@ -186,9 +184,9 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
                 # input_ids = list(input_widgets.keys())
                 # return input_widgets
                 # values = self.run_code_eval(
-                #     f"widgets_matrix('{output_widget_id}', '{input_widget_ids}'))"
+                #     f"widget_matrix('{output_widget_id}', '{input_widget_ids}'))"
                 # )
-                values = self.widgets_matrix(output_widget_id, input_widget_ids)
+                values = self.widget_matrix(output_widget_id, input_widget_ids)
                 matrices[output_widget_id] = {
                     "affected_by": list(input_widget_ids),
                     "values": values,
@@ -200,28 +198,17 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         ret["onchange"] = matrices
         self.onchange_values = ret
 
+        self.widget_state = state_after_nb_exec
+
         # print(ret)
         # return json.dumps(ret)
 
-    def widgets_matrix(self, output_widget_id, input_widget_ids):
-        # all_widgets = Widget.widgets
-        # output_widget = all_widgets[output_widget_id]
-        # input_widgets = {m_id: all_widgets[m_id] for m_id in input_widget_ids}
+    def widget_matrix(self, output_widget_id, input_widget_ids):
+        output_state = self.widget_state[output_widget_id]
+        input_states = [self.widget_state[w_id] for w_id in input_widget_ids]
 
-        # 1. Make a product of all the possible widget values
-
-        # For each input_widgets, get all possible values they can have
-        possible_values_by_widget = {}
-        for widget_id in input_widget_ids:
-            possible_values = self.run_code_eval(f"possible_values('{widget_id}')")
-            possible_values_by_widget[widget_id] = possible_values
-
-        list_ = possible_values_by_widget.values()
-        # Prodcut is a list of lists, each item is a combination of possible
-        # input widget values
-
-        product = itertools.product(*list_)
-        # print(list(product))
+        # Get the product of all possible input values
+        product = widget_product(input_states)
 
         # 2. Now we iterate the combinations of possible values
         # To create the matrix
@@ -232,7 +219,7 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         for inputs_set in product:
 
             # Update values of input widgets
-            for i, (widget_id, value) in enumerate(zip(input_widget_ids, inputs_set)):
+            for widget_id, value in zip(input_widget_ids, inputs_set):
                 self.run_code(f"set_widget_value('{widget_id}', {value})")
 
             # Save the new value of the output widget
@@ -259,35 +246,34 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         elif model_name == "OutputModel":
             return widget_state["outputs"]
         else:
-
             raise Exception(f"Output Widget type '{model_name}' not supported.")
 
     def hash_fn(self, widget_ids):
-        values = []
+        widget_states = []
         # print(self.widget_state)
         for widget_id in widget_ids:
-            widget_state = self.widget_state[widget_id]
-            model_name = widget_state["_model_name"]
+            w_state = self.widget_state[widget_id]
+            widget_states.append(w_state)
 
-            if model_name in NUMERIC_CONTROL_WIDGETS:
-                value = widget_state["value"]
-            elif model_name in BOOLEAN_CONTROL_WIDGETS:
-                value = widget_state["value"]
-            elif model_name in SELECTION_CONTROL_WIDGETS:
-                value = widget_state["index"]
-            else:
-                raise Exception(f"Cannot use 'f{model_name}' as input")
+        return hash_fn(widget_states)
 
-            if isinstance(value, str):
-                value = json.dumps(value)
-            elif isinstance(value, bool):
-                value = json.dumps(value)
-            elif isinstance(value, tuple):
-                value = list(value)
-                value = json.dumps(value, separators=(",", ":"))
-            values.append(value)
+    def possible_values(self, widget_id):
+        """
+        Returns a list with the possible values for a widget
+        """
+        widget_state = self.widget_state[widget_id]
+        return possible_values(widget_state)
 
-        return dumps(values)
+
+def widget_product(input_states):
+    # Make a product of all the possible widget values
+    # For each input_widgets, get all possible values they can have
+    possible_values_by_widget = []
+    for w_state in input_states:
+        values = possible_values(w_state)
+        possible_values_by_widget.append(values)
+
+    return list(itertools.product(*possible_values_by_widget))
 
 
 def diff_state(initial, new, my_id=None):
@@ -303,6 +289,69 @@ def diff_state(initial, new, my_id=None):
     if my_id and my_id in diff:
         diff.remove(my_id)
     return diff
+
+
+def possible_values(widget_state):
+    model_name = widget_state["_model_name"]
+    if model_name == "IntRangeSliderModel":
+        # Return all combinations that are possible: low < high
+        range_ = range(widget_state["min"], widget_state["max"] + widget_state["step"], widget_state["step"])
+        ret = itertools.product(range_, range_)
+        ret = [[i, j] for i, j in ret if i <= j]
+        return ret
+    elif model_name in NUMERIC_CONTROL_WIDGETS:
+        return list(range(widget_state["min"], widget_state["max"] + widget_state["step"], widget_state["step"]))
+    elif model_name in BOOLEAN_CONTROL_WIDGETS:
+        return [True, False]
+    elif model_name == "SelectionRangeSliderModel":
+        range_ = range(0, len(widget_state["_options_labels"]))
+        ret = itertools.product(range_, range_)
+        ret = [[i, j] for i, j in ret if i <= j]
+        return ret
+    elif model_name == "SelectMultipleModel":
+        range_ = range(0, len(widget_state["_options_labels"]))
+        return list(powerset(range_))
+    elif model_name in SELECTION_CONTROL_WIDGETS:
+        range_ = range(0, len(widget_state["_options_labels"]))
+        return list(range_)
+    else:
+        raise Exception(f"Widget type '{model_name}' not supported.")
+
+
+def powerset(iterable):
+    """
+    Example: powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
+    """
+    s = list(iterable)
+    return itertools.chain.from_iterable(
+        itertools.combinations(s, r) for r in range(len(s) + 1)
+    )
+
+
+def hash_fn(w_states):
+    values = []
+    for w_state in w_states:
+        model_name = w_state["_model_name"]
+
+        if model_name in NUMERIC_CONTROL_WIDGETS:
+            value = w_state["value"]
+        elif model_name in BOOLEAN_CONTROL_WIDGETS:
+            value = w_state["value"]
+        elif model_name in SELECTION_CONTROL_WIDGETS:
+            value = w_state["index"]
+        else:
+            raise Exception(f"Cannot use '{model_name}' as input")
+
+        if isinstance(value, str):
+            value = json.dumps(value)
+        elif isinstance(value, bool):
+            value = json.dumps(value)
+        elif isinstance(value, (tuple, list)):
+            value = list(value)
+            value = json.dumps(value, separators=(",", ":"))
+        values.append(value)
+
+    return dumps(values)
 
 
 def dumps(values):

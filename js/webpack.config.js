@@ -55,8 +55,7 @@ var distRoot = path.resolve(
     "nbconvert",
     "templates",
     "illusionist",
-    "static",
-    "dist"
+    "static"
 );
 
 module.exports = [
@@ -65,7 +64,7 @@ module.exports = [
         output: {
             filename: "illusionist.js",
             path: distRoot,
-            libraryTarget: "amd",
+            // libraryTarget: "amd",
         },
         module: { rules: rules },
         devtool: "source-map",

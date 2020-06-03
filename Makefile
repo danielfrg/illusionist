@@ -112,13 +112,14 @@ netlify:  ## Build docs on Netlify
 
 .PHONY: nbs  ## Render the nodebooks
 nbs:
-	jupyter nbconvert ./notebooks/widget-gallery.ipynb --to illusionist
-	jupyter nbconvert ./notebooks/multiplier.ipynb --to illusionist
-	jupyter nbconvert ./notebooks/linked.ipynb --to illusionist
+	# jupyter nbconvert ./notebooks/widget-gallery.ipynb --to illusionist
+	# jupyter nbconvert ./notebooks/multiplier.ipynb --to illusionist
+	# jupyter nbconvert ./notebooks/linked.ipynb --to illusionist
+	jupyter nbconvert ./notebooks/matplotlib.ipynb --to illusionist
 
 
 .PHONY: js-install
-js-install:  ## Install JS dependencies
+install-js:  ## Install JS dependencies
 	cd js/; npm install
 
 
@@ -136,5 +137,10 @@ dev-js:  ## Build JS with watch
 
 .PHONY: clean-js
 clean-js:  # Clean JS
-	rm -rf notebooks/static/dist;
-	cd js/; rm -rf .cache dist lib node_modules
+	rm -rf "notebooks/static/*(.js|.js.map|.svg|.woff|.woff2|.eot|.ttf)"
+	cd js/; rm -rf .cache dist lib
+
+
+.PHONY: cleanall-js
+cleanall-js: clean-js  # Clean JS including node_modules
+	cd js/; rm -rf node_modules

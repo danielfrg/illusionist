@@ -3,16 +3,19 @@
 {% block jupyter_widgets %}
 {%- if "widgets" in nb.metadata -%}
   <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css" />
-  {%- if resources.illusionist_devmode -%}
-      <script src="./static/main.js"></script>
-  {%- else -%}
-      <script>{{ include_template("./static/main.js") }}</script>
-  {%- endif -%}
 {%- endif -%}
 {% endblock jupyter_widgets %}
 
 {%- block footer %}
 {{ super() }}
+
+{%- if "widgets" in nb.metadata -%}
+  {%- if resources.illusionist_devmode -%}
+      <script src="./static/illusionist.js"></script>
+  {%- else -%}
+      <script>{{ include_template("./static/illusionist.js") }}</script>
+  {%- endif -%}
+{%- endif -%}
 
 {% set mimetype = "application/vnd.illusionist.widget-onchange+json" %}
 {% if mimetype in nb.metadata.get("widgets", {}) %}

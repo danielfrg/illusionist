@@ -14,9 +14,9 @@
     },
     "scripts": {
         "build": "npm run build:src && webpack --mode=production",
-        "build:src": "tsc --build",
+        "build:src": "babel src --out-dir lib",
         "dev": "npm-run-all -p dev:*",
-        "dev:lib": "tsc --build --watch",
+        "dev:lib": "babel src --out-dir lib --watch",
         "dev:bundle": "webpack --watch --mode=development",
         "clean": "rimraf docs && rimraf lib && rimraf tsconfig.tsbuildinfo",
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -49,8 +49,6 @@
         "p-limit": "^2.3.0",
         "rimraf": "^2.6.1",
         "style-loader": "^0.23.1",
-        "tslint": "^6.1.2",
-        "typescript": "~3.7.4",
         "url-loader": "^1.0.0",
         "webpack": "^4.43.0",
         "webpack-cli": "^3.3.11",

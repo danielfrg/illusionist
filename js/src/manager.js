@@ -10,6 +10,7 @@ import {
     uuid,
     PROTOCOL_VERSION,
 } from "@jupyter-widgets/base";
+
 const WIDGET_STATE_MIMETYPE = "application/vnd.jupyter.widget-state+json";
 const WIDGET_VIEW_MIMETYPE = "application/vnd.jupyter.widget-view+json";
 const WIDGET_ONCHANGE_MIMETYPE =
@@ -50,13 +51,15 @@ const STRING_WIDGETS = [
     "ImageModel",
 ];
 
+const WIDGET_MIMETYPE = "application/vnd.jupyter.widget-view+json";
+
 export class WidgetManager extends HTMLManager {
-    public onChangeValues: any = {};
+    onChangeValues = {};
 
     /**
      * Main entry point to build the widgets to the DOM
      */
-    public async build_widgets() {
+    async build_widgets() {
         // Set state
         console.log(this._models);
         await this.load_initial_state();
@@ -70,7 +73,7 @@ export class WidgetManager extends HTMLManager {
     /**
      * Loads the widget state.
      */
-    public async load_initial_state() {
+    async load_initial_state() {
         const tags = document.body.querySelectorAll(
             `script[type="${WIDGET_STATE_MIMETYPE}"]`
         );
@@ -84,7 +87,7 @@ export class WidgetManager extends HTMLManager {
     /**
      * Loads the onchange state.
      */
-    public async load_onchange() {
+    async load_onchange() {
         const onChangeTags = document.body.querySelectorAll(
             `script[type="${WIDGET_ONCHANGE_MIMETYPE}"]`
         );
@@ -95,7 +98,7 @@ export class WidgetManager extends HTMLManager {
         console.log(this.onChangeValues);
     }
 
-    public async display_models(filter: String = "") {
+    async display_models(model_name_filter = "") {
         const viewTags = document.body.querySelectorAll(
             `script[type="${WIDGET_VIEW_MIMETYPE}"]`
         );
@@ -107,8 +110,8 @@ export class WidgetManager extends HTMLManager {
                 const model = await this.get_model(model_id);
                 // console.log(model_id);
                 // console.log(model);
-                if (filter) {
-                    if (model?.name != filter) {
+                if (model_name_filter) {
+                    if (model?.name != model_name_filter) {
                         continue;
                     }
                 }
@@ -117,7 +120,7 @@ export class WidgetManager extends HTMLManager {
                     // console.log(model_id);
                     // console.log(model);
                     viewtag.parentElement.insertBefore(widgetEl, viewtag);
-                    let dommodel: DOMWidgetModel = model as DOMWidgetModel;
+                    let dommodel = model;
                     const view = await this.create_view(dommodel);
                     // console.log("View");
                     // console.log(view);
@@ -137,13 +140,13 @@ export class WidgetManager extends HTMLManager {
      * Handles the state update
      * It will trigger the update of the Widget Views.
      */
-    public async onWidgetChange(model: WidgetModel) {
+    async onWidgetChange(model) {
         const { model_id } = model;
         const state = await this.get_state();
         const onChange = this.onChangeValues["onchange"];
 
         for (let output_id in onChange) {
-            console.log("----");
+            // console.log("----");
             // console.log("Output ID:");
             // console.log(output_id);
             const output_onchange_data = onChange[output_id];
@@ -156,14 +159,13 @@ export class WidgetManager extends HTMLManager {
                 continue;
             }
 
+            // Iterat inputs and get the values to make the has
             let inputs = [];
             for (let input_id of affected_by_ids) {
                 const input_model = state["state"][input_id]["state"];
                 // console.log("Input ID:");
                 // console.log(input_id);
-                const key = this.getWidgetValueKey(
-                    input_model["_model_name"] as string
-                );
+                const key = this.getWidgetValueKey(input_model["_model_name"]);
                 let input_value = input_model[key];
                 // console.log("Input/index Value:");
                 // console.log(input_value);
@@ -185,16 +187,14 @@ export class WidgetManager extends HTMLManager {
             // console.log("Inputs final:");
             // console.log(inputs);
             let hash = this.hash_fn(inputs);
-            // console.log("Hash:");
-            // console.log(hash);
+            console.log("Hash:");
+            console.log(hash);
 
             const output_value = output_onchange_data["values"][hash];
-            // console.log("Output value");
-            // console.log(output_value);
+            console.log("Output value");
+            console.log(output_value);
             if (output_value !== undefined) {
-                const key = this.getWidgetValueKey(
-                    output_model["_model_name"] as string
-                );
+                const key = this.getWidgetValueKey(output_model["_model_name"]);
                 state["state"][output_id]["state"][key] = output_value;
                 // await this.get_state();
 
@@ -204,9 +204,9 @@ export class WidgetManager extends HTMLManager {
                         // (models as any)[id].close();
                         // this._models = Object.create(null);
 
-                        let model = models[id] as any;
+                        let model = models[id];
                         if (model.name == "OutputModel") {
-                            (models as any)[id].close();
+                            models[id].close();
                             this._models[model.model_id] = null;
 
                             // console.log(id);
@@ -242,7 +242,7 @@ export class WidgetManager extends HTMLManager {
         }
     }
 
-    public getWidgetValueKey(model_name: string) {
+    getWidgetValueKey(model_name) {
         if (SELECTION_WIDGETS.includes(model_name)) {
             return "index";
         } else if (model_name == "OutputModel") {
@@ -251,7 +251,7 @@ export class WidgetManager extends HTMLManager {
         return "value";
     }
 
-    public hash_fn(inputs: Array<any>) {
+    hash_fn(inputs) {
         let quotes = [];
         for (let input of inputs) {
             if (typeof input === "number") {
