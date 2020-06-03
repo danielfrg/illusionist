@@ -2,8 +2,9 @@ import os
 import os.path
 
 import jinja2
-from traitlets import default, List
 from nbconvert.exporters.html import HTMLExporter
+from traitlets import List, default
+
 from illusionist.preprocessor import IllusionistPreprocessor
 
 

@@ -1,6 +1,7 @@
 # This code is executed on the Kernel that also executes the notebook
-import json
 import itertools
+import json
+
 from ipywidgets import *  # noqa
 
 
@@ -67,8 +68,6 @@ OUTPUT_WIDGETS = (
 
 VALUE_WIDGETS = CONTROL_WIDGETS + OUTPUT_WIDGETS
 LAYOUT_WIDGETS = Box, HBox, VBox, Accordion, Tab
-
-
 
 
 def frange(x, y, z):
@@ -178,5 +177,3 @@ def set_widget_value(widget_id, value):
     else:
         widget_type = type(widget)
         raise Exception(f"Cannot set value on widget type: 'f{widget_type}'")
-
-

@@ -1,10 +1,10 @@
-import pytest
 import ipywidgets
-
-from .utils import preprocessor
-from illusionist.widgets import *  # noqa
+import pytest
 
 from illusionist.preprocessor import possible_values
+from illusionist.widgets import *  # noqa
+
+from .utils import preprocessor
 
 
 def test_widget_matrix_IntSlider(preprocessor):
@@ -15,7 +15,7 @@ def test_widget_matrix_IntSlider(preprocessor):
     in_ids = [in_id]
 
     matrix = preprocessor.widget_matrix(out_id, in_ids)
-    assert list(matrix.keys()) == ['-3', '-2', '-1', '0']
+    assert list(matrix.keys()) == ["-3", "-2", "-1", "0"]
 
 
 def test_widget_matrix_IntRangeSlider(preprocessor):
@@ -57,6 +57,6 @@ def test_widget_matrix_Selection(preprocessor, class_):
         '"[0,1]"',
         '"[0,2]"',
         '"[1,2]"',
-        '"[0,1,2]"'
+        '"[0,1,2]"',
     ]
     assert list(matrix.keys()) == ans

@@ -1,8 +1,8 @@
-import pytest
 import ipywidgets
+import pytest
 
-from illusionist.widgets import *  # noqa
 from illusionist.preprocessor import possible_values
+from illusionist.widgets import *  # noqa
 
 
 @pytest.mark.parametrize("class_", [IntSlider, BoundedIntText])
@@ -31,14 +31,7 @@ def test_possible_values_boolean(class_):
 
 
 @pytest.mark.parametrize(
-    "class_",
-    [
-        Dropdown,
-        RadioButtons,
-        Select,
-        SelectionSlider,
-        ToggleButtons,
-    ],
+    "class_", [Dropdown, RadioButtons, Select, SelectionSlider, ToggleButtons,],
 )
 def test_possible_values_selection_single_value(class_):
     options = ["a", "b", "c"]
@@ -84,6 +77,7 @@ def test_possible_values_SelectionRangeSlider():
     w_state = w.get_state()
     a = [[0, 0], [0, 1], [0, 2], [1, 1], [1, 2], [2, 2]]
     assert possible_values(w_state) == a
+
 
 # def test_pb(preprocessor):
 # # def test_pb(preprocessor):

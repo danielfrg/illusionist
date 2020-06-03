@@ -1,9 +1,9 @@
 import pytest
 
-from illusionist.widgets import *  # noqa
 from illusionist.preprocessor import hash_fn
-from .utils import preprocessor
+from illusionist.widgets import *  # noqa
 
+from .utils import preprocessor
 
 
 @pytest.mark.parametrize("class_", [IntSlider, BoundedIntText])

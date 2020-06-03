@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.fixture
 def preprocessor():
     import os
@@ -21,6 +22,7 @@ def preprocessor():
 
     from illusionist.utils import get_source
     from illusionist import widgets
+
     p.run_code(get_source(widgets))
 
     yield p

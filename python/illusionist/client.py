@@ -3,15 +3,14 @@ import queue
 from time import monotonic
 
 import nbformat
+from nbclient import NotebookClient
 from nbclient.exceptions import (
     CellExecutionComplete,
     CellExecutionError,
     CellTimeoutError,
 )
-from nbclient import NotebookClient
 from nbclient.util import ensure_async, run_sync
 from traitlets.config.application import Application
-
 
 from illusionist.utils import DEV_MODE
 

@@ -1,5 +1,5 @@
-import pytest
 import ipywidgets
+import pytest
 
 from .utils import preprocessor
 

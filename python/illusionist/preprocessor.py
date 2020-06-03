@@ -1,16 +1,15 @@
-import io
-import csv
-import copy
-import json
 import asyncio
+import copy
+import csv
+import io
 import itertools
-
-from illusionist import utils
-from illusionist.utils import DEV_MODE
-from illusionist import kernel_utils
-from illusionist.client import IllusionistClient
+import json
 
 from nbconvert.preprocessors import Preprocessor
+
+from illusionist import kernel_utils, utils
+from illusionist.client import IllusionistClient
+from illusionist.utils import DEV_MODE
 
 
 NUMERIC_CONTROL_WIDGETS = (
@@ -295,12 +294,22 @@ def possible_values(widget_state):
     model_name = widget_state["_model_name"]
     if model_name == "IntRangeSliderModel":
         # Return all combinations that are possible: low < high
-        range_ = range(widget_state["min"], widget_state["max"] + widget_state["step"], widget_state["step"])
+        range_ = range(
+            widget_state["min"],
+            widget_state["max"] + widget_state["step"],
+            widget_state["step"],
+        )
         ret = itertools.product(range_, range_)
         ret = [[i, j] for i, j in ret if i <= j]
         return ret
     elif model_name in NUMERIC_CONTROL_WIDGETS:
-        return list(range(widget_state["min"], widget_state["max"] + widget_state["step"], widget_state["step"]))
+        return list(
+            range(
+                widget_state["min"],
+                widget_state["max"] + widget_state["step"],
+                widget_state["step"],
+            )
+        )
     elif model_name in BOOLEAN_CONTROL_WIDGETS:
         return [True, False]
     elif model_name == "SelectionRangeSliderModel":
