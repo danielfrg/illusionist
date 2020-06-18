@@ -60,8 +60,8 @@ test:  ## Run tests
 
 
 report:  ## Generate coverage reports
-	@coverage xml
-	@coverage html
+	cd $(CURDIR)/python; coverage xml
+	cd $(CURDIR)/python; coverage html
 
 
 cleanpython:  ## Clean Python build files
