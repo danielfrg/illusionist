@@ -1,24 +1,31 @@
 # Used for CI - It should match environment.yml
 
-# Base conda deps
+# Base
 setuptools
-setuptools-scm
+setuptools_scm
 pylint
-black
 flake8
+black
 isort
 twine
 wheel
 pytest
 pytest-cov
 
-# This project conda deps
-
-# Base pip deps: Docs
+# Docs
 mkdocs
 mkdocs-material
 mkdocs-minify-plugin
 pygments
 pymdown-extensions
 
-# This project pip deps
+# Package
+nbconvert<6,>=5.5.0
+nbclient>=0.4.0
+nbformat
+
+# Other
+notebook
+jupyterlab
+ipywidgets
+matplotlib

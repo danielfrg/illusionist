@@ -1,0 +1,3 @@
+# We add these files here because they are not tracked in git and listed on .gitignore
+
+include share/jupyter/nbconvert/templates/illusionist/static/\*

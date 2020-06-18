@@ -1,16 +1,14 @@
 var path = require("path");
 
 var rules = [
-    { test: /\.css$/, use: ["style-loader", "css-loader"] },
     {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-            loader: "url-loader",
-            options: {
-                limit: 10000,
-                mimetype: "image/svg+xml",
-            },
-        },
+        test: /\.s?[ac]ss$/,
+        use: ["style-loader", "css-loader", "sass-loader"],
+    },
+    {
+        test: /\.(js)$/,
+        exclude: /node_modules/,
+        use: ["babel-loader"],
     },
     // required to load font-awesome
     {
@@ -44,6 +42,16 @@ var rules = [
         },
     },
     { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, use: "file-loader" },
+    {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        use: {
+            loader: "url-loader",
+            options: {
+                limit: 10000,
+                mimetype: "image/svg+xml",
+            },
+        },
+    },
 ];
 
 var distRoot = path.resolve(
@@ -55,18 +63,19 @@ var distRoot = path.resolve(
     "nbconvert",
     "templates",
     "illusionist",
-    "static"
+    "static",
+    "dist"
 );
 
 module.exports = [
     {
-        entry: ["./lib/index.js"],
+        entry: [path.resolve(__dirname, "src", "index.js")],
         output: {
             filename: "illusionist.js",
             path: distRoot,
-            // libraryTarget: "amd",
         },
         module: { rules: rules },
+        mode: "development",
         devtool: "source-map",
     },
 ];

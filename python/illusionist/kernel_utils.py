@@ -3,9 +3,12 @@ import json
 import itertools
 
 try:
+    # This is mostly flake8
+    # Be sure to source widgets.py on the kernel before sourcing this
     from .widgets import *  # noqa
 except:
     pass
+
 
 def get_widgets_ids(widgets=None, kind=None):
     """

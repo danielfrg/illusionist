@@ -1,15 +1,10 @@
-import { WidgetManager } from "./manager";
-// import { renderMathJax } from './mathjax';
+import WidgetManager from "./manager";
 
-// import "../style/index.css";
-
-console.log("index.js");
-
-var widgetManager = new WidgetManager();
+const widgetManager = new WidgetManager();
 
 async function init() {
-    await widgetManager.build_widgets();
-    // illusionist.renderMathJax();
+    await widgetManager.loadState();
+    await widgetManager.renderAllWidgets();
 }
 
 if (document.readyState === "complete") {
