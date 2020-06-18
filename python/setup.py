@@ -95,7 +95,7 @@ setup(
         "dev": read_file("requirements.txt").splitlines(),
     },
     description="",
-    long_description=read_file("../README.md"),
+    long_description=read_file("README.md"),
     long_description_content_type="text/markdown",
     license="Apache License, Version 2.0",
     maintainer="Daniel Rodriguez",
