@@ -12,18 +12,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        python-version: [3.7, 3.8]
-
     steps:
       - uses: actions/checkout@v2
       - run: git fetch --prune --unshallow
 
       - name: Set up Python
         uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python }}
 
       - name: Install Python dependencies
         run: |
