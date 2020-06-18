@@ -2,45 +2,57 @@ name: test
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
+  schedule:
+    - cron: "0 5 * * *"
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        python-version: [3.6, 3.7, 3.8]
-
     steps:
-    - uses: actions/checkout@v2
-    - run: git fetch --prune --unshallow
+      - uses: actions/checkout@v2
+      - run: git fetch --prune --unshallow
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python
+        uses: actions/setup-python@v1
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r python/requirements.txt
-        pip freeze
+      - name: Install Python dependencies
+        run: |
+          cd python
+          python -m pip install --upgrade pip
+          pip install -U -r requirements.txt
+          pip freeze
 
-    - name: Install package
-      run: |
-        make build
-        pip install dist/*.tar.gz
-        pip freeze
+      - name: Setup node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: "12"
 
-    - name: Check linting
-      run: |
-        make check
-        make report
+      - name: Install JS dependencies
+        run: |
+          make npm-install
 
-    - name: Run tests
-      if: always()
-      run: |
-        make test
+      - name: Build package
+        run: |
+          make build
+
+      - name: Install package
+        run: |
+          cd python
+          pip install dist/*.tar.gz
+          pip freeze
+
+      - name: Run tests
+        if: always()
+        run: |
+          make test
+          make report
+
+      - name: Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: python/coverage.xml
+          fail_ci_if_error: true

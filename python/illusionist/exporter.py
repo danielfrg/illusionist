@@ -1,4 +1,5 @@
 import os
+import sys
 import os.path
 
 import jinja2
@@ -39,19 +40,43 @@ def include_external_base64_img(ctx, name):
 class IllusionistExporter(HTMLExporter):
     # Name for the menu item under "File -> Download as" in the IDE
     export_from_notebook = "Illusionist"
-
-    extra_loaders = [jinja2.PackageLoader(__name__, "")]
-
     preprocessors = [IllusionistPreprocessor]
 
-    @default("template_name")
-    def _template_name_default(self):
-        return "illusionist"
+    # extra_loaders = [
+    #     jinja2.FileSystemLoader(
+    #         os.path.join(
+    #             sys.prefix, "share", "jupyter", "nbconvert", "templates", "illusionist"
+    #         )
+    #     )
+    # ]
 
-    @default("template_data_paths")
-    def _template_data_paths_default(self):
-        this_file_dir = os.path.abspath(os.path.dirname(__file__))
-        return [os.path.join(this_file_dir, "templates")]
+    @property
+    def template_path(self):
+        """
+        Append template intalled to share
+        This is compat code until nbconvert 6.0.0 lands
+        The structure of the project here is whats 6.0.0 will use
+        """
+        return super().template_path + [
+            os.path.join(
+                sys.prefix, "share", "jupyter", "nbconvert", "templates", "illusionist"
+            )
+        ]
+
+    def _template_file_default(self):
+        """
+        We want to use the new template we ship with our library.
+        """
+        return "index"
+
+    # @default("template_name")
+    # def _template_name_default(self):
+    #     return "illusionist"
+
+    # @default("template_data_paths")
+    # def _template_data_paths_default(self):
+    #     this_file_dir = os.path.abspath(os.path.dirname(__file__))
+    #     return [os.path.join(this_file_dir, "templates")]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
