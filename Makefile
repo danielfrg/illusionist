@@ -112,14 +112,14 @@ clean-js:  # Clean JS
 
 .PHONY: examples
 examples:  ## Run nbconvert the examples (dev)
-	# jupyter nbconvert ./examples/widget-gallery.ipynb --to illusionist
-	# jupyter nbconvert ./examples/multiplier.ipynb --to illusionist
-	# jupyter nbconvert ./examples/linked.ipynb --to illusionist
-	# jupyter nbconvert ./examples/matplotlib.ipynb --to illusionist
-	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/widget-gallery.ipynb --to illusionist-nb --execute --inplace
-	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/multiplier.ipynb --to illusionist-nb --execute --inplace
-	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/linked.ipynb --to illusionist-nb --execute --inplace
-	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/matplotlib.ipynb --to illusionist-nb --execute --inplace
+	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/widget-gallery.ipynb --to illusionist
+	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/multiplier.ipynb --to illusionist
+	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/linked.ipynb --to illusionist
+	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/matplotlib.ipynb --to illusionist
+	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/widget-gallery.ipynb --output=widget-gallery.ipynb --to illusionist-nb --execute
+	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/multiplier.ipynb --output=multiplier.ipynb --to illusionist-nb --execute
+	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/linked.ipynb --output=linked.ipynb --to illusionist-nb --execute
+	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/matplotlib.ipynb --output=matplotlib.ipynb --to illusionist-nb --execute
 
 
 
