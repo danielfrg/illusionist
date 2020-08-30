@@ -110,6 +110,7 @@ clean-js:  # Clean JS
 # ------------------------------------------------------------------------------
 # Docs
 
+.PHONY: examples
 examples:  ## Run nbconvert the examples (dev)
 	# jupyter nbconvert ./examples/widget-gallery.ipynb --to illusionist
 	# jupyter nbconvert ./examples/multiplier.ipynb --to illusionist

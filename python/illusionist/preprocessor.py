@@ -201,7 +201,6 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
                 self.run_code(f"set_widget_value('{widget_id}', {value})")
 
             # Save the new value of the output widget
-            # print(hash_fn(input_widgets))
             hash_ = self.hash_fn(input_widget_ids)
             matrix[hash_] = self.get_output_value(output_widget_id)
 
