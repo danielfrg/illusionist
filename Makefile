@@ -70,7 +70,6 @@ cleanpython:  ## Clean Python build files
 	find . -type f -name '*.py[co]' -delete
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type d -name .ipynb_checkpoints -exec rm -rf {} +
-	rm -rf site docs/examples
 
 
 # ------------------------------------------------------------------------------
@@ -145,7 +144,7 @@ serve-docs:  ## Serve docs
 # Other
 
 cleanall: cleanpython cleanjs  ## Clean everything
-	rm -rf site
+	rm -rf site $(CURDIR)/docs/examples/*.html
 	cd $(CURDIR)/examples/; rm -rf *.html
 	cd $(CURDIR)/python/; rm -rf *.egg-info
 	cd $(CURDIR)/js/; rm -rf node_modules
