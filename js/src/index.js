@@ -1,6 +1,6 @@
-import WidgetManager from "./manager";
+import IllusionistWidgetManager from "./manager";
 
-const widgetManager = new WidgetManager();
+const widgetManager = new IllusionistWidgetManager();
 
 async function init() {
     await widgetManager.loadState();

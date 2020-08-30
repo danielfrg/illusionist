@@ -79,6 +79,9 @@ OUTPUT_WIDGETS = (
 VALUE_WIDGETS = CONTROL_WIDGETS + OUTPUT_WIDGETS
 
 
+WIDGET_ONCHANGE_MIMETYPE = "application/vnd.illusionist.widget-onchange+json"
+
+
 class IllusionistPreprocessor(Preprocessor, IllusionistClient):
     """
     Execute cells in the notebook
@@ -107,7 +110,7 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
             self.reset_execution_trackers()
             self.execute(cleanup_kc=False)
 
-            self.set_widgets_onchange_metadata(self.onchange_values)
+            # self.set_widgets_onchange_metadata(self.onchange_values)
         finally:
             # Clean up
             self._cleanup_kernel()
@@ -118,38 +121,20 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
 
     def post_exec(self):
         """
-        This gets executed as part for self.execute()
+        This methond it's executed as part for self.execute()
         """
-        # Load helper code to the kernel
+        # Load helper code into the kernel
         _ = self.run_code(utils.get_source(widgets))
         _ = self.run_code(utils.get_source(kernel_utils))
 
-        # _ = self.run_code("print(out.outputs)")
-        # print(_)
-        # _ = self.run_code("f.value = 1")
-        # _ = self.run_code("f.value = 1\nout.get_state()")
-        # print(_)
-        # _ = self.run_code("out.get_state()")
-        # print(_)
-        # print(self.widget_state)
-        # _ = self.run_code("print(out.outputs)")
+        # Save Notebook and widget state before executing extra code
+        nb_cells_before = copy.deepcopy(self.nb.cells)
+        widget_state_before = copy.deepcopy(self.widget_state)
 
-        # print(self.run_code("f.value"))
-        # _ = self.run_cmd(f"f.value = 1")
-        # _ = self.run_cmd(f"print(f.value)", ret_output=True)
-        # print(_)
-        # _ = self.run_cmd(f"out", ret_output=True)
-        # print(_)
-
-        ####
-
-        state_after_nb_exec = copy.deepcopy(self.widget_state)
+        print(len(self.nb.cells))
 
         value_widgets = self.run_code_eval("get_widgets_ids(kind='value')")
         control_widgets = self.run_code_eval("get_widgets_ids(kind='control')")
-
-        # print(self.widget_state)
-        # print(control_widgets)
 
         # 1. Iterate the control widgets and see which outputs it affects
         affected_by = {m_id: set() for m_id in value_widgets}
@@ -170,38 +155,31 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
             for affected in widget_affects:
                 affected_by[affected] |= {widget_id}
 
-        # print(affected_by)
-
         # 2. Iterate affected_by and add matrix (per output widget) to the matrix
 
-        # matrices = {output_id: [[ ... matrix ... ]] }
+        # matrices is of the form: {output_id: [[ ... matrix ... ]] }
         matrices = {}
 
         for output_widget_id, input_widget_ids in affected_by.items():
-            # output_widget = all_widgets[output_widget_id]
             if len(input_widget_ids) > 0:
-                # input_widgets = {m_id: all_widgets[m_id] for m_id in input_widget_ids}
-                # input_ids = list(input_widgets.keys())
-                # return input_widgets
-                # values = self.run_code_eval(
-                #     f"widget_matrix('{output_widget_id}', '{input_widget_ids}'))"
-                # )
                 values = self.widget_matrix(output_widget_id, input_widget_ids)
                 matrices[output_widget_id] = {
                     "affected_by": list(input_widget_ids),
                     "values": values,
                 }
 
-        ret = {"version_major": 1, "version_minor": 0}
-        ret["all_widgets"] = value_widgets
-        ret["control_widgets"] = control_widgets
-        ret["onchange"] = matrices
-        self.onchange_values = ret
+        # Save the onChange state
+        onChangeState = {"version_major": 1, "version_minor": 0}
+        onChangeState["all_widgets"] = value_widgets
+        onChangeState["control_widgets"] = control_widgets
+        onChangeState["onchange"] = matrices
+        self.nb.metadata.widgets.update({WIDGET_ONCHANGE_MIMETYPE: onChangeState})
 
-        self.widget_state = state_after_nb_exec
+        # Set the original widget_state values back
+        self.widget_state = widget_state_before
+        # self.nb.cells = nb_cells_before
 
-        # print(ret)
-        # return json.dumps(ret)
+        print(len(self.nb.cells))
 
     def widget_matrix(self, output_widget_id, input_widget_ids):
         output_state = self.widget_state[output_widget_id]

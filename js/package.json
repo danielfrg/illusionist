@@ -20,6 +20,7 @@
         "dev": "webpack --watch --mode=development",
         "dev:prod": "webpack --watch --mode=production",
         "build": "webpack --mode=production",
+        "build:watch": "webpack --mode=production --watch",
         "fmt": "prettier --write \"src/**/*.{js,jsx}\"",
         "lint": "eslint \"src/**/*.{js,jsx}\" --quiet",
         "clean": "rm -rf .cache/ dist/ lib/",

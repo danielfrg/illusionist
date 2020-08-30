@@ -40,7 +40,7 @@ def get_data_files():
 
 class DevelopCmd(develop):
     """The DevelopCmd will create symlinks for nbconvert under:
-        sys.prefix/share/jupyter/
+    sys.prefix/share/jupyter/
     """
 
     prefix_targets = [
@@ -84,7 +84,10 @@ setup(
     data_files=get_data_files(),
     cmdclass={"develop": DevelopCmd},
     entry_points={
-        "nbconvert.exporters": ["illusionist = illusionist:IllusionistExporter"],
+        "nbconvert.exporters": [
+            "illusionist = illusionist:IllusionistHTMLExporter",
+            "illusionist-nb = illusionist:IllusionistNotebookExporter",
+        ],
     },
     options={"bdist_wheel": {"universal": "1"}},
     python_requires=">=3.6",

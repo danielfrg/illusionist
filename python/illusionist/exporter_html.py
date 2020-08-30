@@ -11,16 +11,14 @@ from illusionist.preprocessor import IllusionistPreprocessor
 
 @jinja2.contextfunction
 def include_template(ctx, name):
-    """Include a file relative to this python file
-    """
+    """Include a file relative to this python file"""
     env = ctx.environment
     return jinja2.Markup(env.loader.get_source(env, name)[0])
 
 
 @jinja2.contextfunction
 def include_external_file(ctx, name):
-    """Include an encoded base64 image
-    """
+    """Include an encoded base64 image"""
     with open(os.path.abspath(name), "r") as f:
         content = f.read()
     return jinja2.Markup(content)
@@ -28,8 +26,7 @@ def include_external_file(ctx, name):
 
 @jinja2.contextfunction
 def include_external_base64_img(ctx, name):
-    """Include an encoded base64 external image
-    """
+    """Include an encoded base64 external image"""
     import base64
 
     with open(os.path.abspath(name), "rb") as f:
@@ -37,18 +34,10 @@ def include_external_base64_img(ctx, name):
     return jinja2.Markup(encoded_string.decode())
 
 
-class IllusionistExporter(HTMLExporter):
+class IllusionistHTMLExporter(HTMLExporter):
     # Name for the menu item under "File -> Download as" in the IDE
-    export_from_notebook = "Illusionist"
+    export_from_notebook = "Illusionist HTML"
     preprocessors = [IllusionistPreprocessor]
-
-    # extra_loaders = [
-    #     jinja2.FileSystemLoader(
-    #         os.path.join(
-    #             sys.prefix, "share", "jupyter", "nbconvert", "templates", "illusionist"
-    #         )
-    #     )
-    # ]
 
     @property
     def template_path(self):
@@ -68,15 +57,6 @@ class IllusionistExporter(HTMLExporter):
         We want to use the new template we ship with our library.
         """
         return "index"
-
-    # @default("template_name")
-    # def _template_name_default(self):
-    #     return "illusionist"
-
-    # @default("template_data_paths")
-    # def _template_data_paths_default(self):
-    #     this_file_dir = os.path.abspath(os.path.dirname(__file__))
-    #     return [os.path.join(this_file_dir, "templates")]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

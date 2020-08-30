@@ -22,4 +22,5 @@ except ImportError:
         __version__ = None
 
 
-from .exporter import IllusionistExporter  # noqa
+from .exporter_html import IllusionistHTMLExporter  # noqa
+from .exporter_nb import IllusionistNotebookExporter  # noqa

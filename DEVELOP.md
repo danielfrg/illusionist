@@ -8,6 +8,7 @@ Python:
 # Create conda env
 make env
 conda activate illusionist
+make extensions
 
 # Install package
 make develop
@@ -41,8 +42,9 @@ Run the http server on the examples dir:
 make serve-examples
 ```
 
-With this for changes on the JS you can just refresh the page.
-For changes on the python (nbconvert) part, run `make examples` each time.
+With this setup:
+- To see changes on the JS part you can just refresh the page
+- To see changes on the python (nbconvert) part, run `make examples` again
 
 ## Testing
 

@@ -137,5 +137,5 @@ npm-debug.log
 typings/tsd.d.ts
 
 ### Project specific ###
-notebooks/*.html
+examples/*.html
 docs/examples

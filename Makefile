@@ -28,12 +28,12 @@ env:  ## Create dev environment
 	cd $(CURDIR)/python; conda env create
 
 
-develop:  ## Install package for development
-	cd $(CURDIR)/python; python -m pip install --no-build-isolation -e . ;
-
-
 extensions:  ## Install Jupyter extensions
 	jupyter labextension install @jupyter-widgets/jupyterlab-manager
+
+
+develop:  ## Install package for development
+	cd $(CURDIR)/python; python -m pip install --no-build-isolation -e . ;
 
 
 check:  ## Check linting
@@ -73,7 +73,6 @@ cleanpython:  ## Clean Python build files
 	rm -rf site docs/examples
 
 
-
 # ------------------------------------------------------------------------------
 # JS
 
@@ -104,15 +103,23 @@ cleanjs:  ## Clean JS build files
 
 
 clean-js:  # Clean JS
-	rm -rf "notebooks/static/*(.js|.js.map|.svg|.woff|.woff2|.eot|.ttf)"
+	rm -rf "examples/static/*(.js|.js.map|.svg|.woff|.woff2|.eot|.ttf)"
 	cd js/; rm -rf .cache dist lib
 
 
-reset-js: cleanjs  # Clean JS including node_modules
-	cd js/; rm -rf node_modules
-
 # ------------------------------------------------------------------------------
 # Docs
+
+examples:  ## Run nbconvert the examples (dev)
+	# jupyter nbconvert ./examples/widget-gallery.ipynb --to illusionist
+	# jupyter nbconvert ./examples/multiplier.ipynb --to illusionist
+	jupyter nbconvert ./examples/multiplier.ipynb --to illusionist-nb --inplace
+	# jupyter nbconvert ./examples/linked.ipynb --to illusionist
+	# jupyter nbconvert ./examples/matplotlib.ipynb --to illusionist
+
+
+serve-examples:  ## Serve examples
+	cd $(CURDIR)/examples; python -m http.server
 
 
 docs:  docs-examples  ## Build mkdocs
@@ -120,21 +127,10 @@ docs:  docs-examples  ## Build mkdocs
 
 
 docs-examples:  ## Run nbconvert on the docs examples
-	jupyter nbconvert --to illusionist ./notebooks/widget-gallery.ipynb --output-dir=./docs/examples/
-	jupyter nbconvert --to illusionist ./notebooks/multiplier.ipynb --output-dir=./docs/examples/
-	jupyter nbconvert --to illusionist ./notebooks/linked.ipynb --output-dir=./docs/examples/
-	jupyter nbconvert --to illusionist ./notebooks/matplotlib.ipynb --output-dir=./docs/examples/
-
-
-examples:  ## Run nbconvert the examples (dev)
-	jupyter nbconvert ./notebooks/widget-gallery.ipynb --to illusionist
-	jupyter nbconvert ./notebooks/multiplier.ipynb --to illusionist
-	jupyter nbconvert ./notebooks/linked.ipynb --to illusionist
-	jupyter nbconvert ./notebooks/matplotlib.ipynb --to illusionist
-
-
-serve-examples:  ## Serve examples
-	cd $(CURDIR)/notebooks; python -m http.server
+	jupyter nbconvert --to illusionist ./examples/widget-gallery.ipynb --output-dir=./docs/examples/
+	jupyter nbconvert --to illusionist ./examples/multiplier.ipynb --output-dir=./docs/examples/
+	jupyter nbconvert --to illusionist ./examples/linked.ipynb --output-dir=./docs/examples/
+	jupyter nbconvert --to illusionist ./examples/matplotlib.ipynb --output-dir=./docs/examples/
 
 
 serve-docs:  ## Serve docs
@@ -145,7 +141,9 @@ serve-docs:  ## Serve docs
 # Other
 
 cleanall: cleanpython cleanjs  ## Clean everything
-	rm -rf *.egg-info
+	rm -rf site
+	cd $(CURDIR)/examples/; rm -rf *.html
+	cd $(CURDIR)/python/; rm -rf *.egg-info
 	cd $(CURDIR)/js/; rm -rf node_modules
 
 
