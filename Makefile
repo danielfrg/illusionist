@@ -122,7 +122,6 @@ examples:  ## Run nbconvert the examples (dev)
 	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/matplotlib.ipynb --output=matplotlib.ipynb --to illusionist-nb --execute
 
 
-
 serve-examples:  ## Serve examples
 	cd $(CURDIR)/examples; python -m http.server
 

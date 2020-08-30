@@ -1,3 +1,8 @@
+{#
+Changes:
+- Add RequireJS for plotly
+#}
+
 {% extends "base.html" %}
 
 {% block extrahead %}
@@ -5,4 +10,5 @@
 <script type="text/javascript">
     requirejs.config({paths:  {'plotly': ['https://cdn.plot.ly/plotly-latest.min']}},);
 </script>
+<script data-jupyter-widgets-cdn="https://cdn.jsdelivr.net/npm/" src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
 {% endblock %}

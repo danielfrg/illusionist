@@ -44,9 +44,6 @@ const STRING_WIDGETS = [
 
 export default class IllusionistWidgetManager extends HTMLManager {
     onChangeState = null;
-
-    // We save a map of ModelID to ViewScriptTag elements
-    // so we know where to render the widget
     modelIdToViewScriptTag = {};
 
     async loadState() {
@@ -67,7 +64,6 @@ export default class IllusionistWidgetManager extends HTMLManager {
             );
             return;
         }
-        console.log("IllusionistWidgetManager: Loading widget state");
         for (let stateTag of stateTags) {
             const widgetState = JSON.parse(stateTag.innerHTML);
             await this.set_state(widgetState);
@@ -82,16 +78,24 @@ export default class IllusionistWidgetManager extends HTMLManager {
             `script[type="${WIDGET_ONCHANGE_MIMETYPE}"]`
         );
         if (onChangeTags.length == 0) {
-            console.log(
-                "IllusionistWidgetManager: Didn't find widget onChange state on the HTML page."
-            );
             return;
         }
-        console.log("IllusionistWidgetManager: Loading widget onChange state");
         for (let tag of onChangeTags) {
             const onChangeState = JSON.parse(tag.innerHTML);
             await this.setOnChangeState(onChangeState);
         }
+        this.widgetAffects = {};
+
+        this.onChangeState.control_widgets.forEach((controlId) => {
+            this.widgetAffects[controlId] = [];
+            for (let [outputId, obj] of Object.entries(
+                this.onChangeState.onchange
+            )) {
+                if (obj.affected_by.includes(controlId)) {
+                    this.widgetAffects[controlId].push(outputId);
+                }
+            }
+        });
     }
 
     /**
@@ -249,7 +253,7 @@ export default class IllusionistWidgetManager extends HTMLManager {
                 });
 
                 await this.set_state(state);
-                if (outputModel["_model_name"] == "OuptuModel") {
+                if (outputModel["_model_name"] == "OutputModel") {
                     this.renderWidget(outputId);
                 }
             }

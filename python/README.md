@@ -5,8 +5,6 @@
 [![License](http://img.shields.io/:license-Apache%202-blue.svg)](https://github.com/danielfrg/illusionist/blob/master/LICENSE.txt)
 [![Docs](https://github.com/danielfrg/jupyter-flex/workflows/docs/badge.svg)](https://jupyter-flex.extrapolations.dev/)
 
-Status: experimentation
-
 Illusionist takes a Jupyter Notebooks with widgets and converts it to a
 dynamic HTML report that maintains the interactivity of the widgets without a
 running Jupyter kernel.
