@@ -34,4 +34,5 @@ dependencies:
       - notebook
       - jupyterlab
       - ipywidgets
+      - numpy
       - matplotlib

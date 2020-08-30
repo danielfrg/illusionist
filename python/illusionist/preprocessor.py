@@ -1,9 +1,8 @@
-import asyncio
-import copy
-import csv
 import io
-import itertools
+import csv
+import copy
 import json
+import itertools
 
 from nbconvert.preprocessors import Preprocessor
 
@@ -105,18 +104,23 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
 
         resources = resources if resources else {}
         resources["illusionist_devmode"] = DEV_MODE
+        if resources["illusionist_devmode"]:
+            self.log.warning(
+                "Illusionist DevMode is ON. "
+                "Output Notebooks and HTML will contain extra cells at the end"
+            )
 
         try:
             self.reset_execution_trackers()
             self.execute(cleanup_kc=False)
 
-            # self.set_widgets_onchange_metadata(self.onchange_values)
+            self.nb.metadata.widgets.update(
+                {WIDGET_ONCHANGE_MIMETYPE: self.widget_onchange_state}
+            )
         finally:
             # Clean up
             self._cleanup_kernel()
 
-        # self.resources = resources
-        # print(resources)
         return nb, resources
 
     def post_exec(self):
@@ -128,10 +132,8 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         _ = self.run_code(utils.get_source(kernel_utils))
 
         # Save Notebook and widget state before executing extra code
-        nb_cells_before = copy.deepcopy(self.nb.cells)
+        # nb_cells_before = copy.deepcopy(self.nb.cells)
         widget_state_before = copy.deepcopy(self.widget_state)
-
-        print(len(self.nb.cells))
 
         value_widgets = self.run_code_eval("get_widgets_ids(kind='value')")
         control_widgets = self.run_code_eval("get_widgets_ids(kind='control')")
@@ -173,13 +175,10 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         onChangeState["all_widgets"] = value_widgets
         onChangeState["control_widgets"] = control_widgets
         onChangeState["onchange"] = matrices
-        self.nb.metadata.widgets.update({WIDGET_ONCHANGE_MIMETYPE: onChangeState})
+        self.widget_onchange_state = onChangeState
 
         # Set the original widget_state values back
         self.widget_state = widget_state_before
-        # self.nb.cells = nb_cells_before
-
-        print(len(self.nb.cells))
 
     def widget_matrix(self, output_widget_id, input_widget_ids):
         output_state = self.widget_state[output_widget_id]

@@ -114,9 +114,13 @@ clean-js:  # Clean JS
 examples:  ## Run nbconvert the examples (dev)
 	# jupyter nbconvert ./examples/widget-gallery.ipynb --to illusionist
 	# jupyter nbconvert ./examples/multiplier.ipynb --to illusionist
-	jupyter nbconvert ./examples/multiplier.ipynb --to illusionist-nb --inplace
 	# jupyter nbconvert ./examples/linked.ipynb --to illusionist
 	# jupyter nbconvert ./examples/matplotlib.ipynb --to illusionist
+	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/widget-gallery.ipynb --to illusionist-nb --execute --inplace
+	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/multiplier.ipynb --to illusionist-nb --execute --inplace
+	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/linked.ipynb --to illusionist-nb --execute --inplace
+	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/matplotlib.ipynb --to illusionist-nb --execute --inplace
+
 
 
 serve-examples:  ## Serve examples
