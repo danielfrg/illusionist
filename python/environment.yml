@@ -21,6 +21,7 @@ dependencies:
       # Docs
       - mkdocs
       - mkdocs-material
+      - mkdocs-jupyter
       - mkdocs-minify-plugin
       - pygments
       - pymdown-extensions
