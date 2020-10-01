@@ -41,3 +41,11 @@ make upload-pypi
 git push origin ${VERSION}
 git push
 ```
+
+## Upload to NPM
+
+First update the `package.json` version.
+
+```
+make npm-publish
+```

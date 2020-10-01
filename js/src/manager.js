@@ -158,7 +158,6 @@ export default class IllusionistWidgetManager extends HTMLManager {
         }
 
         // Render Widget
-        console.log(widgetEl);
         await this.display_view("", view, { el: widgetEl });
 
         // Set listeners for onChange state

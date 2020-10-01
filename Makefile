@@ -87,6 +87,11 @@ npm-dev:  ## Build JS with watch
 	cd $(CURDIR)/js/; npm run dev
 
 
+npm-publish:  ## Publish NPM
+	cd $(CURDIR)/js/; npm version
+	cd $(CURDIR)/js/; npm publish --access public
+
+
 cleanjs:  ## Clean JS build files
 	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.js
 	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.js.map
@@ -108,6 +113,12 @@ clean-js:  # Clean JS
 
 # ------------------------------------------------------------------------------
 # Docs
+
+
+.PHONY: example
+example:  ## Run nbconvert on one example
+	jupyter nbconvert ./examples/widget-gallery.ipynb --to illusionist
+
 
 .PHONY: examples
 examples:  ## Run nbconvert the examples (dev)

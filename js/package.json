@@ -1,6 +1,6 @@
 {
     "name": "@danielfrg/illusionist",
-    "version": "0.1.2",
+    "version": "0.2.2",
     "description": "Client-only Jupyter Widgets",
     "author": "Daniel Rodriguez",
     "license": "Apache-2.0",
@@ -29,7 +29,8 @@
         "test:coverage": "jest --coverage",
         "test:update": "jest -u",
         "test:watch": "jest --watch",
-        "publish": "npm version && npm publish --access public"
+        "publish": "npm publish --access public",
+        "version": "npm version"
     },
     "dependencies": {
         "@jupyter-widgets/base": "4.0.0-alpha.1",

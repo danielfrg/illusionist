@@ -30,9 +30,10 @@ nbconvert template static directory.
 make npm-dev
 ```
 
-Now run nbconvert on the examples:
+Now run nbconvert on one or all the examples:
 
 ```
+make example
 make examples
 ```
 

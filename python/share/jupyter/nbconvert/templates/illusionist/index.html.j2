@@ -1,0 +1,32 @@
+{% extends "lab/index.html.j2" %}
+
+{% block jupyter_widgets %}
+{% endblock jupyter_widgets %}
+
+{%- block footer %}
+
+{%- if "widgets" in nb.metadata %}
+
+  {%- set mimetype = 'application/vnd.jupyter.widget-state+json'-%}
+  {%- if mimetype in nb.metadata.get("widgets", {}) %}
+  <script type="{{ mimetype }}">
+  {{ nb.metadata.widgets[mimetype] | json_dumps }}
+  </script>
+  {%- endif -%}
+
+  {%- set mimetype = "application/vnd.illusionist.widget-onchange+json" -%}
+  {%- if mimetype in nb.metadata.get("widgets", {}) %}
+  <script type="{{ mimetype }}">
+  {{ nb.metadata.widgets[mimetype] | json_dumps }}
+  </script>
+  {%- endif %}
+
+  {%- if resources.illusionist_devmode %}
+  <script src="./static/dist/illusionist-embed.js"></script>
+  {%- else -%}
+  {{ include_js("./static/dist/illusionist-embed.js") }}
+  {%- endif %}
+{%- endif %}
+
+</html>
+{%- endblock footer-%}

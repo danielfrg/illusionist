@@ -90,7 +90,7 @@ setup(
         ],
     },
     options={"bdist_wheel": {"universal": "1"}},
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     setup_requires=["setuptools_scm"],
     install_requires=read_file("requirements-package.txt").splitlines(),
     extras_require={
@@ -107,7 +107,6 @@ setup(
     keywords=[],
     classifiers=[
         "License :: OSI Approved :: Apache Software License",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],

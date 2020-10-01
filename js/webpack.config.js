@@ -78,4 +78,14 @@ module.exports = [
         mode: "development",
         devtool: "source-map",
     },
+    {
+        entry: [path.resolve(__dirname, "src", "embed.js")],
+        output: {
+            filename: "illusionist-embed.js",
+            path: distRoot,
+        },
+        module: { rules: rules },
+        mode: "development",
+        devtool: "source-map",
+    },
 ];
