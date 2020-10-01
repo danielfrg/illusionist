@@ -34,8 +34,6 @@ export VERSION=1.0.0
 git commit -am "Release ${VERSION}" --allow-empty
 git tag ${VERSION}
 
-make cleanall
-make npm-install
 make build
 make upload-pypi
 git push origin ${VERSION}
