@@ -2,9 +2,10 @@ import { HTMLManager } from "@jupyter-widgets/html-manager";
 import { resolvePromisesDict } from "@jupyter-widgets/base";
 import Papa from "papaparse";
 
-const WIDGET_STATE_MIMETYPE = "application/vnd.jupyter.widget-state+json";
-const WIDGET_VIEW_MIMETYPE = "application/vnd.jupyter.widget-view+json";
-const WIDGET_ONCHANGE_MIMETYPE =
+export const WIDGET_STATE_MIMETYPE =
+    "application/vnd.jupyter.widget-state+json";
+export const WIDGET_VIEW_MIMETYPE = "application/vnd.jupyter.widget-view+json";
+export const WIDGET_ONCHANGE_MIMETYPE =
     "application/vnd.illusionist.widget-onchange+json";
 
 const NUMERIC_WIDGETS = [
@@ -43,8 +44,11 @@ const STRING_WIDGETS = [
 ];
 
 export default class IllusionistWidgetManager extends HTMLManager {
-    onChangeState = null;
-    modelIdToViewScriptTag = {};
+    constructor() {
+        super();
+        this.onChangeState = null;
+        this.modelIdToViewScriptTag = {};
+    }
 
     async loadState() {
         await this.loadInitialState();
@@ -122,17 +126,17 @@ export default class IllusionistWidgetManager extends HTMLManager {
      * Render one widgetd based on a ModelId
      */
     async renderWidget(modelId) {
-        let widgetEl = document.body.querySelector(`div[id="${modelId}"]`);
         const model = await this.get_model(modelId);
         const view = await this.create_view(model);
 
+        let widgetEl = document.body.querySelector(`div[id="${modelId}"]`);
         if (widgetEl) {
             // If there is a div with ID equal to the modelId
             // Render the widget inside that element
             widgetEl.innerHTML = "";
         } else {
-            // If not there is not a div with ID equal to the modelID
-            // We create that div in the parent of the script tag that has that ModelId
+            // If there is not a div with ID equal to the modelID
+            // We create a div in the parent of the script tag that has that modelID
             // We look for the viewScriptTag on the this.modelIdToViewScriptTag map
 
             const viewScriptTag = this.modelIdToViewScriptTag[modelId];
@@ -154,7 +158,8 @@ export default class IllusionistWidgetManager extends HTMLManager {
         }
 
         // Render Widget
-        await this.display_view(view, widgetEl);
+        console.log(widgetEl);
+        await this.display_view("", view, { el: widgetEl });
 
         // Set listeners for onChange state
         if (this.onChangeState) {

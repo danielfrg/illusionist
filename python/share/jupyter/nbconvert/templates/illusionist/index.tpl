@@ -28,6 +28,21 @@
   <script src="./static/dist/illusionist.js"></script>
   {%- else -%}
   <script>{{ include_template("./static/dist/illusionist.js") }}</script>
+  <script>
+      let widgetManager;
+
+      async function init() {
+          widgetManager = new IllusionistWidgetManager();
+          await widgetManager.loadState();
+          await widgetManager.renderAllWidgets();
+      }
+
+      if (document.readyState === "complete") {
+          init();
+      } else {
+          window.addEventListener("load", init);
+      }
+  </script>
   {%- endif %}
 
 {%- endif %}

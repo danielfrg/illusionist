@@ -1,6 +1,6 @@
 {
     "name": "@danielfrg/illusionist",
-    "version": "1.0.0",
+    "version": "0.1.1",
     "description": "Client-only Jupyter Widgets",
     "author": "Daniel Rodriguez",
     "license": "Apache-2.0",
@@ -28,13 +28,14 @@
         "test": "jest --silent",
         "test:coverage": "jest --coverage",
         "test:update": "jest -u",
-        "test:watch": "jest --watch"
+        "test:watch": "jest --watch",
+        "publish": "npm version && npm publish --access public"
     },
     "dependencies": {
-        "@jupyter-widgets/base": "^4.0.0-alpha.0",
-        "@jupyter-widgets/controls": "^3.0.0-alpha.0",
-        "@jupyter-widgets/html-manager": "^0.20.0-alpha.0",
-        "@jupyter-widgets/output": "^4.0.0-alpha.0",
+        "@jupyter-widgets/base": "4.0.0-alpha.1",
+        "@jupyter-widgets/controls": "3.0.0-alpha.1",
+        "@jupyter-widgets/html-manager": "0.20.0-alpha.1",
+        "@jupyter-widgets/output": "4.0.0-alpha.1",
         "papaparse": "^5.2.0"
     },
     "devDependencies": {

@@ -1,14 +1,6 @@
 import IllusionistWidgetManager from "./manager";
 
-const widgetManager = new IllusionistWidgetManager();
-
-async function init() {
-    await widgetManager.loadState();
-    await widgetManager.renderAllWidgets();
-}
-
-if (document.readyState === "complete") {
-    init();
-} else {
-    window.addEventListener("load", init);
-}
+export default IllusionistWidgetManager;
+export { WIDGET_STATE_MIMETYPE } from "./manager";
+export { WIDGET_VIEW_MIMETYPE } from "./manager";
+export { WIDGET_ONCHANGE_MIMETYPE } from "./manager";
