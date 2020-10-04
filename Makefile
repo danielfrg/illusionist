@@ -79,6 +79,7 @@ npm-build:  ## Build JS
 	cd $(CURDIR)/js/; npm run build
 
 
+npm-i: npm-install
 npm-install:  ## Install JS dependencies
 	cd $(CURDIR)/js/; npm install
 
@@ -104,11 +105,6 @@ cleanjs:  ## Clean JS build files
 	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.ttf
 	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.svg
 	cd $(CURDIR)/js/; rm -rf .cache dist lib
-
-
-clean-js:  # Clean JS
-	rm -rf "examples/static/*(.js|.js.map|.svg|.woff|.woff2|.eot|.ttf)"
-	cd js/; rm -rf .cache dist lib
 
 
 # ------------------------------------------------------------------------------
