@@ -23,8 +23,10 @@
 
   {%- if resources.illusionist_devmode %}
   <script src="./static/dist/illusionist-embed.js"></script>
+  <link rel="stylesheet" href="./static/dist/illusionist.css">
   {%- else -%}
   {{ resources.include_js("./static/dist/illusionist-embed.js") }}
+  {{ resources.include_css("./static/dist/illusionist.css") }}
   {%- endif %}
 {%- endif %}
 

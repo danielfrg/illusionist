@@ -1,6 +1,8 @@
 var path = require("path");
 const FileManagerPlugin = require("filemanager-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+    .BundleAnalyzerPlugin;
 
 var pythonPkgStatic = path.resolve(
     __dirname,
@@ -37,6 +39,7 @@ module.exports = [
                     ],
                 },
             }),
+            // new BundleAnalyzerPlugin(),
         ],
         module: {
             rules: [
