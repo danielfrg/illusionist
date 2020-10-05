@@ -4,7 +4,11 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
     .BundleAnalyzerPlugin;
 
-var pythonPkgStatic = path.resolve(
+const extractPlugin = {
+    loader: MiniCssExtractPlugin.loader,
+};
+
+const pythonPkgStatic = path.resolve(
     __dirname,
     "..",
     "python",
@@ -17,16 +21,18 @@ var pythonPkgStatic = path.resolve(
     "dist"
 );
 
-module.exports = [
-    {
-        entry: [path.resolve(__dirname, "src", "embed.js")],
+module.exports = (env, argv) => {
+    const IS_PRODUCTION = argv.mode === "production";
+
+    const config_dist = {
+        entry: path.resolve(__dirname, "src", "embed.js"),
         output: {
             path: path.resolve(__dirname, "dist"),
             filename: "illusionist-embed.js",
         },
         plugins: [
             new MiniCssExtractPlugin({
-                filename: "illusionist.css",
+                filename: "illusionist-embed.css",
             }),
             // Copy the output to the Python Package
             new FileManagerPlugin({
@@ -51,52 +57,33 @@ module.exports = [
                 },
                 // Jupyter Widgets CSS
                 {
-                    test: /\.css$/i,
-                    use: [MiniCssExtractPlugin.loader, "css-loader"],
+                    test: /\.s?[ac]ss$/,
+                    use: [
+                        IS_PRODUCTION
+                            ? extractPlugin
+                            : require.resolve("style-loader"),
+                        "css-loader",
+                        // "sass-loader",
+                    ],
                     // use: ["null-loader"],
                 },
-                // Jupyter Widget Icons
-                { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, use: ["url-loader"] },
-                // Required to load font-awesome
-                { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, use: ["file-loader"] },
-                { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, use: ["file-loader"] },
-                { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, use: ["file-loader"] },
-                { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, use: ["file-loader"] },
+                // Bundle Jupyter Widgets and Font Awesome
+                {
+                    test: /\.(eot|ttf|woff|woff2|svg|png|gif|jpe?g)$/,
+                    loader: require.resolve("url-loader"),
+                    // loader: require.resolve("file-loader"),
+                    // options: {
+                    //     name: "[name].[ext]?[hash]",
+                    // outputPath: "assets/",
+                    // },
+                },
             ],
         },
         mode: "development",
         devtool: "source-map",
-    },
-    // {
-    //     entry: [path.resolve(__dirname, "src", "index.js")],
-    //     output: {
-    //         path: path.resolve(__dirname, "lib"),
-    //         filename: "index.js",
-    //         libraryTarget: "commonjs2",
-    //     },
-    //     module: {
-    //         rules: [
-    //             {
-    //                 test: /\.(js)$/,
-    //                 include: path.resolve(__dirname, "src"),
-    //                 // exclude: /node_modules/,
-    //                 use: ["babel-loader"],
-    //             },
-    //             // Jupyter Widgets CSS
-    //             { test: /\.css$/i, use: ["url-loader"] },
-    //             // Jupyter Widget Icons
-    //             { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, use: ["url-loader"] },
-    //             // Required to load font-awesome
-    //             { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, use: ["file-loader"] },
-    //             { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, use: ["file-loader"] },
-    //             { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, use: ["file-loader"] },
-    //             { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, use: ["file-loader"] },
-    //         ],
-    //     },
-    //     optimization: {
-    //         minimize: false,
-    //     },
-    //     mode: "development",
-    //     devtool: "source-map",
-    // },
-];
+    };
+
+    let config = [config_dist];
+
+    return config;
+};
