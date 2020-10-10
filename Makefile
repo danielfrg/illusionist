@@ -111,7 +111,8 @@ cleanjs:  ## Clean JS build files
 # Docs
 
 .PHONY: docs
-docs:  docs-examples-html  ## Build docs
+docs:  ## Build docs
+	$(MAKE) docs-examples-html
 	mkdocs build
 	$(MAKE) docs-copy-notebooks
 

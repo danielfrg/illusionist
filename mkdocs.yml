@@ -1,20 +1,20 @@
 site_name: Illusionist
-site_url: https://github.com/danielfrg/illusionist
+site_url: https://illusionist.extrapolations.dev
 copyright: Copyright 2019 - 2020 Daniel Rodriguez
-
-repo_name: "danielfrg/illusionist"
-repo_url: "https://github.com/danielfrg/illusionist"
-edit_uri: ""
 
 nav:
   - Home: index.md
   - Usage: usage.ipynb
   - FAQ: faq.md
 
+repo_name: danielfrg/illusionist
+repo_url: https://github.com/danielfrg/illusionist
+edit_uri: ""
+
 theme:
-  name: "material"
-  custom_dir: "docs/theme"
-  favicon: "/assets/img/favicon.ico"
+  name: material
+  custom_dir: docs/theme
+  favicon: /assets/img/favicon.ico
   logo: /assets/img/icon.png
 
 extra_css:
