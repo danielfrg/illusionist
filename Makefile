@@ -110,41 +110,31 @@ cleanjs:  ## Clean JS build files
 # ------------------------------------------------------------------------------
 # Docs
 
-
-.PHONY: example
-example:  ## Run nbconvert on one example
-	jupyter nbconvert ./examples/widget-gallery.ipynb --to illusionist
-
-
-.PHONY: examples
-examples:  ## Run nbconvert the examples (dev)
-	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/widget-gallery.ipynb --to illusionist
-	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/multiplier.ipynb --to illusionist
-	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/linked.ipynb --to illusionist
-	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/matplotlib.ipynb --to illusionist
-	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/widget-gallery.ipynb --output=widget-gallery.ipynb --to illusionist-nb --execute
-	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/multiplier.ipynb --output=multiplier.ipynb --to illusionist-nb --execute
-	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/linked.ipynb --output=linked.ipynb --to illusionist-nb --execute
-	ILLUSIONIST_DEV_MODE=0 jupyter nbconvert ./examples/matplotlib.ipynb --output=matplotlib.ipynb --to illusionist-nb --execute
-
-
-serve-examples:  ## Serve examples
-	cd $(CURDIR)/examples; python -m http.server
-
-
-docs:  docs-examples  ## Build mkdocs
-	mkdocs build --config-file $(CURDIR)/mkdocs.yml
-
-
-docs-examples:  ## Run nbconvert on the docs examples
-	jupyter nbconvert --to illusionist ./examples/widget-gallery.ipynb --output-dir=./docs/examples/
-	jupyter nbconvert --to illusionist ./examples/multiplier.ipynb --output-dir=./docs/examples/
-	jupyter nbconvert --to illusionist ./examples/linked.ipynb --output-dir=./docs/examples/
-	jupyter nbconvert --to illusionist ./examples/matplotlib.ipynb --output-dir=./docs/examples/
+.PHONY: docs
+docs:  docs-examples-html  ## Build docs
+	mkdocs build
+	$(MAKE) docs-copy-notebooks
 
 
 serve-docs:  ## Serve docs
 	mkdocs serve
+
+
+docs-examples-html:  ## Run nbconvert on the docs examples
+	cd $(CURDIR)/examples jupyter nbconvert *.ipynb --output-dir=$(CURDIR)/docs/examples/ --to illusionist
+
+
+docs-copy-notebooks:  ## Execute example notebooks into docs output
+	cd $(CURDIR)/examples jupyter nbconvert *.ipynb --output-dir=$(CURDIR)/site/examples/notebooks --to illusionist-nb  --execute
+
+
+.PHONY: example
+example:  ## Run nbconvert on one example
+	cd $(CURDIR)/examples; ILLUSIONIST_DEV_MODE=0 jupyter nbconvert widget-gallery.ipynb --to illusionist
+
+
+serve-examples:  ## Serve examples
+	cd $(CURDIR)/examples; python -m http.server
 
 
 # ------------------------------------------------------------------------------
