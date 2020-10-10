@@ -4,7 +4,7 @@
 [![Testing](https://github.com/danielfrg/illusionist/workflows/test/badge.svg)](https://github.com/danielfrg/illusionist/actions)
 [![Docs](https://github.com/danielfrg/illusionist/workflows/docs/badge.svg)](https://illusionist.extrapolations.dev/)
 [![Coverage Status](https://codecov.io/gh/danielfrg/illusionist/branch/master/graph/badge.svg)](https://codecov.io/gh/danielfrg/illusionist?branch=master)
-[![License](http://img.shields.io/:license-Apache%202-blue.svg)](https://github.com/danielfrg/illusionist/blob/master/LICENSE.txt)
+[![License](https://img.shields.io/:license-Apache%202-blue.svg)](https://github.com/danielfrg/illusionist/blob/master/LICENSE.txt)
 
 Illusionist takes a Jupyter Notebook with widgets and converts it to a
 an HTML report that maintains the interactivity of the widgets without a
