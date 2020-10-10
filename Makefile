@@ -121,11 +121,11 @@ serve-docs:  ## Serve docs
 
 
 docs-examples-html:  ## Run nbconvert on the docs examples
-	cd $(CURDIR)/examples jupyter nbconvert *.ipynb --output-dir=$(CURDIR)/docs/examples/ --to illusionist
+	cd $(CURDIR)/examples; jupyter nbconvert *.ipynb --output-dir=$(CURDIR)/docs/examples/ --to illusionist
 
 
 docs-copy-notebooks:  ## Execute example notebooks into docs output
-	cd $(CURDIR)/examples jupyter nbconvert *.ipynb --output-dir=$(CURDIR)/site/examples/notebooks --to illusionist-nb  --execute
+	cd $(CURDIR)/examples; jupyter nbconvert *.ipynb --output-dir=$(CURDIR)/site/examples/notebooks --to illusionist-nb  --execute
 
 
 .PHONY: example
