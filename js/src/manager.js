@@ -1,4 +1,4 @@
-import { HTMLManager } from "@jupyter-widgets/html-manager";
+import { HTMLManager, requireLoader } from "@jupyter-widgets/html-manager";
 import { resolvePromisesDict } from "@jupyter-widgets/base";
 import Papa from "papaparse";
 
@@ -46,6 +46,7 @@ const STRING_WIDGETS = [
 export default class IllusionistWidgetManager extends HTMLManager {
     constructor() {
         super();
+        this.loader = requireLoader;
         this.onChangeState = null;
         this.modelIdToViewScriptTag = {};
     }
