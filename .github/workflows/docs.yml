@@ -4,31 +4,43 @@ on:
   push:
     branches: [master]
   pull_request_target:
+  workflow_dispatch:
 
 jobs:
   docs:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        python-version: [3.8]
+        node-version: ["15"]
 
     steps:
       - uses: actions/checkout@v2
       - run: git fetch --prune --unshallow
 
-      - name: Set up Python
-        uses: actions/setup-python@v1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: Install Python dependencies
         run: |
+          which python
+          which pip
+          python --version
+          pip --version
           cd python
           python -m pip install --upgrade pip
           pip install -U -r requirements.txt
           pip freeze
 
-      - name: Setup node
-        uses: actions/setup-node@v2-beta
+      - name: Setup NodeJS ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
         with:
-          node-version: "12"
+          node-version: ${{ matrix.node-version }}
 
-      - name: Install JS dependencies
+      - name: Install JS deps
         run: |
           make npm-install
 
@@ -43,14 +55,6 @@ jobs:
         run: |
           make docs
 
-      - name: Push docs (branch)
-        uses: jsmrcaga/action-netlify-deploy@master
-        if: github.event_name == 'pull_request_target'
-        with:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          build_directory: site
-
       - name: Push docs (master)
         uses: jsmrcaga/action-netlify-deploy@master
         if: (github.event_name == 'push') && endsWith(github.ref, '/master')
@@ -58,6 +62,14 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_DEPLOY_TO_PROD: true
+          build_directory: site
+
+      - name: Push docs (branch)
+        uses: jsmrcaga/action-netlify-deploy@master
+        if: github.event_name == 'pull_request_target'
+        with:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           build_directory: site
 
       - name: Upload docs

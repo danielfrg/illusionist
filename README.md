@@ -2,7 +2,7 @@
 
 [![PyPI](https://badge.fury.io/py/illusionist.svg)](https://pypi.org/project/illusionist/)
 [![Testing](https://github.com/danielfrg/illusionist/workflows/test/badge.svg)](https://github.com/danielfrg/illusionist/actions)
-[![Docs](https://github.com/danielfrg/illusionist/workflows/docs/badge.svg)](https://illusionist.extrapolations.dev/)
+[![Docs](https://github.com/danielfrg/illusionist/workflows/docs/badge.svg)](https://illusionist.danielfrg.com/)
 [![Coverage Status](https://codecov.io/gh/danielfrg/illusionist/branch/master/graph/badge.svg)](https://codecov.io/gh/danielfrg/illusionist?branch=master)
 [![License](https://img.shields.io/:license-Apache%202-blue.svg)](https://github.com/danielfrg/illusionist/blob/master/LICENSE.txt)
 
@@ -24,4 +24,4 @@ just run one `nbconvert` command.
 The generated assets are easy to deploy, scale and have a big longevity by
 removing a lot of deployment requirements and dependencies.
 
-Learn more and see examples in [the docs](https://illusionist.extrapolations.dev/).
+Learn more and see examples in [the docs](https://illusionist.danielfrg.com/).

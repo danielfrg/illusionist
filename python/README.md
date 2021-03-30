@@ -3,7 +3,7 @@
 [![PyPI](https://badge.fury.io/py/illusionist.svg)](https://pypi.org/project/illusionist/)
 [![Testing](https://github.com/danielfrg/illusionist/workflows/test/badge.svg)](https://github.com/danielfrg/illusionist/actions)
 [![License](http://img.shields.io/:license-Apache%202-blue.svg)](https://github.com/danielfrg/illusionist/blob/master/LICENSE.txt)
-[![Docs](https://github.com/danielfrg/jupyter-flex/workflows/docs/badge.svg)](https://jupyter-flex.extrapolations.dev/)
+[![Docs](https://github.com/danielfrg/jupyter-flex/workflows/docs/badge.svg)](https://jupyter-flex.danielfrg.com/)
 
 Illusionist takes a Jupyter Notebooks with widgets and converts it to a
 dynamic HTML report that maintains the interactivity of the widgets without a

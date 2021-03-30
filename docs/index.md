@@ -44,8 +44,8 @@ jupyter nbconvert --to illusionist-nb --execute your-notebook.ipynb --output=out
 
 ## Examples
 
-- Widget Galley: [html](/examples/widget-gallery.html) - [ipynb](https://nbviewer.extrapolations.dev/#/url/raw.githubusercontent.com/danielfrg/illusionist/master/examples/widget-gallery.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/widget-gallery.html)
-- Output Widgets using Matplotlib: [html](/examples/matplotlib.html) - [ipynb](https://nbviewer.extrapolations.dev/#/url/raw.githubusercontent.com/danielfrg/illusionist/master/examples/matplotlib.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/matplotlib.html)
-- Multiplier: [html](/examples/multiplier.html) - [ipynb](https://nbviewer.extrapolations.dev/#/url/raw.githubusercontent.com/danielfrg/illusionist/master/examples/multiplier.ipynb)
-- Linked Widgets: [html](/examples/linked.html) - [ipynb](https://nbviewer.extrapolations.dev/#/url/raw.githubusercontent.com/danielfrg/illusionist/master/examples/linked.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/linked.html)
+- Widget Galley: [html](/examples/widget-gallery.html) - [ipynb](https://nbviewer.danielfrg.com/#/url/raw.githubusercontent.com/danielfrg/illusionist/master/examples/widget-gallery.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/widget-gallery.html)
+- Output Widgets using Matplotlib: [html](/examples/matplotlib.html) - [ipynb](https://nbviewer.danielfrg.com/#/url/raw.githubusercontent.com/danielfrg/illusionist/master/examples/matplotlib.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/matplotlib.html)
+- Multiplier: [html](/examples/multiplier.html) - [ipynb](https://nbviewer.danielfrg.com/#/url/raw.githubusercontent.com/danielfrg/illusionist/master/examples/multiplier.ipynb)
+- Linked Widgets: [html](/examples/linked.html) - [ipynb](https://nbviewer.danielfrg.com/#/url/raw.githubusercontent.com/danielfrg/illusionist/master/examples/linked.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/linked.html)
 
