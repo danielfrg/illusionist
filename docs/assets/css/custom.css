@@ -1,39 +1,37 @@
 :root {
-  /* Default color shades */
-  --md-default-fg-color: hsla(0, 0%, 0%, 0.87);
-  --md-default-fg-color--light: hsla(0, 0%, 0%, 0.54);
-  --md-default-fg-color--lighter: hsla(0, 0%, 0%, 0.26);
-  --md-default-fg-color--lightest: hsla(0, 0%, 0%, 0.07);
-  --md-default-bg-color: hsla(0, 0%, 100%, 1);
-  --md-default-bg-color--light: hsla(0, 0%, 100%, 0.7);
-  --md-default-bg-color--lighter: hsla(0, 0%, 100%, 0.3);
-  --md-default-bg-color--lightest: hsla(0, 0%, 100%, 0.12);
+    /* Default color shades */
+    --md-default-fg-color: hsla(0, 0%, 0%, 0.87);
+    --md-default-fg-color--light: hsla(0, 0%, 0%, 0.54);
+    --md-default-fg-color--lighter: hsla(0, 0%, 0%, 0.26);
+    --md-default-fg-color--lightest: hsla(0, 0%, 0%, 0.07);
+    --md-default-bg-color: hsla(0, 0%, 100%, 1);
+    --md-default-bg-color--light: hsla(0, 0%, 100%, 0.7);
+    --md-default-bg-color--lighter: hsla(0, 0%, 100%, 0.3);
+    --md-default-bg-color--lightest: hsla(0, 0%, 100%, 0.12);
 
-  /* Primary color shades */
-  --md-primary-fg-color: rgb(3, 102, 214);
-  /* --md-primary-fg-color: hsla(231deg, 48%, 48%, 1); */
-  --md-primary-fg-color--light: hsla(230deg, 44%, 64%, 1);
-  --md-primary-fg-color--dark: hsla(232deg, 54%, 41%, 1);
-  --md-primary-bg-color: var(--md-default-bg-color);
-  --md-primary-bg-color--light: var(--md-default-bg-color--light);
+    /* Primary color shades */
+    --md-primary-fg-color: rgb(3, 102, 214);
+    /* --md-primary-fg-color: hsla(231deg, 48%, 48%, 1); */
+    --md-primary-fg-color--light: hsla(230deg, 44%, 64%, 1);
+    --md-primary-fg-color--dark: hsla(232deg, 54%, 41%, 1);
+    --md-primary-bg-color: var(--md-default-bg-color);
+    --md-primary-bg-color--light: var(--md-default-bg-color--light);
 
-  /* Accent color shades */
-  --md-accent-fg-color: #1563ff;
-  /* --md-accent-fg-color: hsla(218deg, 100%, 63%, 1); */
-  --md-accent-fg-color--transparent: hsla(218deg, 100%, 63%, 0.1);
-  --md-accent-bg-color: var(--md-default-bg-color);
-  --md-accent-bg-color--light: var(--md-default-bg-color--light);
+    /* Accent color shades */
+    --md-accent-fg-color: #1563ff;
+    /* --md-accent-fg-color: hsla(218deg, 100%, 63%, 1); */
+    --md-accent-fg-color--transparent: hsla(218deg, 100%, 63%, 0.1);
+    --md-accent-bg-color: var(--md-default-bg-color);
+    --md-accent-bg-color--light: var(--md-default-bg-color--light);
 
-  /* Code block color shades */
-  /* --md-code-bg-color:                  ...;
-  --md-code-fg-color:                  ...; */
+    --md-primary-fg-color--dark: #24292e;
 }
 
 .md-header {
     background-color: #24292e;
 }
 
-.md-header[data-md-state=shadow] {
+.md-header[data-md-state="shadow"] {
     transition: none;
     box-shadow: none;
 }
@@ -43,70 +41,77 @@
 }
 
 a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
-a.md-nav__link:before {
-    color: var(--md-primary-fg-color);
-    content: '\203A';
-    left: 20px;
-    opacity: 0.8;
-    position: absolute;
-    height: 100%;
-    width: 8px;
-    margin-top: -1px;
-}
-
-a.md-nav__link {
-  text-decoration: none;
-  padding: 6px 0 6px 15px
-}
-
-a.md-nav__link--active{
-  /* font-weight: 600; */
-}
-
-table code {
-    word-break: normal !important;
-}
 
 /* Image grid */
-
-.image-grid-row {
+.image-grid {
     display: flex;
-    flex-direction: row;
-    margin: 0;
+    flex: 1 1 100%;
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin: 15px 0;
 }
-
-figure.image-card {
+.image-grid .image-card {
     display: flex;
     flex-direction: column;
-	align-items: center;
-    width: 300px;
-    margin: 5px;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+    padding: 5px;
 }
-
-.image-card img {
-    margin: auto;
-    vertical-align: middle;
+.image-grid .image-card:hover {
+    background-color: #99999924;
 }
-
-.image-card figcaption {
+.image-grid .image-card a {
+    color: #676767;
+}
+.image-grid .image-card a:hover {
+    color: #676767;
+}
+.image-grid .image-card figure:hover {
+    background: none;
+}
+.image-grid .image-card figcaption {
     color: #676767;
     font-size: 13px;
     text-align: center;
     margin-top: 10px;
+    margin-bottom: 0px;
+}
+.image-grid .image-card figcaption:hover {
+    color: #676767;
+}
+.image-grid img {
+    margin: 0 auto !important;
+    width: 100%;
+    vertical-align: middle;
+}
+@media (min-width: 576px) {
+    .image-grid {
+        flex-direction: row;
+    }
+    .image-grid .image-card {
+        width: 250px;
+    }
+    .image-grid img {
+        padding-bottom: 0;
+    }
 }
 
 /* Terminal */
-
 p.code-header {
     color: #3c3c3c;
     background-color: rgba(219, 219, 219, 0.8);
     margin: 1em 0 -1.2em;
     padding: 0.1em 1em;
-    font-size: 0.9em;
-    font-family: "Roboto Mono","Courier New",Courier,monospace;
+    font-size: 0.8em;
+    font-family: "Roboto Mono", "Courier New", Courier, monospace;
+}
+
+pre {
+    overflow: auto;
 }
 
 pre .code-noselect {
@@ -115,7 +120,6 @@ pre .code-noselect {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    /* padding-right: 6px; */
 }
 
 .md-footer-meta {
