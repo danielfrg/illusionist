@@ -7,20 +7,31 @@ on:
     branches: [master]
   schedule:
     - cron: "0 5 * * *"
+  workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9]
 
     steps:
       - uses: actions/checkout@v2
       - run: git fetch --prune --unshallow
 
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: Install Python dependencies
         run: |
+          which python
+          which pip
+          python --version
+          pip --version
           cd python
           python -m pip install --upgrade pip
           pip install -U -r requirements.txt
