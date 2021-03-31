@@ -20,8 +20,8 @@ dependencies:
 
       # Docs
       - mkdocs
-      - mkdocs-material
-      - mkdocs-jupyter
+      - mkdocs-material==7.1.0
+      - mkdocs-jupyter>=0.16.1
       - mkdocs-minify-plugin
       - pygments
       - pymdown-extensions
