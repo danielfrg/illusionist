@@ -1,7 +1,7 @@
 # This code is executed on the Kernel that also executes the notebook
 
 try:
-    # Be sure to source widgets.py on the kernel before sourcing this
+    # This will fail when executed in the Kernel is just for linting to work
     from .widgets import VALUE_WIDGETS, CONTROL_WIDGETS, NUMERIC_OUTPUT_WIDGETS, BOOLEAN_OUTPUT_WIDGET, SELECTION_OUTPUT_WIDGETS, STRING_OUTPUT_WIDGETS
     import ipywidgets as W
 except:
