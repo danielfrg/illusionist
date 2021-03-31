@@ -9,10 +9,6 @@ write_to = "python/illusionist/_generated_version.py"
 norecursedirs = ".git,dist,build,env,venv"
 addopts = "illusionist/tests --cov=illusionist --cov-report term-missing"
 
-[tool.coverage.run]
-parallel = true
-branch = true
-
 [tool.coverage.report]
 omit = ["illusionist/_generated_version.py", "illusionist/tests/*"]
 

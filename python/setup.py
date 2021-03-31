@@ -1,5 +1,4 @@
 import os
-import shutil
 import sys
 
 from setuptools import find_packages, setup
@@ -30,7 +29,7 @@ def parse_git(root, **kwargs):
 def get_data_files():
     # Add the templates
     data_files = []
-    for (dirpath, dirnames, filenames) in os.walk("share/jupyter/nbconvert/templates/"):
+    for (dirpath, dirnames, filenames) in os.walk("share/jupyter/"):
         if filenames:
             data_files.append(
                 (dirpath, [os.path.join(dirpath, filename) for filename in filenames])
@@ -97,17 +96,22 @@ setup(
         "test": ["pytest"],
         "dev": read_file("requirements-dev.txt").splitlines(),
     },
-    description="",
+    description="Interactive Jupyter Widgets without a Kernel",
     long_description=read_file("README.md"),
     long_description_content_type="text/markdown",
     license="Apache License, Version 2.0",
     maintainer="Daniel Rodriguez",
     maintainer_email="daniel@danielfrg.com",
     url="https://github.com/danielfrg/illusionist",
-    keywords=[],
+    keywords=[
+        "jupyter",
+        "widgets",
+        "ipywidgets",
+    ],
     classifiers=[
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
 )
