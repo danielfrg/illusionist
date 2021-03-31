@@ -9,6 +9,10 @@ requires = ["setuptools>=42", "setuptools_scm[toml]>=3.4", "wheel"]
 norecursedirs = ".git,dist,build,env,venv"
 addopts = "illusionist/tests --cov=illusionist --cov-report term-missing"
 
+[tool.coverage.run]
+parallel = true
+branch = true
+
 [tool.coverage.report]
 omit = ["illusionist/_generated_version.py", "illusionist/tests/*"]
 
@@ -28,13 +32,14 @@ exclude = '''
   | buck-out
   | build
   | dist
+  | _generated_version.py
   | node_modules
 )
 '''
 
 [tool.isort]
 # https://black.readthedocs.io/en/stable/the_black_code_style.html#how-black-wraps-lines
-multi_line_output=3
+multi_line_output = 3
 lines_after_imports = 2
 force_grid_wrap = 0
 include_trailing_comma = "true"

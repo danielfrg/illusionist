@@ -1,6 +1,6 @@
-# Used for CI - It should match environment.yml
+# Used for CI: It should match environment.yml
 
-# Base
+# Dev tools
 setuptools
 setuptools_scm
 pylint
@@ -9,24 +9,27 @@ black
 isort
 twine
 wheel
+
+# Package deps
+nbconvert>=6.0.6,<7
+nbclient>=0.5.0
+nbformat>=5.0.7
+
+# Testing
 pytest
 pytest-cov
 
 # Docs
-mkdocs
+mkdocs>=1.1.0,<2
 mkdocs-material==7.1.0
 mkdocs-jupyter>=0.16.1
 mkdocs-minify-plugin
 pygments
 pymdown-extensions
 
-# Package
-nbconvert>=6.0.6,<7
-nbclient>=0.5.0
-nbformat>=5.0.7
-
-# Other
+# Examples
 notebook
 jupyterlab
 ipywidgets
+numpy
 matplotlib

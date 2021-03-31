@@ -2,26 +2,26 @@
 
 ## Development environment
 
-Python:
+### Python
 
-Create conda env
+Create Python env
 
 ```
 make env
 conda activate illusionist
-make extensions
 ```
 
-Install the package on dev mode
+Install package for developmentt
 
 ```
 make develop
 ```
 
-JS:
+### JS
+
+Install deps
 
 ```
-# Install deps
 make npm-install
 ```
 
@@ -52,7 +52,11 @@ With this setup:
 -   To see changes on the JS part you can just refresh the page
 -   To see changes on the python (nbconvert) part, run `make examples` again
 
-## Testing
+## Tests
+
+```
+make test
+```
 
 Check linting and format
 
@@ -60,10 +64,3 @@ Check linting and format
 make check
 make fmt
 ```
-
-Run tests
-
-````
-make test
-```
-````
