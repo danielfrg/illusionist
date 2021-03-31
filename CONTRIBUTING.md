@@ -1,16 +1,20 @@
-# Development
+# How to Contribute
 
-Setting up development for quick iteration
+## Development environment
 
 Python:
 
+Create conda env
+
 ```
-# Create conda env
 make env
 conda activate illusionist
 make extensions
+```
 
-# Install package
+Install the package on dev mode
+
+```
 make develop
 ```
 
@@ -21,7 +25,7 @@ JS:
 make npm-install
 ```
 
-## Iteration cycle
+### Iteration cycle
 
 Start webpack in watch mode, this will place the built files in the
 nbconvert template static directory.
@@ -49,11 +53,15 @@ With this setup:
 
 ## Testing
 
+Check linting and format
+
 ```
-# Check linting and format
 make check
 make fmt
+```
 
-# Run tests
+Run tests
+
+````
 make test
 ```

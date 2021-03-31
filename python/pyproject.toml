@@ -5,6 +5,10 @@ requires = ["setuptools", "setuptools_scm", "wheel"]
 root = "../"
 write_to = "python/illusionist/_generated_version.py"
 
+[tool.pytest.ini_options]
+norecursedirs = ".git,dist,build,env,venv"
+addopts = "illusionist/tests --cov=illusionist --cov-report term-missing"
+
 [tool.coverage.run]
 parallel = true
 branch = true
@@ -13,7 +17,7 @@ branch = true
 omit = ["illusionist/_generated_version.py", "illusionist/tests/*"]
 
 [tool.black]
-target-version = ["py36", "py37", "py38"]
+target-version = ["py37", "py38"]
 exclude = '''
 (
     asv_bench/env
@@ -28,6 +32,7 @@ exclude = '''
   | buck-out
   | build
   | dist
+  | node_modules
 )
 '''
 

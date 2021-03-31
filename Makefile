@@ -11,39 +11,37 @@ PYTEST_K ?= ""
 
 first: help
 
-# ------------------------------------------------------------------------------
-# Package build
 
-build: npm-build python-build  ## Build assets and Python package
+build: npm-build python-build  ## Build JS and Python package
 
 
 # ------------------------------------------------------------------------------
 # Python
 
-python-build:  ## Build Python package (sdist)
-	cd $(CURDIR)/python; python setup.py sdist
-
-
 env:  ## Create dev environment
-	cd $(CURDIR)/python; conda env create
+	cd $(CURDIR)/python; mamba env create
+
+
+develop:  ## Install package for development
+	cd $(CURDIR)/python; python -m pip install --no-build-isolation -e .
 
 
 extensions:  ## Install Jupyter extensions
 	jupyter labextension install @jupyter-widgets/jupyterlab-manager
 
 
-develop:  ## Install package for development
-	cd $(CURDIR)/python; python -m pip install --no-build-isolation -e . ;
+python-build:  ## Build Python package (sdist)
+	cd $(CURDIR)/python; python setup.py sdist
 
 
 check:  ## Check linting
 	cd $(CURDIR)/python; flake8
-	cd $(CURDIR)/python; isort --check-only --diff --recursive --project jupyter_flex --section-default THIRDPARTY .
-	cd $(CURDIR)/python; black --check .
+	cd $(CURDIR)/python; isort . --project jupyter_flex --check-only --diff
+	cd $(CURDIR)/python; black . --check
 
 
 fmt:  ## Format source
-	cd $(CURDIR)/python; isort --recursive --project jupyter-flex --section-default THIRDPARTY .
+	cd $(CURDIR)/python; isort . --project jupyter-flex
 	cd $(CURDIR)/python; black .
 
 
@@ -129,7 +127,6 @@ docs-copy-notebooks:  ## Execute example notebooks into docs output
 	cd $(CURDIR)/examples; jupyter nbconvert *.ipynb --output-dir=$(CURDIR)/site/examples/notebooks --to illusionist-nb  --execute
 
 
-.PHONY: example
 example:  ## Run nbconvert on one example
 	cd $(CURDIR)/examples; ILLUSIONIST_DEV_MODE=0 jupyter nbconvert widget-gallery.ipynb --to illusionist
 
@@ -141,6 +138,7 @@ serve-examples:  ## Serve examples
 # ------------------------------------------------------------------------------
 # Other
 
+reset: cleanall  ## Same as cleanall
 cleanall: cleanpython cleanjs  ## Clean everything
 	rm -rf site $(CURDIR)/docs/examples/*.html
 	cd $(CURDIR)/examples/; rm -rf *.html

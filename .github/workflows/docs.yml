@@ -53,6 +53,7 @@ jobs:
 
       - name: Install package
         run: |
+          cd python
           pip install dist/*.tar.gz
           pip freeze
 
