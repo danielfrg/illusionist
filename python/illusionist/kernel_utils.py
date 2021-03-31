@@ -1,9 +1,9 @@
 # This code is executed on the Kernel that also executes the notebook
 
-
 try:
     # Be sure to source widgets.py on the kernel before sourcing this
-    import .widgets as W  # noqa
+    from .widgets import VALUE_WIDGETS, CONTROL_WIDGETS, NUMERIC_OUTPUT_WIDGETS, BOOLEAN_OUTPUT_WIDGET, SELECTION_OUTPUT_WIDGETS, STRING_OUTPUT_WIDGETS
+    import ipywidgets as W
 except:
     pass
 
@@ -23,14 +23,14 @@ def get_widgets_ids(widgets=None, kind=None):
     if kind == "value":
         value_widgets = []
         for model_id, obj in all_widgets.items():
-            if isinstance(obj, W.VALUE_WIDGETS):
+            if isinstance(obj, VALUE_WIDGETS):
                 value_widgets.append(model_id)
         return value_widgets
 
     if kind == "control":
         control_widgets = []
         for model_id, obj in all_widgets.items():
-            if isinstance(obj, W.CONTROL_WIDGETS) and not obj.disabled:
+            if isinstance(obj, CONTROL_WIDGETS) and not obj.disabled:
                 control_widgets.append(model_id)
         return control_widgets
 
@@ -40,14 +40,14 @@ def set_widget_value(widget_id, value):
     Set the value of a widget, based on a possible value
     """
     widget = W.Widget.widgets[widget_id]
-    if isinstance(widget, W.NUMERIC_OUTPUT_WIDGETS):
+    if isinstance(widget, NUMERIC_OUTPUT_WIDGETS):
         widget.value = value
         # raise Exception(widget, value, widget.value)
-    elif isinstance(widget, W.BOOLEAN_OUTPUT_WIDGETS):
+    elif isinstance(widget, BOOLEAN_OUTPUT_WIDGETS):
         widget.value = value
-    elif isinstance(widget, W.SELECTION_OUTPUT_WIDGETS):
+    elif isinstance(widget, SELECTION_OUTPUT_WIDGETS):
         widget.index = value
-    elif isinstance(widget, W.STRING_OUTPUT_WIDGETS):
+    elif isinstance(widget, STRING_OUTPUT_WIDGETS):
         return widget.value
     else:
         widget_type = type(widget)

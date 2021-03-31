@@ -1,7 +1,9 @@
 import pytest
 
+import ipywidgets as W
+
+import illusionist.widgets as W2
 from illusionist.preprocessor import hash_fn
-import illusionist.widgets as W
 
 from .utils import preprocessor
 
@@ -30,7 +32,7 @@ def test_hash_fn_int_multiple_single_value(class_):
     assert hash_fn(w_states) == "5,8"
 
 
-@pytest.mark.parametrize("class_", W.BOOLEAN_CONTROL_WIDGETS)
+@pytest.mark.parametrize("class_", W2.BOOLEAN_CONTROL_WIDGETS)
 def test_hash_fn_boolean(class_):
     w = class_()
     w_states = [w.get_state() for w in [w]]
@@ -41,7 +43,7 @@ def test_hash_fn_boolean(class_):
     assert hash_fn(w_states) == '"true"'
 
 
-@pytest.mark.parametrize("class_", W.BOOLEAN_CONTROL_WIDGETS)
+@pytest.mark.parametrize("class_", W2.BOOLEAN_CONTROL_WIDGETS)
 def test_hash_fn_boolean_multiple(class_):
     w1 = class_()
     w2 = class_()

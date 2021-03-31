@@ -8,8 +8,8 @@ from .utils import preprocessor
 
 
 def test_widget_matrix_IntSlider(preprocessor):
-    preprocessor.run_code("w = IntSlider(min=-3, max=0)")
-    preprocessor.run_code("lbl = Label()")
+    preprocessor.run_code("w = W.IntSlider(min=-3, max=0)")
+    preprocessor.run_code("lbl = W.Label()")
     in_id = preprocessor.run_code_eval("w.model_id")
     out_id = preprocessor.run_code_eval("lbl.model_id")
     in_ids = [in_id]
@@ -19,8 +19,8 @@ def test_widget_matrix_IntSlider(preprocessor):
 
 
 def test_widget_matrix_IntRangeSlider(preprocessor):
-    preprocessor.run_code("w = IntRangeSlider(min=0, max=2)")
-    preprocessor.run_code("lbl = Label()")
+    preprocessor.run_code("w = W.IntRangeSlider(min=0, max=2)")
+    preprocessor.run_code("lbl = W.Label()")
     in_id = preprocessor.run_code_eval("w.model_id")
     out_id = preprocessor.run_code_eval("lbl.model_id")
     in_ids = [in_id]
@@ -42,8 +42,8 @@ def test_widget_matrix_IntRangeSlider(preprocessor):
     ],
 )
 def test_widget_matrix_Selection(preprocessor, class_):
-    preprocessor.run_code(f'w = {class_}(options=["a", "b", "c"])')
-    preprocessor.run_code("lbl = Label()")
+    preprocessor.run_code(f'w = W.{class_}(options=["a", "b", "c"])')
+    preprocessor.run_code("lbl = W.Label()")
     in_id = preprocessor.run_code_eval("w.model_id")
     out_id = preprocessor.run_code_eval("lbl.model_id")
     in_ids = [in_id]
