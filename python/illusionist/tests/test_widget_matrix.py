@@ -1,7 +1,7 @@
-import ipywidgets
+# import ipywidgets
 import pytest
 
-from illusionist.preprocessor import possible_values
+# from illusionist.preprocessor import possible_values
 from illusionist.widgets import *  # noqa
 
 from .utils import preprocessor

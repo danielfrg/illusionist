@@ -1,12 +1,12 @@
 import pytest
 
 from illusionist.preprocessor import hash_fn
-from illusionist.widgets import *  # noqa
+import illusionist.widgets as W
 
 from .utils import preprocessor
 
 
-@pytest.mark.parametrize("class_", [IntSlider, BoundedIntText])
+@pytest.mark.parametrize("class_", [W.IntSlider, W.BoundedIntText])
 def test_hash_fn_int_single_value(class_):
     w = class_(min=1, max=5)
     w_states = [w.get_state() for w in [w]]
@@ -17,7 +17,7 @@ def test_hash_fn_int_single_value(class_):
     assert hash_fn(w_states) == "5"
 
 
-@pytest.mark.parametrize("class_", [IntSlider, BoundedIntText])
+@pytest.mark.parametrize("class_", [W.IntSlider, W.BoundedIntText])
 def test_hash_fn_int_multiple_single_value(class_):
     w1 = class_(min=1, max=5)
     w2 = class_(min=6, max=10)
@@ -30,7 +30,7 @@ def test_hash_fn_int_multiple_single_value(class_):
     assert hash_fn(w_states) == "5,8"
 
 
-@pytest.mark.parametrize("class_", BOOLEAN_CONTROL_WIDGETS)
+@pytest.mark.parametrize("class_", W.BOOLEAN_CONTROL_WIDGETS)
 def test_hash_fn_boolean(class_):
     w = class_()
     w_states = [w.get_state() for w in [w]]
@@ -41,7 +41,7 @@ def test_hash_fn_boolean(class_):
     assert hash_fn(w_states) == '"true"'
 
 
-@pytest.mark.parametrize("class_", BOOLEAN_CONTROL_WIDGETS)
+@pytest.mark.parametrize("class_", W.BOOLEAN_CONTROL_WIDGETS)
 def test_hash_fn_boolean_multiple(class_):
     w1 = class_()
     w2 = class_()
@@ -58,7 +58,8 @@ def test_hash_fn_boolean_multiple(class_):
 
 
 @pytest.mark.parametrize(
-    "class_", [SelectMultiple],
+    "class_",
+    [W.SelectMultiple],
 )
 def test_hash_fn_selection_multi_value(class_):
     options = ["a", "b"]

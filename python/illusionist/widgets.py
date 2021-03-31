@@ -1,30 +1,30 @@
-from ipywidgets import *  # noqa
+import ipywidgets as W
 
 
 NUMERIC_CONTROL_WIDGETS = (
-    IntSlider,
+    W.IntSlider,
     # FloatSlider,  # floats suck
     # FloatLogSlider,  # floats suck
-    IntRangeSlider,
+    W.IntRangeSlider,
     # FloatRangeSlider,  # floats suck
-    BoundedIntText,
+    W.BoundedIntText,
     # BoundedFloatText,  # floats suck
     # IntText,  # No open ended
     # FloatText,  # No open ended
 )
-NUMERIC_OUTPUT_WIDGETS = NUMERIC_CONTROL_WIDGETS + (IntProgress, FloatProgress)
+NUMERIC_OUTPUT_WIDGETS = NUMERIC_CONTROL_WIDGETS + (W.IntProgress, W.FloatProgress)
 
-BOOLEAN_CONTROL_WIDGETS = (ToggleButton, Checkbox)
-BOOLEAN_OUTPUT_WIDGETS = BOOLEAN_CONTROL_WIDGETS + (Valid,)
+BOOLEAN_CONTROL_WIDGETS = (W.ToggleButton, W.Checkbox)
+BOOLEAN_OUTPUT_WIDGETS = BOOLEAN_CONTROL_WIDGETS + (W.Valid,)
 
 SELECTION_CONTROL_WIDGETS = (
-    Dropdown,
-    RadioButtons,
-    Select,
-    SelectionSlider,
-    ToggleButtons,
-    SelectionRangeSlider,
-    SelectMultiple,
+    W.Dropdown,
+    W.RadioButtons,
+    W.Select,
+    W.SelectionSlider,
+    W.ToggleButtons,
+    W.SelectionRangeSlider,
+    W.SelectMultiple,
 )
 SELECTION_OUTPUT_WIDGETS = SELECTION_CONTROL_WIDGETS
 
@@ -33,7 +33,7 @@ STRING_CONTROL_WIDGETS = (
     # Textarea,  # No opeen ended
 )
 STRING_OUTPUT_WIDGETS = (
-    Label,
+    W.Label,
     # HTML,  # TODO
     # HTMLMath,  # TODO
     # Image,  # TODO
@@ -59,8 +59,8 @@ OUTPUT_WIDGETS = (
     + BOOLEAN_OUTPUT_WIDGETS
     + SELECTION_OUTPUT_WIDGETS
     + STRING_OUTPUT_WIDGETS
-    + (Output,)
+    + (W.Output,)
 )
 
 VALUE_WIDGETS = CONTROL_WIDGETS + OUTPUT_WIDGETS
-LAYOUT_WIDGETS = Box, HBox, VBox, Accordion, Tab
+LAYOUT_WIDGETS = W.Box, W.HBox, W.VBox, W.Accordion, W.Tab

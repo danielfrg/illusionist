@@ -1,12 +1,12 @@
-import io
-import csv
 import copy
-import json
+import csv
+import io
 import itertools
+import json
 
 from nbconvert.preprocessors import Preprocessor
 
-from illusionist import widgets, kernel_utils, utils
+from illusionist import kernel_utils, utils, widgets
 from illusionist.client import IllusionistClient
 from illusionist.utils import DEV_MODE
 

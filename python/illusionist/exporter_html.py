@@ -1,13 +1,12 @@
 import os
-import sys
 import os.path
 
 import jinja2
 from nbconvert.exporters.html import HTMLExporter
-from traitlets import List, default
+from traitlets import default
 
-from illusionist.utils import DEV_MODE
 from illusionist.preprocessor import IllusionistPreprocessor
+from illusionist.utils import DEV_MODE
 
 
 @jinja2.contextfunction

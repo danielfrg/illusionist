@@ -36,8 +36,8 @@ python-build:  ## Build Python package (sdist)
 
 check:  ## Check linting
 	cd $(CURDIR)/python; flake8
-	cd $(CURDIR)/python; isort . --project jupyter_flex --check-only --diff
-	cd $(CURDIR)/python; black . --check
+	# cd $(CURDIR)/python; isort . --project jupyter_flex --check-only --diff
+	# cd $(CURDIR)/python; black . --check
 
 
 fmt:  ## Format source

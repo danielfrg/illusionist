@@ -3,8 +3,8 @@ import pytest
 
 @pytest.fixture
 def preprocessor():
-    import os
     import nbformat
+
     from illusionist import preprocessor
 
     # this_dir = os.path.abspath(os.path.dirname(__file__))
@@ -20,8 +20,8 @@ def preprocessor():
 
     p.execute(cleanup_kc=False)
 
-    from illusionist.utils import get_source
     from illusionist import widgets
+    from illusionist.utils import get_source
 
     p.run_code(get_source(widgets))
 

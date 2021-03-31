@@ -1,6 +1,6 @@
 import os
-import sys
 import shutil
+import sys
 
 from setuptools import find_packages, setup
 from setuptools.command.develop import develop
