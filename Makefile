@@ -5,44 +5,32 @@ SHELL := bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-PWD := $(shell pwd)
 PYTEST_K ?= ""
+TEST_MARKERS ?= ""
 
 
 first: help
 
 
-build: npm-build python-build  ## Build JS and Python package
-
+build: npm-build build-python  ## Build JS and Python package
 
 # ------------------------------------------------------------------------------
 # Python
 
-env:  ## Create dev environment
-	cd $(CURDIR)/python; mamba env create
+env:  ## Create Python env
+	cd $(CURDIR)/python;mamba env create
 
 
 develop:  ## Install package for development
-	cd $(CURDIR)/python; python -m pip install --no-build-isolation -e .
+	cd $(CURDIR)/python;python -m pip install --no-build-isolation -e .
 
 
 extensions:  ## Install Jupyter extensions
 	jupyter labextension install @jupyter-widgets/jupyterlab-manager
 
 
-python-build:  ## Build Python package (sdist)
+build-python:  ## Build package
 	cd $(CURDIR)/python; python setup.py sdist
-
-
-check:  ## Check linting
-	cd $(CURDIR)/python; flake8
-	# cd $(CURDIR)/python; isort . --project jupyter_flex --check-only --diff
-	# cd $(CURDIR)/python; black . --check
-
-
-fmt:  ## Format source
-	cd $(CURDIR)/python; isort . --project jupyter-flex
-	cd $(CURDIR)/python; black .
 
 
 upload-pypi:  ## Upload package to PyPI
@@ -53,8 +41,19 @@ upload-test:  ## Upload package to test PyPI
 	cd $(CURDIR)/python; twine upload --repository test dist/*.tar.gz
 
 
+check:  ## Check linting
+	cd $(CURDIR)/python; flake8
+	cd $(CURDIR)/python; isort . --project illusionist --check-only --diff
+	cd $(CURDIR)/python; black . --check
+
+
+fmt:  ## Format source
+	cd $(CURDIR)/python; isort . --project illusionist
+	cd $(CURDIR)/python; black .
+
+
 test:  ## Run tests
-	cd python && pytest -k $(PYTEST_K)
+	cd $(CURDIR)/python; pytest -k $(PYTEST_K) -m $(TEST_MARKERS)
 
 
 report:  ## Generate coverage reports
@@ -64,7 +63,7 @@ report:  ## Generate coverage reports
 
 cleanpython:  ## Clean Python build files
 	cd $(CURDIR)/python; rm -rf build dist htmlcov .pytest_cache test-results .eggs
-	cd $(CURDIR)/python; rm -f .coverage coverage.xml jupyter_flex/_generated_version.py
+	cd $(CURDIR)/python; rm -f .coverage coverage.xml illusionist/_generated_version.py
 	find . -type f -name '*.py[co]' -delete
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type d -name .ipynb_checkpoints -exec rm -rf {} +

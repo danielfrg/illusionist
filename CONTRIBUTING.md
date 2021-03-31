@@ -1,4 +1,4 @@
-# How to Contribute
+# Contributing
 
 ## Development environment
 
@@ -48,8 +48,9 @@ make serve-examples
 ```
 
 With this setup:
-- To see changes on the JS part you can just refresh the page
-- To see changes on the python (nbconvert) part, run `make examples` again
+
+-   To see changes on the JS part you can just refresh the page
+-   To see changes on the python (nbconvert) part, run `make examples` again
 
 ## Testing
 
@@ -65,3 +66,4 @@ Run tests
 ````
 make test
 ```
+````
