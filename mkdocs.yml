@@ -17,8 +17,15 @@ theme:
   favicon: /assets/img/favicon.ico
   logo: /assets/img/icon.png
 
+  palette:
+    primary: deep orange
+    accent: blue
+
 extra_css:
   - assets/css/custom.css
+
+extra_javascript:
+  - assets/js/custom.js
 
 plugins:
   - search
@@ -26,9 +33,15 @@ plugins:
       execute: false
 
 markdown_extensions:
-  - meta
   - admonition
-  - codehilite
+  - codehilite:
+      guess_lang: false
+  - attr_list
+  - meta
+  - pymdownx.tabbed
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences
   - toc:
       permalink: true
 
