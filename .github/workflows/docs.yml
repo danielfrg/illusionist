@@ -3,7 +3,7 @@ name: docs
 on:
   push:
     branches: [main]
-  pull_request_target:
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8]
-        node-version: ["15"]
+        node-version: ["16"]
 
     steps:
       - uses: actions/checkout@v2
@@ -64,7 +64,7 @@ jobs:
 
       - name: Push docs (master)
         uses: jsmrcaga/action-netlify-deploy@master
-        if: (github.event_name == 'push') && endsWith(github.ref, '/main')
+        if: (github.event_name != 'pull_request') && endsWith(github.ref, '/main')
         with:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -73,7 +73,7 @@ jobs:
 
       - name: Push docs (branch)
         uses: jsmrcaga/action-netlify-deploy@master
-        if: github.event_name == 'pull_request_target'
+        if: github.event_name == 'pull_request'
         with:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
