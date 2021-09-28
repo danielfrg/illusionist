@@ -23,7 +23,7 @@ env:  ## Create Python env
 
 
 build-python:  ## Build package
-	cd $(CURDIR)/python; python setup.py sdist
+	cd $(CURDIR)/python; poetry build
 
 
 upload-pypi:  ## Upload package to PyPI
