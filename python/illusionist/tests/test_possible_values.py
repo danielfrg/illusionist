@@ -2,7 +2,6 @@ import ipywidgets as W
 import pytest
 
 from illusionist.preprocessor import possible_values
-from illusionist.widgets import *  # noqa
 
 
 @pytest.mark.parametrize("class_", [W.IntSlider, W.BoundedIntText])
@@ -95,18 +94,3 @@ def test_possible_values_SelectionRangeSlider():
     w_state = w.get_state()
     a = [[0, 0], [0, 1], [0, 2], [1, 1], [1, 2], [2, 2]]
     assert possible_values(w_state) == a
-
-
-# def test_pb(preprocessor):
-# # def test_pb(preprocessor):
-#     # preprocessor.exec_code("import ipywidgets")
-#     # preprocessor.exec_code("w = IntSlider(min=5, max=10)")
-#     # w_id = preprocessor.eval_code("w.model_id")
-
-#     w = IntSlider(min=5, max=10)
-#     w_state = w.get_state()
-#     # w_id = list(preprocessor.widget_state.keys())[0]
-#     assert possible_values(w_state)
-#     # print(preprocessor.widget_state)
-
-#     preprocessor._cleanup_kernel()

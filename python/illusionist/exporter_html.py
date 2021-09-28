@@ -8,7 +8,7 @@ from illusionist.config import settings
 from illusionist.preprocessor import IllusionistPreprocessor
 
 
-@jinja2.utils.contextfunction
+@jinja2.utils.pass_context
 def include_external_file(ctx, name):
     """Include an encoded base64 image"""
     with open(os.path.abspath(name), "r") as f:

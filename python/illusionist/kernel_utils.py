@@ -16,11 +16,15 @@ except:
     pass
 
 
-def get_used_widgets_ids(widgets=None, kind=None):
+def get_widgets_ids(widgets=None, kind=None):
     """
     Return all widgets that are used in the notebook
-    Returns a dictionary with
-        {model_id: widget_object}
+    Parameters
+    ----------
+        widgets (list): List of widgets to
+    Returns
+    -------
+        dictionary of `{"model_id": widget_object}`
     """
     # The `Widgets` class has a registry of all the widgets that were used
     all_widgets = widgets if widgets else W.Widget.widgets

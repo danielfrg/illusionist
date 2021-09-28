@@ -59,12 +59,16 @@ class IllusionistClient(NotebookClient, Application):
 
     async def async_exec_code(self, source, write_cell=settings.dev_mode):
         """
-        Run some code in a Kernel
+        Execute code in a Kernel
 
         Parameters
         ----------
             source (str): Execute this code
             write_cell (bool, default=None): Write a new cell to the notebook
+
+        Returns
+        -------
+            NotebookNode
         """
         cell = nbformat.NotebookNode()
         cell.cell_type = "code"
@@ -75,7 +79,6 @@ class IllusionistClient(NotebookClient, Application):
 
         self.nb["cells"].append(cell)
         cell_index = len(self.nb["cells"]) - 1
-        # print(cell)
         cell = await self.async_execute_cell(
             cell, cell_index, execution_count=cell.execution_count
         )
@@ -88,12 +91,17 @@ class IllusionistClient(NotebookClient, Application):
 
     exec_code = run_sync(async_exec_code)
 
-    def eval_code(self, source):
+    def eval_cell(self, cell):
         """
+        Run Python `eval` on a NotebookCell
+
         Parameters
         ----------
-            source (str): Execute this code
+            cell (NotebookNode):
+
+        Returns
+        -------
+            Python objects
         """
-        output = self.exec_code(source)
-        text_plain = output["outputs"][0]["data"]["text/plain"]
-        return eval(text_plain)
+        output_txt = cell["outputs"][0]["data"]["text/plain"]
+        return eval(output_txt)
