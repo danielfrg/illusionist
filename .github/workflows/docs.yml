@@ -63,7 +63,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: python/.venv
-          key: venv-docs-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock', '**/requirements*.txt')) }}
+          key: venv-docs-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock', '**/requirements*.txt') }}
 
       - name: Ensure cache is healthy
         if: steps.cached-poetry-dependencies.outputs.cache-hit == 'true'
