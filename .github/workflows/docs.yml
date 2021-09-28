@@ -74,6 +74,7 @@ jobs:
         run: |
           cd python
           poetry install --no-interaction --no-root
+          pip install -r requirements-docs.txt
 
       - name: Print Python info
         run: |
