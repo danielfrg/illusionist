@@ -1,6 +1,5 @@
-import pytest
-
 import ipywidgets as W
+import pytest
 
 import illusionist.widgets as W2
 from illusionist.preprocessor import hash_fn

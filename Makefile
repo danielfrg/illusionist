@@ -12,21 +12,14 @@ TEST_MARKERS ?= ""
 first: help
 
 
-build: npm-build build-python  ## Build JS and Python package
+all: npm-build build-python  ## Build JS and Python package
+
 
 # ------------------------------------------------------------------------------
 # Python
 
 env:  ## Create Python env
-	cd $(CURDIR)/python;mamba env create
-
-
-develop:  ## Install package for development
-	cd $(CURDIR)/python;python -m pip install --no-build-isolation -e .
-
-
-extensions:  ## Install Jupyter extensions
-	jupyter labextension install @jupyter-widgets/jupyterlab-manager
+	cd $(CURDIR)/python; poetry install
 
 
 build-python:  ## Build package
@@ -42,13 +35,13 @@ upload-test:  ## Upload package to test PyPI
 
 
 check:  ## Check linting
-	cd $(CURDIR)/python; flake8
-	cd $(CURDIR)/python; isort . --project illusionist --check-only --diff
+	cd $(CURDIR)/python; isort . --check-only --diff
 	cd $(CURDIR)/python; black . --check
+	cd $(CURDIR)/python; flake8
 
 
 fmt:  ## Format source
-	cd $(CURDIR)/python; isort . --project illusionist
+	cd $(CURDIR)/python; isort .
 	cd $(CURDIR)/python; black .
 
 
@@ -72,13 +65,13 @@ cleanpython:  ## Clean Python build files
 # ------------------------------------------------------------------------------
 # JS
 
-npm-build:  ## Build JS
-	cd $(CURDIR)/js/; npm run build:all
-
-
 npm-i: npm-install
 npm-install:  ## Install JS dependencies
 	cd $(CURDIR)/js/; npm install
+
+
+npm-build:  ## Build JS
+	cd $(CURDIR)/js/; npm run build:all
 
 
 npm-dev:  ## Build JS with watch
@@ -107,11 +100,11 @@ cleanjs:  ## Clean JS build files
 # ------------------------------------------------------------------------------
 # Docs
 
-.PHONY: docs
 docs:  ## Build docs
 	$(MAKE) docs-examples-html
 	mkdocs build
 	$(MAKE) docs-copy-notebooks
+.PHONY: docs
 
 
 serve-docs:  ## Serve docs
@@ -127,7 +120,7 @@ docs-copy-notebooks:  ## Execute example notebooks into docs output
 
 
 example:  ## Run nbconvert on one example
-	cd $(CURDIR)/examples; ILLUSIONIST_DEV_MODE=0 jupyter nbconvert widget-gallery.ipynb --to illusionist
+	cd $(CURDIR)/examples; ILLUSIONIST_DEV_MODE=1 jupyter nbconvert widget-gallery.ipynb --to illusionist
 
 
 serve-examples:  ## Serve examples

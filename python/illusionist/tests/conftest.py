@@ -8,7 +8,8 @@ def preprocessor():
     from illusionist import preprocessor
 
     # this_dir = os.path.abspath(os.path.dirname(__file__))
-    # nb_file = os.path.join(this_dir, "widget-gallery.ipynb")
+    # nb_file =
+    # os.path.join(this_dir, "widget-gallery.ipynb")
 
     nb = nbformat.v4.new_notebook()
     # cell = nbformat.v4.new_code_cell("import ipywidgets")
@@ -23,7 +24,7 @@ def preprocessor():
     from illusionist import widgets
     from illusionist.utils import get_source
 
-    p.run_code(get_source(widgets))
+    p.exec_code(get_source(widgets))
 
     yield p
 

@@ -12,13 +12,10 @@ const pythonPkgStatic = path.resolve(
     __dirname,
     "..",
     "python",
-    "share",
-    "jupyter",
-    "nbconvert",
+    "illusionist",
     "templates",
     "illusionist",
-    "static",
-    "dist"
+    "assets"
 );
 
 module.exports = (env, argv) => {

@@ -8,13 +8,6 @@ Create Python env
 
 ```
 make env
-conda activate illusionist
-```
-
-Install package for developmentt
-
-```
-make develop
 ```
 
 ### JS
@@ -27,8 +20,7 @@ make npm-install
 
 ### Iteration cycle
 
-Start webpack in watch mode, this will place the built files in the
-nbconvert template static directory.
+Start webpack in watch mode.
 
 ```
 make npm-dev

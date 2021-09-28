@@ -7,76 +7,9 @@ import json
 from nbconvert.preprocessors import Preprocessor
 
 from illusionist import kernel_utils, utils, widgets
+from illusionist.config import settings
 from illusionist.client import IllusionistClient
-from illusionist.utils import DEV_MODE
-
-
-NUMERIC_CONTROL_WIDGETS = (
-    "IntSliderModel",
-    # "FloatSlider",  # floats suck
-    # "FloatLogSlider",  # floats suck
-    "IntRangeSliderModel",
-    # "FloatRangeSlider",  # floats suck
-    "BoundedIntTextModel",
-    # "BoundedFloatText",  # floats suck
-    # "IntText",  # No open ended
-    # "FloatText",  # No open ended
-)
-NUMERIC_OUTPUT_WIDGETS = NUMERIC_CONTROL_WIDGETS + (
-    "IntProgressModel",
-    "FloatProgressModel",
-)
-
-BOOLEAN_CONTROL_WIDGETS = ("ToggleButtonModel", "CheckboxModel")
-BOOLEAN_OUTPUT_WIDGETS = BOOLEAN_CONTROL_WIDGETS + ("ValidModel",)
-
-SELECTION_CONTROL_WIDGETS = (
-    "DropdownModel",
-    "RadioButtonsModel",
-    "SelectModel",
-    "SelectionSliderModel",
-    "ToggleButtonsModel",
-    "SelectionRangeSliderModel",
-    "SelectMultipleModel",
-)
-SELECTION_OUTPUT_WIDGETS = SELECTION_CONTROL_WIDGETS
-
-STRING_CONTROL_WIDGETS = (
-    # "Text",  # No open ended
-    # "Textarea",  # No opeen ended
-)
-STRING_OUTPUT_WIDGETS = (
-    "LabelModel",
-    # "HTMLModel",  # TODO
-    # "HTMLMathModel",  # TODO
-    # "ImageModel",  # TODO
-)
-
-OTHER_CONTROL_WIDGETS = (
-    # "ButtonModel",  # TODO
-    # "PlayModel",  # TODO
-    # "DatePickerModel",  # TODO
-    # "ColorPickerModel"  # TODO
-)
-
-CONTROL_WIDGETS = (
-    NUMERIC_CONTROL_WIDGETS
-    + BOOLEAN_CONTROL_WIDGETS
-    + SELECTION_CONTROL_WIDGETS
-    + STRING_CONTROL_WIDGETS
-    + OTHER_CONTROL_WIDGETS
-)
-
-OUTPUT_WIDGETS = (
-    NUMERIC_OUTPUT_WIDGETS
-    + BOOLEAN_OUTPUT_WIDGETS
-    + SELECTION_OUTPUT_WIDGETS
-    + STRING_OUTPUT_WIDGETS
-    + ("OutputModel",)
-)
-
-VALUE_WIDGETS = CONTROL_WIDGETS + OUTPUT_WIDGETS
-
+import illusionist.widgets_str as W
 
 WIDGET_ONCHANGE_MIMETYPE = "application/vnd.illusionist.widget-onchange+json"
 
@@ -86,13 +19,14 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
     Execute cells in the notebook
     Then looks at the widgets and generates on-change values
 
-    This class is mostly copied from nbconvert.preprocessors.execute
+    This class is based and adapted from nbconvert.preprocessors.execute:
+    https://github.com/jupyter/nbconvert/blob/main/nbconvert/preprocessors/execute.py
     """
 
     def __init__(self, **kw):
         nb = kw.get("nb")
-        if nb:
-            del kw["nb"]
+        # if nb:
+        #     del kw["nb"]
         Preprocessor.__init__(self, nb=nb, **kw)
         IllusionistClient.__init__(self, nb, **kw)
 
@@ -103,11 +37,11 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         self.onchange_values = {}
 
         resources = resources if resources else {}
-        resources["illusionist_devmode"] = DEV_MODE
+        resources["illusionist_devmode"] = settings.dev_mode
         if resources["illusionist_devmode"]:
             self.log.warning(
-                "Illusionist DevMode is ON. "
-                "Output Notebooks and HTML will contain extra cells at the end"
+                "Illusionist Dev Mode is ON. "
+                "Output HTML or Notebook will contain extra cells at the end"
             )
 
         try:
@@ -123,20 +57,26 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
 
         return nb, resources
 
-    def post_exec(self):
+    def after_notebook(self):
         """
-        This methond it's executed as part for self.execute()
+        Overwrites IllusionistClient
+
+        This is called after the regular notebook cells have been executed
+
+        It iterates all the widgets and generate static properties
         """
         # Load helper code into the kernel
-        _ = self.run_code(utils.get_source(widgets))
-        _ = self.run_code(utils.get_source(kernel_utils))
+        _ = self.exec_code(utils.get_source(widgets))
+        _ = self.exec_code(utils.get_source(kernel_utils))
 
-        # Save Notebook and widget state before executing extra code
+        # Save original Notebook and widget state
         # nb_cells_before = copy.deepcopy(self.nb.cells)
         widget_state_before = copy.deepcopy(self.widget_state)
 
-        value_widgets = self.run_code_eval("get_widgets_ids(kind='value')")
-        control_widgets = self.run_code_eval("get_widgets_ids(kind='control')")
+        value_widgets = self.eval_code("get_used_widgets_ids(kind='value')")
+        control_widgets = self.eval_code(
+            "get_used_widgets_ids(kind='control')"
+        )
 
         # 1. Iterate the control widgets and see which outputs it affects
         affected_by = {m_id: set() for m_id in value_widgets}
@@ -147,7 +87,7 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
             widget_affects = []
 
             for value in possible_values[:2]:
-                self.run_code(f"set_widget_value('{widget_id}', {value})")
+                self.exec_code(f"set_widget_value('{widget_id}', {value})")
 
                 new_state = self.widget_state
                 diff = diff_state(init_state, new_state, my_id=widget_id)
@@ -197,7 +137,7 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
 
             # Update values of input widgets
             for widget_id, value in zip(input_widget_ids, inputs_set):
-                self.run_code(f"set_widget_value('{widget_id}', {value})")
+                self.exec_code(f"set_widget_value('{widget_id}', {value})")
 
             # Save the new value of the output widget
             hash_ = self.hash_fn(input_widget_ids)
@@ -209,20 +149,22 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         widget_state = self.widget_state[output_widget_id]
         model_name = widget_state["_model_name"]
 
-        if model_name in NUMERIC_OUTPUT_WIDGETS:
+        if model_name in W.NUMERIC_OUTPUT_WIDGETS:
             return widget_state["value"]
-        elif model_name in BOOLEAN_OUTPUT_WIDGETS:
+        elif model_name in W.BOOLEAN_OUTPUT_WIDGETS:
             return widget_state["value"]
-        elif model_name in SELECTION_OUTPUT_WIDGETS:
+        elif model_name in W.SELECTION_OUTPUT_WIDGETS:
             if isinstance(widget_state["index"], tuple):
                 return list(widget_state["index"])
             return widget_state["index"]
-        elif model_name in STRING_OUTPUT_WIDGETS:
+        elif model_name in W.STRING_OUTPUT_WIDGETS:
             return widget_state["value"]
         elif model_name == "OutputModel":
             return widget_state["outputs"]
         else:
-            raise Exception(f"Output Widget type '{model_name}' not supported.")
+            raise Exception(
+                f"Output Widget type '{model_name}' not supported."
+            )
 
     def hash_fn(self, widget_ids):
         widget_states = []
@@ -257,7 +199,9 @@ def diff_state(initial, new, my_id=None):
     Return a list of widget model_ids that have changed based on the two widget states
     """
     diff = []
-    for (init_id, init_state), (new_id, new_state) in zip(initial.items(), new.items()):
+    for (init_id, init_state), (new_id, new_state) in zip(
+        initial.items(), new.items()
+    ):
         assert init_id == new_id
         if init_state != new_state:
             diff.append(init_id)
@@ -279,7 +223,7 @@ def possible_values(widget_state):
         ret = itertools.product(range_, range_)
         ret = [[i, j] for i, j in ret if i <= j]
         return ret
-    elif model_name in NUMERIC_CONTROL_WIDGETS:
+    elif model_name in W.NUMERIC_CONTROL_WIDGETS:
         return list(
             range(
                 widget_state["min"],
@@ -287,7 +231,7 @@ def possible_values(widget_state):
                 widget_state["step"],
             )
         )
-    elif model_name in BOOLEAN_CONTROL_WIDGETS:
+    elif model_name in W.BOOLEAN_CONTROL_WIDGETS:
         return [True, False]
     elif model_name == "SelectionRangeSliderModel":
         range_ = range(0, len(widget_state["_options_labels"]))
@@ -297,7 +241,7 @@ def possible_values(widget_state):
     elif model_name == "SelectMultipleModel":
         range_ = range(0, len(widget_state["_options_labels"]))
         return list(powerset(range_))
-    elif model_name in SELECTION_CONTROL_WIDGETS:
+    elif model_name in W.SELECTION_CONTROL_WIDGETS:
         range_ = range(0, len(widget_state["_options_labels"]))
         return list(range_)
     else:
@@ -319,11 +263,11 @@ def hash_fn(w_states):
     for w_state in w_states:
         model_name = w_state["_model_name"]
 
-        if model_name in NUMERIC_CONTROL_WIDGETS:
+        if model_name in W.NUMERIC_CONTROL_WIDGETS:
             value = w_state["value"]
-        elif model_name in BOOLEAN_CONTROL_WIDGETS:
+        elif model_name in W.BOOLEAN_CONTROL_WIDGETS:
             value = w_state["value"]
-        elif model_name in SELECTION_CONTROL_WIDGETS:
+        elif model_name in W.SELECTION_CONTROL_WIDGETS:
             value = w_state["index"]
         else:
             raise Exception(f"Cannot use '{model_name}' as input")
@@ -356,9 +300,3 @@ def dumps(values):
     contents = output.getvalue()
     output.close()
     return contents.strip()
-
-
-if __name__ == "__main__":
-    from nbconvert.nbconvertapp import main
-
-    main()

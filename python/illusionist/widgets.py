@@ -1,18 +1,22 @@
-import ipywidgets as W
+# A module that imports all ipywidgets
 
+import ipywidgets as W
 
 NUMERIC_CONTROL_WIDGETS = (
     W.IntSlider,
-    # FloatSlider,  # floats suck
-    # FloatLogSlider,  # floats suck
+    # FloatSlider,  # floats not supported
+    # FloatLogSlider,  # floats not supported
     W.IntRangeSlider,
-    # FloatRangeSlider,  # floats suck
+    # FloatRangeSlider,  # floats not supported
     W.BoundedIntText,
-    # BoundedFloatText,  # floats suck
-    # IntText,  # No open ended
-    # FloatText,  # No open ended
+    # BoundedFloatText,  # floats not supported
+    # IntText,  # open ended widgets not supported
+    # FloatText,  # open ended widgets not supported
 )
-NUMERIC_OUTPUT_WIDGETS = NUMERIC_CONTROL_WIDGETS + (W.IntProgress, W.FloatProgress)
+NUMERIC_OUTPUT_WIDGETS = NUMERIC_CONTROL_WIDGETS + (
+    W.IntProgress,
+    W.FloatProgress,
+)
 
 BOOLEAN_CONTROL_WIDGETS = (W.ToggleButton, W.Checkbox)
 BOOLEAN_OUTPUT_WIDGETS = BOOLEAN_CONTROL_WIDGETS + (W.Valid,)
@@ -29,8 +33,8 @@ SELECTION_CONTROL_WIDGETS = (
 SELECTION_OUTPUT_WIDGETS = SELECTION_CONTROL_WIDGETS
 
 STRING_CONTROL_WIDGETS = (
-    # Text,  # No open ended
-    # Textarea,  # No opeen ended
+    # Text,  # open ended widgets not supported
+    # Textarea,  # open ended widgets not supported
 )
 STRING_OUTPUT_WIDGETS = (
     W.Label,
@@ -63,4 +67,4 @@ OUTPUT_WIDGETS = (
 )
 
 VALUE_WIDGETS = CONTROL_WIDGETS + OUTPUT_WIDGETS
-LAYOUT_WIDGETS = W.Box, W.HBox, W.VBox, W.Accordion, W.Tab
+LAYOUT_WIDGETS = (W.Box, W.HBox, W.VBox, W.Accordion, W.Tab)

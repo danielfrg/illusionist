@@ -4,14 +4,12 @@ import pytest
 # from illusionist.preprocessor import possible_values
 from illusionist.widgets import *  # noqa
 
-from .utils import preprocessor
-
 
 def test_widget_matrix_IntSlider(preprocessor):
-    preprocessor.run_code("w = W.IntSlider(min=-3, max=0)")
-    preprocessor.run_code("lbl = W.Label()")
-    in_id = preprocessor.run_code_eval("w.model_id")
-    out_id = preprocessor.run_code_eval("lbl.model_id")
+    preprocessor.exec_code("w = W.IntSlider(min=-3, max=0)")
+    preprocessor.exec_code("lbl = W.Label()")
+    in_id = preprocessor.eval_code("w.model_id")
+    out_id = preprocessor.eval_code("lbl.model_id")
     in_ids = [in_id]
 
     matrix = preprocessor.widget_matrix(out_id, in_ids)
@@ -19,10 +17,10 @@ def test_widget_matrix_IntSlider(preprocessor):
 
 
 def test_widget_matrix_IntRangeSlider(preprocessor):
-    preprocessor.run_code("w = W.IntRangeSlider(min=0, max=2)")
-    preprocessor.run_code("lbl = W.Label()")
-    in_id = preprocessor.run_code_eval("w.model_id")
-    out_id = preprocessor.run_code_eval("lbl.model_id")
+    preprocessor.exec_code("w = W.IntRangeSlider(min=0, max=2)")
+    preprocessor.exec_code("lbl = W.Label()")
+    in_id = preprocessor.eval_code("w.model_id")
+    out_id = preprocessor.eval_code("lbl.model_id")
     in_ids = [in_id]
 
     matrix = preprocessor.widget_matrix(out_id, in_ids)
@@ -42,10 +40,10 @@ def test_widget_matrix_IntRangeSlider(preprocessor):
     ],
 )
 def test_widget_matrix_Selection(preprocessor, class_):
-    preprocessor.run_code(f'w = W.{class_}(options=["a", "b", "c"])')
-    preprocessor.run_code("lbl = W.Label()")
-    in_id = preprocessor.run_code_eval("w.model_id")
-    out_id = preprocessor.run_code_eval("lbl.model_id")
+    preprocessor.exec_code(f'w = W.{class_}(options=["a", "b", "c"])')
+    preprocessor.exec_code("lbl = W.Label()")
+    in_id = preprocessor.eval_code("w.model_id")
+    out_id = preprocessor.eval_code("lbl.model_id")
     in_ids = [in_id]
 
     matrix = preprocessor.widget_matrix(out_id, in_ids)

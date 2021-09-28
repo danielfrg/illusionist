@@ -19,7 +19,18 @@ def test_possible_values_int_single_value(class_):
 def test_possible_values_IntRangeSlider():
     w = W.IntRangeSlider(min=0, max=3)
     w_state = w.get_state()
-    a = [[0, 0], [0, 1], [0, 2], [0, 3], [1, 1], [1, 2], [1, 3], [2, 2], [2, 3], [3, 3]]
+    a = [
+        [0, 0],
+        [0, 1],
+        [0, 2],
+        [0, 3],
+        [1, 1],
+        [1, 2],
+        [1, 3],
+        [2, 2],
+        [2, 3],
+        [3, 3],
+    ]
     assert possible_values(w_state) == a
 
 
@@ -88,9 +99,9 @@ def test_possible_values_SelectionRangeSlider():
 
 # def test_pb(preprocessor):
 # # def test_pb(preprocessor):
-#     # preprocessor.run_code("import ipywidgets")
-#     # preprocessor.run_code("w = IntSlider(min=5, max=10)")
-#     # w_id = preprocessor.run_code_eval("w.model_id")
+#     # preprocessor.exec_code("import ipywidgets")
+#     # preprocessor.exec_code("w = IntSlider(min=5, max=10)")
+#     # w_id = preprocessor.eval_code("w.model_id")
 
 #     w = IntSlider(min=5, max=10)
 #     w_state = w.get_state()
