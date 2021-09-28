@@ -95,13 +95,10 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         # nb_cells_before = copy.deepcopy(self.nb.cells)
         base_widget_state = copy.deepcopy(self.widget_state)
 
-        value_widgets = self.exec_code("get_widgets_ids(kind='value')")
-        value_widgets = self.eval_cell(value_widgets)
-        control_widgets = self.exec_code("get_widgets_ids(kind='control')")
-        control_widgets = self.eval_cell(control_widgets)
+        control_widgets, value_widgets = self.get_target_widgets()
 
         # 1. Get a list of how value widgets are affected by control widgets
-        affected_by = self.get_affected_matrix(control_widgets, value_widgets)
+        affected_by = self.get_affected_widgets(control_widgets, value_widgets)
 
         # 2. Iterate affected_by and add matrix (per output widget) to the matrix
         static_values = self.get_static_values(affected_by)
@@ -116,7 +113,14 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         # Set the original widget_state back to the original ones
         self.widget_state = base_widget_state
 
-    def get_affected_matrix(self, control_widgets, value_widgets):
+    def get_target_widgets(self):
+        value_widgets = self.exec_code("get_widgets_ids(kind='value')")
+        value_widgets = self.eval_cell(value_widgets)
+        control_widgets = self.exec_code("get_widgets_ids(kind='control')")
+        control_widgets = self.eval_cell(control_widgets)
+        return value_widgets, control_widgets
+
+    def get_affected_widgets(self, control_widgets, value_widgets):
         """
         Iterates the control widgets and see which value widgets are affected
         by changes to them.
@@ -188,7 +192,6 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         # 2. Iterate the combinations of possible values to create a matrix
         matrix = {}
         for controls_set in product:
-
             # Update values of control widgets
             for widget_id, value in zip(control_w_ids, controls_set):
                 self.exec_code(f"set_widget_value('{widget_id}', {value})")

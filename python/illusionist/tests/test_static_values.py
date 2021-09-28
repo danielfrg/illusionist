@@ -1,60 +1,59 @@
+import ipywidgets as W
 import pytest
 
-
-def test_static_values_single_IntSlider(preprocessor):
-    preprocessor.exec_code("w = W.IntSlider(min=-3, max=0)")
-    preprocessor.exec_code("lbl = W.Label()")
-    in_id = preprocessor.exec_code("w.model_id")
-    in_id = preprocessor.eval_cell(in_id)
-    out_id = preprocessor.exec_code("lbl.model_id")
-    out_id = preprocessor.eval_cell(out_id)
-    in_ids = [in_id]
-
-    matrix = preprocessor.get_static_values_by_widget(out_id, in_ids)
-    assert list(matrix.keys()) == ["-3", "-2", "-1", "0"]
+import illusionist.widgets as IW
 
 
-def test_static_values_single_IntRangeSlider(preprocessor):
-    preprocessor.exec_code("w = W.IntRangeSlider(min=0, max=2)")
-    preprocessor.exec_code("lbl = W.Label()")
-    in_id = preprocessor.exec_code("w.model_id")
-    in_id = preprocessor.eval_cell(in_id)
-    out_id = preprocessor.exec_code("lbl.model_id")
-    out_id = preprocessor.eval_cell(out_id)
-    in_ids = [in_id]
+@pytest.mark.parametrize("class_", IW.NUMERIC_SINGLEVALUE_CONTROL_WIDGETS)
+def test_static_values_num_nolink(preprocessor, class_):
+    preprocessor.exec_code(
+        f"""
+w = W.{class_.__name__}(min=-3, max=0)
+lbl = W.Label()
+"""
+    )
+    control_w_id = preprocessor.exec_code("w.model_id")
+    control_w_id = preprocessor.eval_cell(control_w_id)
+    value_w_id = preprocessor.exec_code("lbl.model_id")
+    value_w_id = preprocessor.eval_cell(value_w_id)
+    value_w_ids = [value_w_id]
+    control_w_ids = [control_w_id]
 
-    matrix = preprocessor.get_static_values_by_widget(out_id, in_ids)
-    ans = ['"[0,0]"', '"[0,1]"', '"[0,2]"', '"[1,1]"', '"[1,2]"', '"[2,2]"']
-    assert list(matrix.keys()) == ans
+    affected_by = preprocessor.get_affected_widgets(control_w_ids, value_w_ids)
+    values = preprocessor.get_static_values(affected_by)
+
+    # nothing link between the widgets
+    assert len(values) == 0
 
 
-# @pytest.mark.parametrize(
-#     "class_",
-#     [
-#         # "Dropdown",
-#         # "RadioButtons",
-#         # "Select",
-#         # "SelectionSlider",
-#         # "ToggleButtons",
-#         "SelectMultiple",
-#     ],
-# )
-# def test_static_values_single_Selection(preprocessor, class_):
-#     preprocessor.exec_code(f'w = W.{class_}(options=["a", "b", "c"])')
-#     preprocessor.exec_code("lbl = W.Label()")
-#     in_id = preprocessor.eval_cell("w.model_id")
-#     out_id = preprocessor.eval_cell("lbl.model_id")
-#     in_ids = [in_id]
+@pytest.mark.parametrize("class_", IW.NUMERIC_SINGLEVALUE_CONTROL_WIDGETS)
+def test_static_values_num_link(preprocessor, class_):
+    preprocessor.exec_code(
+        f"""
+w = W.{class_.__name__}(min=-3, max=0)
+lbl = W.Label()
 
-#     matrix = preprocessor.get_static_values_by_widget(out_id, in_ids)
-#     ans = [
-#         '"[]"',
-#         '"[0]"',
-#         '"[1]"',
-#         '"[2]"',
-#         '"[0,1]"',
-#         '"[0,2]"',
-#         '"[1,2]"',
-#         '"[0,1,2]"',
-#     ]
-#     assert list(matrix.keys()) == ans
+def update(args):
+    lbl.value = str(w.value * 2)
+
+update(None)
+w.observe(update, "value")
+"""
+    )
+    control_w_id = preprocessor.exec_code("w.model_id")
+    control_w_id = preprocessor.eval_cell(control_w_id)
+    value_w_id = preprocessor.exec_code("lbl.model_id")
+    value_w_id = preprocessor.eval_cell(value_w_id)
+    value_w_ids = [value_w_id]
+    control_w_ids = [control_w_id]
+
+    affected_by = preprocessor.get_affected_widgets(control_w_ids, value_w_ids)
+    values = preprocessor.get_static_values(affected_by)
+
+    assert list(values.keys()) == value_w_ids
+    assert list(values.values()) == [
+        {
+            "affected_by": control_w_ids,
+            "values": {"-1": "-2", "-2": "-4", "-3": "-6", "0": "0"},
+        }
+    ]
