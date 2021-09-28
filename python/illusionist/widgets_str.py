@@ -1,15 +1,20 @@
 # A module that lists all ipywidgets Model names
 
-NUMERIC_CONTROL_WIDGETS = (
+NUMERIC_SINGLEVALUE_CONTROL_WIDGETS = (
     "IntSliderModel",
     # "FloatSlider",  # floats not supported
     # "FloatLogSlider",  # floats not supported
-    "IntRangeSliderModel",
-    # "FloatRangeSlider",  # floats not supported
     "BoundedIntTextModel",
     # "BoundedFloatText",  # floats not supported
     # "IntText",  # open ended widgets not supported
     # "FloatText",  # open ended widgets not supported
+)
+NUMERIC_MULTIVALUE_CONTROL_WIDGETS = (
+    "IntRangeSliderModel",
+    # "FloatRangeSlider",  # floats not supported
+)
+NUMERIC_CONTROL_WIDGETS = (
+    NUMERIC_SINGLEVALUE_CONTROL_WIDGETS + NUMERIC_MULTIVALUE_CONTROL_WIDGETS
 )
 NUMERIC_OUTPUT_WIDGETS = NUMERIC_CONTROL_WIDGETS + (
     "IntProgressModel",

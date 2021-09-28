@@ -24,10 +24,17 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
     based on the control widget it is affected by.
 
     ```
-    { value_widget_id: {
-        "affected_by": [control_widget_ids],
-        "values": [ [ ... ] ]
-    }}
+    {
+        "version_major": 1, "version_minor": 0,
+        "all_widgets": [ value_widgets ],
+        "control_widgets": [ control_widgets ],
+        "onchange": {
+            <value_widget_id>: {
+                "affected_by": [ control_widget_ids ],
+                "values": [ [ ... ] ]
+            }
+        }
+    }
     ```
 
     This class is based and adapted from nbconvert.preprocessors.execute:
@@ -340,6 +347,7 @@ def hash_fn_plain(widget_states):
             value = json.dumps(value)
         elif isinstance(value, (tuple, list)):
             value = list(value)
+            # separators are the same but without the spaces
             value = json.dumps(value, separators=(",", ":"))
         values.append(value)
 
