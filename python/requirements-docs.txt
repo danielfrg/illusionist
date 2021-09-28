@@ -5,3 +5,10 @@ mkdocs-minify-plugin
 pygments
 pymdown-extensions
 nbconvert>=6.2.0
+
+# Examples
+notebook
+jupyterlab
+ipywidgets
+numpy
+matplotlib
