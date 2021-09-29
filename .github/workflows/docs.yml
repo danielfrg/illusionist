@@ -59,22 +59,25 @@ jobs:
           virtualenvs-in-project: true
 
       - name: Load cached venv
-        id: cached-poetry-dependencies
+        id: cached-python-env
         uses: actions/cache@v2
         with:
           path: python/.venv
           key: venv-docs-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock', '**/requirements*.txt') }}
 
       - name: Ensure cache is healthy
-        if: steps.cached-poetry-dependencies.outputs.cache-hit == 'true'
-        shell: bash
+        id: cache-reset
+        continue-on-error: true
+        if: steps.cached-python-env.outputs.cache-hit == 'true'
         run: |
           cd python
-          poetry run python --version || rm -rf .venv
+          poetry run python --version
 
       - name: Install Python dependencies
+        if: steps.cached-python-env.outputs.cache-hit != 'true' || steps.cache-reset.conclusion != 'success'
         run: |
           cd python
+          rm -rf .venv || true
           poetry install --no-interaction --no-root
           source .venv/bin/activate
           pip install -r requirements-docs.txt

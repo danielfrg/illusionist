@@ -7,17 +7,20 @@
 - Update `CHANGELOG.md`
 - Update `README.md` and docs
 
-```
+```shell
 export VERSION=1.0.0
+
+# Optional reset
+make cleanall resetjs
+make npm-install
+
+# Build
+make all
+make upload-pypi
 
 git commit -am "Release ${VERSION}" --allow-empty
 git tag ${VERSION}
 
-# Optional reset
-make cleanall
-
-make all
-make upload-pypi
 git push origin ${VERSION}
 git push
 ```
