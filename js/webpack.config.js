@@ -21,7 +21,7 @@ const pythonPkgStatic = path.resolve(
 module.exports = (env, argv) => {
     const IS_PRODUCTION = argv.mode === "production";
 
-    const config_dist = {
+    return {
         entry: path.resolve(__dirname, "src", "embed.js"),
         output: {
             path: path.resolve(__dirname, "dist"),
@@ -68,8 +68,4 @@ module.exports = (env, argv) => {
         mode: IS_PRODUCTION ? "production" : "development",
         devtool: "source-map",
     };
-
-    let config = [config_dist];
-
-    return config;
 };

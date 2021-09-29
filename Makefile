@@ -62,6 +62,10 @@ resetpython: cleanpython  ## Reset Python
 	cd $(CURDIR)/python; rm -rf .venv
 
 
+example:  ## Dev: Run nbconvert on one example
+	cd $(CURDIR)/examples && ILLUSIONIST_DEV_MODE=1 jupyter nbconvert widget-gallery.ipynb --to illusionist
+
+
 # ------------------------------------------------------------------------------
 # Javascript
 
@@ -103,24 +107,24 @@ docs:  ## Docs: Build
 .PHONY: docs
 
 
-serve-docs:  ## Docs: Serve
+docs-serve:  ## Docs: Serve
 	mkdocs serve
 
 
-docs-examples-html:  ## Docs: Examples to HTML
+docs-examples-html:  ## Docs: Convert examples to HTML
 	cd $(CURDIR)/examples && jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/docs/examples/	--to illusionist
 
 
-docs-example-exec-nbs:  ## Docs: Execute example notebooks and output them into docs
+docs-example-exec-nbs:  ## Docs: Execute examples and output them into docs
 	cd $(CURDIR)/examples && jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/site/examples/notebooks	--to illusionist-nb	--execute
+
+
+examples-clear-output:  ## Clear output of notebooks
+	cd $(CURDIR)/examples && jupyter nbconvert */*.ipynb --clear-output --inplace
 
 
 serve-examples:  ## Docs: Serve examples
 	cd $(CURDIR)/examples && python -m http.server
-
-
-example:  ## Dev: Run nbconvert on one example
-	cd $(CURDIR)/examples && ILLUSIONIST_DEV_MODE=1 jupyter nbconvert widget-gallery.ipynb --to illusionist
 
 
 # ------------------------------------------------------------------------------
