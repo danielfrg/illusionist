@@ -6,7 +6,7 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
 PYTEST_K ?= ""
-TEST_MARKERS ?= ""
+PYTEST_MARKERS ?= ""
 
 
 first: help
@@ -26,14 +26,6 @@ build-python:  ## Build Python package
 	cd $(CURDIR)/python; poetry build
 
 
-upload-pypi:  ## Upload package to PyPI
-	cd $(CURDIR)/python; twine upload dist/*.tar.gz
-
-
-upload-test:  ## Upload package to PyPI (test)
-	cd $(CURDIR)/python; twine upload --repository test dist/*.tar.gz
-
-
 check:  ## Check linting
 	cd $(CURDIR)/python; isort . --check-only --diff
 	cd $(CURDIR)/python; black . --check
@@ -45,8 +37,12 @@ fmt:  ## Format source
 	cd $(CURDIR)/python; black .
 
 
+upload-pypi:  ## Upload package to PyPI
+	cd $(CURDIR)/python; twine upload dist/*.tar.gz
+
+
 test:  ## Run tests
-	cd $(CURDIR)/python; pytest -k $(PYTEST_K) -m $(TEST_MARKERS)
+	cd $(CURDIR)/python; pytest -k $(PYTEST_K) -m $(PYTEST_MARKERS)
 
 
 report:  ## Generate coverage reports
@@ -67,7 +63,7 @@ resetpython: cleanpython  ## Reset Python
 
 
 # ------------------------------------------------------------------------------
-# JS
+# Javascript
 
 npm-i: npm-install
 npm-install:  ## Install JS dependencies
@@ -130,7 +126,6 @@ example:  ## Dev: Run nbconvert on one example
 # ------------------------------------------------------------------------------
 # Other
 
-reset: cleanall  ## Same as cleanall
 cleanall: cleanpython cleanjs  ## Clean everything
 	rm -rf site
 	rm -f $(CURDIR)/examples/*.html

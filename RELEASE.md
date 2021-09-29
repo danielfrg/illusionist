@@ -24,7 +24,7 @@ git push
 
 ## Upload to NPM
 
-First update the `package.json` version.
+- Update version in `package.json`
 
 ```
 make npm-publish
