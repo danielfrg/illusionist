@@ -12,13 +12,10 @@ const pythonPkgStatic = path.resolve(
     __dirname,
     "..",
     "python",
-    "share",
-    "jupyter",
-    "nbconvert",
+    "illusionist",
     "templates",
     "illusionist",
-    "static",
-    "dist"
+    "assets"
 );
 
 module.exports = (env, argv) => {
@@ -37,21 +34,15 @@ module.exports = (env, argv) => {
                     exclude: /node_modules/,
                     use: ["babel-loader"],
                 },
-                // Extract Jupyter Widgets CSS to external file
+                // Extract Jupyter Widgets CSS to an external file
                 {
                     test: /\.s?[ac]ss$/,
                     use: [extractPlugin, "css-loader"],
-                    // use: ["null-loader"],
                 },
                 // Bundle Jupyter Widgets and Font Awesome in the CSS
                 {
                     test: /\.(eot|ttf|woff|woff2|svg|png|gif|jpe?g)$/,
                     loader: require.resolve("url-loader"),
-                    // loader: require.resolve("file-loader"),
-                    // options: {
-                    //     name: "[name].[ext]?[hash]",
-                    // outputPath: "assets/",
-                    // },
                 },
             ],
         },
@@ -61,13 +52,15 @@ module.exports = (env, argv) => {
             }),
             // Copy the output to the Python Package
             new FileManagerPlugin({
-                onEnd: {
-                    copy: [
-                        {
-                            source: "./dist/*.*",
-                            destination: pythonPkgStatic,
-                        },
-                    ],
+                events: {
+                    onEnd: {
+                        copy: [
+                            {
+                                source: "./dist/*.*",
+                                destination: pythonPkgStatic,
+                            },
+                        ],
+                    },
                 },
             }),
             // new BundleAnalyzerPlugin(),

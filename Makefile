@@ -12,25 +12,18 @@ TEST_MARKERS ?= ""
 first: help
 
 
-build: npm-build build-python  ## Build JS and Python package
+all: npm-build build-python  ## Build JS and Python package
+
 
 # ------------------------------------------------------------------------------
 # Python
 
 env:  ## Create Python env
-	cd $(CURDIR)/python;mamba env create
-
-
-develop:  ## Install package for development
-	cd $(CURDIR)/python;python -m pip install --no-build-isolation -e .
-
-
-extensions:  ## Install Jupyter extensions
-	jupyter labextension install @jupyter-widgets/jupyterlab-manager
+	cd $(CURDIR)/python; poetry install
 
 
 build-python:  ## Build package
-	cd $(CURDIR)/python; python setup.py sdist
+	cd $(CURDIR)/python; poetry build
 
 
 upload-pypi:  ## Upload package to PyPI
@@ -42,13 +35,13 @@ upload-test:  ## Upload package to test PyPI
 
 
 check:  ## Check linting
-	cd $(CURDIR)/python; flake8
-	cd $(CURDIR)/python; isort . --project illusionist --check-only --diff
+	cd $(CURDIR)/python; isort . --check-only --diff
 	cd $(CURDIR)/python; black . --check
+	cd $(CURDIR)/python; flake8
 
 
 fmt:  ## Format source
-	cd $(CURDIR)/python; isort . --project illusionist
+	cd $(CURDIR)/python; isort .
 	cd $(CURDIR)/python; black .
 
 
@@ -72,13 +65,13 @@ cleanpython:  ## Clean Python build files
 # ------------------------------------------------------------------------------
 # JS
 
-npm-build:  ## Build JS
-	cd $(CURDIR)/js/; npm run build:all
-
-
 npm-i: npm-install
 npm-install:  ## Install JS dependencies
 	cd $(CURDIR)/js/; npm install
+
+
+npm-build:  ## Build JS
+	cd $(CURDIR)/js/; npm run build:all
 
 
 npm-dev:  ## Build JS with watch
@@ -107,31 +100,31 @@ cleanjs:  ## Clean JS build files
 # ------------------------------------------------------------------------------
 # Docs
 
-.PHONY: docs
-docs:  ## Build docs
+docs:  ## Docs: Build
 	$(MAKE) docs-examples-html
 	mkdocs build
-	$(MAKE) docs-copy-notebooks
+	$(MAKE) docs-example-exec-nbs
+.PHONY: docs
 
 
-serve-docs:  ## Serve docs
+serve-docs:  ## Docs: Serve
 	mkdocs serve
 
 
-docs-examples-html:  ## Run nbconvert on the docs examples
-	cd $(CURDIR)/examples; jupyter nbconvert *.ipynb --output-dir=$(CURDIR)/docs/examples/ --to illusionist
+docs-examples-html:  ## Docs: Examples to HTML
+	cd $(CURDIR)/examples && jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/docs/examples/	--to illusionist
 
 
-docs-copy-notebooks:  ## Execute example notebooks into docs output
-	cd $(CURDIR)/examples; jupyter nbconvert *.ipynb --output-dir=$(CURDIR)/site/examples/notebooks --to illusionist-nb  --execute
+docs-example-exec-nbs:  ## Docs: Execute example notebooks and output them into docs
+	cd $(CURDIR)/examples && jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/site/examples/notebooks	--to illusionist-nb	--execute
 
 
-example:  ## Run nbconvert on one example
-	cd $(CURDIR)/examples; ILLUSIONIST_DEV_MODE=0 jupyter nbconvert widget-gallery.ipynb --to illusionist
+serve-examples:  ## Docs: Serve examples
+	cd $(CURDIR)/examples && python -m http.server
 
 
-serve-examples:  ## Serve examples
-	cd $(CURDIR)/examples; python -m http.server
+example:  ## Dev: Run nbconvert on one example
+	cd $(CURDIR)/examples && ILLUSIONIST_DEV_MODE=1 jupyter nbconvert widget-gallery.ipynb --to illusionist
 
 
 # ------------------------------------------------------------------------------

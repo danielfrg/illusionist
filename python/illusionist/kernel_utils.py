@@ -1,9 +1,17 @@
-# This code is executed on the Kernel that also executes the notebook
+# This module is executed on the Kernel that also executes the notebook
 
 try:
-    # This will fail when executed in the Kernel is just for linting to work
-    from .widgets import VALUE_WIDGETS, CONTROL_WIDGETS, NUMERIC_OUTPUT_WIDGETS, BOOLEAN_OUTPUT_WIDGET, SELECTION_OUTPUT_WIDGETS, STRING_OUTPUT_WIDGETS
+    # This will fail when executed in the Kernel is just for linting purposes
     import ipywidgets as W
+
+    from .widgets import (
+        BOOLEAN_OUTPUT_WIDGETS,
+        CONTROL_WIDGETS,
+        NUMERIC_OUTPUT_WIDGETS,
+        SELECTION_OUTPUT_WIDGETS,
+        STRING_OUTPUT_WIDGETS,
+        VALUE_WIDGETS,
+    )
 except:
     pass
 
@@ -11,8 +19,12 @@ except:
 def get_widgets_ids(widgets=None, kind=None):
     """
     Return all widgets that are used in the notebook
-    Returns a dictionary with
-        {model_id: widget_object}
+    Parameters
+    ----------
+        widgets (list): List of widgets to
+    Returns
+    -------
+        dictionary of `{"model_id": widget_object}`
     """
     # The `Widgets` class has a registry of all the widgets that were used
     all_widgets = widgets if widgets else W.Widget.widgets
@@ -37,7 +49,7 @@ def get_widgets_ids(widgets=None, kind=None):
 
 def set_widget_value(widget_id, value):
     """
-    Set the value of a widget, based on a possible value
+    Set the value of a widget
     """
     widget = W.Widget.widgets[widget_id]
     if isinstance(widget, NUMERIC_OUTPUT_WIDGETS):

@@ -1,7 +1,5 @@
 # Illusionist
 
-Status: experimentation
-
 Illusionist takes a Jupyter Notebook with widgets and converts it to a
 an HTML report that maintains the interactivity of the widgets without a
 running Jupyter kernel.
@@ -22,7 +20,7 @@ removing a lot of deployment requirements and dependencies.
 
 ## Installation
 
-```
+```shell
 pip install illusionist
 ```
 
@@ -30,13 +28,13 @@ pip install illusionist
 
 To generate an HTML report:
 
-```
+```shell
 jupyter nbconvert --to illusionist your-notebook.ipynb
 ```
 
 To add execute the Notebook and add the widget the metadata to an `.ipynb` file:
 
-```
+```shell
 jupyter nbconvert --to illusionist-nb --execute your-notebook.ipynb --output=output-notebook.ipynb
 ```
 
@@ -44,8 +42,8 @@ jupyter nbconvert --to illusionist-nb --execute your-notebook.ipynb --output=out
 
 ## Examples
 
-- Widget Galley: [html](/examples/widget-gallery.html) - [ipynb](https://nbviewer.danielfrg.com/nb/raw.githubusercontent.com/danielfrg/illusionist/master/examples/widget-gallery.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/widget-gallery.html)
-- Output Widgets using Matplotlib: [html](/examples/matplotlib.html) - [ipynb](https://nbviewer.danielfrg.com/nb/raw.githubusercontent.com/danielfrg/illusionist/master/examples/matplotlib.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/matplotlib.html)
-- Multiplier: [html](/examples/multiplier.html) - [ipynb](https://nbviewer.danielfrg.com/nb/raw.githubusercontent.com/danielfrg/illusionist/master/examples/multiplier.ipynb)
-- Linked Widgets: [html](/examples/linked.html) - [ipynb](https://nbviewer.danielfrg.com/nb/raw.githubusercontent.com/danielfrg/illusionist/master/examples/linked.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/linked.html)
+- Widget Galley: [html](/examples/widget-gallery.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#raw.githubusercontent.com/danielfrg/illusionist/master/examples/widget-gallery.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/widget-gallery.html)
+- Output Widgets using Matplotlib: [html](/examples/matplotlib.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#raw.githubusercontent.com/danielfrg/illusionist/master/examples/matplotlib.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/matplotlib.html)
+- Multiplier: [html](/examples/multiplier.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#raw.githubusercontent.com/danielfrg/illusionist/master/examples/multiplier.ipynb)
+- Linked Widgets: [html](/examples/linked.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#raw.githubusercontent.com/danielfrg/illusionist/master/examples/linked.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/linked.html)
 

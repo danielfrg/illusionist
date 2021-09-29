@@ -13,13 +13,15 @@ edit_uri: ""
 
 theme:
   name: material
-  custom_dir: docs/theme
   favicon: /assets/img/favicon.ico
   logo: /assets/img/icon.png
 
   palette:
     primary: deep orange
-    accent: blue
+    accent: deep orange
+
+  features:
+    - navigation.indexes
 
 extra_css:
   - assets/css/custom.css
@@ -30,7 +32,7 @@ extra_javascript:
 plugins:
   - search
   - mkdocs-jupyter:
-      execute: false
+      execute: true
 
 markdown_extensions:
   - admonition
@@ -45,6 +47,8 @@ markdown_extensions:
   - toc:
       permalink: true
 
-google_analytics:
-  - "UA-35523657-5"
-  - "auto"
+extra:
+  generator: false
+  analytics:
+    provider: google
+    property: UA-35523657-5

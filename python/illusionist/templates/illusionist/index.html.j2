@@ -1,0 +1,35 @@
+{%- extends "lab/index.html.j2" -%}
+
+{%- block html_head_js -%}
+{%- block html_head_js_requirejs -%}
+{# <script src="{{ resources.require_js_url }}"></script> #}
+{%- endblock html_head_js_requirejs -%}
+
+{%- if resources.illusionist_devmode %}
+<script src="./assets/illusionist-embed.j"></script>
+<link rel="stylesheet" href="./assets/illusionist-embed.css">
+{%- else -%}
+{{ resources.include_js("illusionist/assets/illusionist-embed.js") }}
+{{ resources.include_css("illusionist/assets/illusionist-embed.css") }}
+{%- endif %}
+{%- endblock html_head_js -%}
+
+
+{%- block footer %}
+{%- if "widgets" in nb.metadata %}
+  {%- set mimetype = 'application/vnd.jupyter.widget-state+json'-%}
+  {%- if mimetype in nb.metadata.get("widgets", {}) %}
+  <script type="{{ mimetype }}">
+  {{ nb.metadata.widgets[mimetype] | json_dumps }}
+  </script>
+  {%- endif -%}
+
+  {%- set mimetype = "application/vnd.illusionist.widget-onchange+json" -%}
+  {%- if mimetype in nb.metadata.get("widgets", {}) %}
+  <script type="{{ mimetype }}">
+  {{ nb.metadata.widgets[mimetype] | json_dumps }}
+  </script>
+  {%- endif %}
+{%- endif %}
+</html>
+{%- endblock footer-%}
