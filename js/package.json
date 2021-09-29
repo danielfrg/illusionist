@@ -42,10 +42,10 @@
         "test:watch": "jest --watch"
     },
     "dependencies": {
-        "@jupyter-widgets/base": "4.0.0-alpha.1",
-        "@jupyter-widgets/controls": "3.0.0-alpha.1",
-        "@jupyter-widgets/html-manager": "0.20.0-alpha.1",
-        "@jupyter-widgets/output": "4.0.0-alpha.1",
+        "@jupyter-widgets/base": "4.0.0",
+        "@jupyter-widgets/controls": "3.0.0",
+        "@jupyter-widgets/html-manager": "0.20.0",
+        "@jupyter-widgets/output": "4.0.0",
         "papaparse": "^5.2.0"
     },
     "devDependencies": {
