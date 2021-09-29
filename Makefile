@@ -100,14 +100,14 @@ cleanjs:  ## Clean JS build files
 # ------------------------------------------------------------------------------
 # Docs
 
-docs:  ## Build docs
-	# $(MAKE) docs-examples-html
+docs:  ## Docs: Build
+	$(MAKE) docs-examples-html
 	mkdocs build
-	# $(MAKE) docs-example-exec-nbs
+	$(MAKE) docs-example-exec-nbs
 .PHONY: docs
 
 
-serve-docs:  ## Serve docs
+serve-docs:  ## Docs: Serve
 	mkdocs serve
 
 
@@ -119,7 +119,7 @@ docs-example-exec-nbs:  ## Docs: Execute example notebooks and output them into 
 	cd $(CURDIR)/examples && jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/site/examples/notebooks	--to illusionist-nb	--execute
 
 
-serve-examples:  ## Serve examples
+serve-examples:  ## Docs: Serve examples
 	cd $(CURDIR)/examples && python -m http.server
 
 

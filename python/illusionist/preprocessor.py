@@ -4,12 +4,21 @@ import io
 import itertools
 import json
 
+import logging
+import structlog
 from nbconvert.preprocessors import Preprocessor
 
 from illusionist import kernel_utils, utils, widgets
 from illusionist.config import settings
 from illusionist.client import IllusionistClient
 import illusionist.widgets_str as W
+
+
+log = structlog.get_logger()
+
+structlog.configure(
+    wrapper_class=structlog.make_filtering_bound_logger(logging.INFO),
+)
 
 
 WIDGET_ONCHANGE_MIMETYPE = "application/vnd.illusionist.widget-onchange+json"
@@ -95,13 +104,15 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         # nb_cells_before = copy.deepcopy(self.nb.cells)
         base_widget_state = copy.deepcopy(self.widget_state)
 
-        control_widgets, value_widgets = self.get_target_widgets()
+        value_widgets, control_widgets = self.get_target_widgets()
 
         # 1. Get a list of how value widgets are affected by control widgets
         affected_by = self.get_affected_widgets(control_widgets, value_widgets)
+        # log.msg("Affected by dict", value=affected_by)
 
         # 2. Iterate affected_by and add matrix (per output widget) to the matrix
         static_values = self.get_static_values(affected_by)
+        # log.msg("Static values dict", value=static_values)
 
         # Save the onchange state
         onChangeState = {"version_major": 1, "version_minor": 0}
@@ -116,14 +127,24 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
     def get_target_widgets(self):
         value_widgets = self.exec_code("get_widgets_ids(kind='value')")
         value_widgets = self.eval_cell(value_widgets)
+
+        for w in value_widgets:
+            name = self.widget_state[w]["_model_name"]
+            # log.msg("Value Widget", id=w, model=name)
+
         control_widgets = self.exec_code("get_widgets_ids(kind='control')")
         control_widgets = self.eval_cell(control_widgets)
+
+        for w in control_widgets:
+            name = self.widget_state[w]["_model_name"]
+            # log.msg("Control Widget", id=w, model=name)
+
         return value_widgets, control_widgets
 
     def get_affected_widgets(self, control_widgets, value_widgets):
         """
         Iterates the control widgets and see which value widgets are affected
-        by changes to them.
+        by changes to each of them.
 
         Returns
         -------
@@ -136,15 +157,17 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
             possible_values = self.possible_values(widget_id)
             widget_affects = []
 
-            for value in possible_values[:2]:
+            # Iterate all possible values of the control widget
+            # and record if any widget state changed
+            for value in possible_values:
                 self.exec_code(f"set_widget_value('{widget_id}', {value})")
-
                 new_state = self.widget_state
                 diff = diff_state(init_state, new_state, my_id=widget_id)
-                # print(diff)
                 widget_affects.extend(diff)
 
+            # For the affected widgets save them
             for affected in widget_affects:
+                # The or operation of set will add them to the list
                 affected_by[affected] |= {widget_id}
 
         return affected_by
