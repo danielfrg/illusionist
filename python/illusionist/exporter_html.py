@@ -8,7 +8,7 @@ from illusionist.config import settings
 from illusionist.preprocessor import IllusionistPreprocessor
 
 
-@jinja2.utils.pass_context
+@jinja2.pass_context
 def include_external_file(ctx, name):
     """Include an encoded base64 image"""
     with open(os.path.abspath(name), "r") as f:
@@ -19,9 +19,9 @@ def include_external_file(ctx, name):
 class IllusionistHTMLExporter(HTMLExporter):
     # Name for the UI menu item under "File -> Download as"
     export_from_notebook = "Illusionist HTML"
-    preprocessors = [IllusionistPreprocessor]
-    template_file = "illusionist/index.html.j2"
     extra_template_paths = [settings.templates_dir]
+    template_file = "illusionist/index.html.j2"
+    preprocessors = [IllusionistPreprocessor]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
