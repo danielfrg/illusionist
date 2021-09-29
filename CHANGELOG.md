@@ -1,8 +1,10 @@
 # illusionist Change Log
 
-## Unreleased
+## 0.3.0
 
 - Support Python 3.9
+- Package the templates inside the package and not in <prefix>/share/jupyter
+- Update JS dependencies
 
 ## 0.2.0
 

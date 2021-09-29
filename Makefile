@@ -12,7 +12,7 @@ TEST_MARKERS ?= ""
 first: help
 
 
-all: npm-build build-python  ## Build JS and Python package
+all: npm-build build-python  ## Build JS and Python
 
 
 # ------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ env:  ## Create Python env
 	cd $(CURDIR)/python; poetry install
 
 
-build-python:  ## Build package
+build-python:  ## Build Python package
 	cd $(CURDIR)/python; poetry build
 
 
@@ -30,7 +30,7 @@ upload-pypi:  ## Upload package to PyPI
 	cd $(CURDIR)/python; twine upload dist/*.tar.gz
 
 
-upload-test:  ## Upload package to test PyPI
+upload-test:  ## Upload package to PyPI (test)
 	cd $(CURDIR)/python; twine upload --repository test dist/*.tar.gz
 
 
@@ -55,11 +55,15 @@ report:  ## Generate coverage reports
 
 
 cleanpython:  ## Clean Python build files
-	cd $(CURDIR)/python; rm -rf build dist htmlcov .pytest_cache test-results .eggs
-	cd $(CURDIR)/python; rm -f .coverage coverage.xml illusionist/_generated_version.py
+	cd $(CURDIR)/python; rm -rf .pytest_cache dist
+	cd $(CURDIR)/python; rm -f .coverage coverage.xml
 	find . -type f -name '*.py[co]' -delete
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type d -name .ipynb_checkpoints -exec rm -rf {} +
+
+
+resetpython: cleanpython  ## Reset Python
+	cd $(CURDIR)/python; rm -rf .venv
 
 
 # ------------------------------------------------------------------------------
@@ -84,17 +88,13 @@ npm-publish:  ## Publish NPM
 
 
 cleanjs:  ## Clean JS build files
-	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.js
-	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.js.map
-	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.css
-	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.css.map
-	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.html
-	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.woff
-	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.woff2
-	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.eot
-	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.ttf
-	rm -rf $(CURDIR)/python/share/jupyter/nbconvert/templates/illusionist/static/dist/*.svg
 	cd $(CURDIR)/js/; rm -rf .cache dist lib
+	rm -rf $(CURDIR)/python/illusionist/templates/illusionist/assets/*.js*
+	rm -rf $(CURDIR)/python/illusionist/templates/illusionist/assets/*.css*
+
+
+resetjs: cleanjs  ## Reset JS
+	cd $(CURDIR)/js/; rm -rf node_modules
 
 
 # ------------------------------------------------------------------------------
@@ -132,10 +132,9 @@ example:  ## Dev: Run nbconvert on one example
 
 reset: cleanall  ## Same as cleanall
 cleanall: cleanpython cleanjs  ## Clean everything
-	rm -rf site $(CURDIR)/docs/examples/*.html
-	cd $(CURDIR)/examples/; rm -rf *.html
-	cd $(CURDIR)/python/; rm -rf *.egg-info
-	cd $(CURDIR)/js/; rm -rf node_modules
+	rm -rf site
+	rm -f $(CURDIR)/examples/*.html
+	rm -f $(CURDIR)/docs/examples/*.html
 
 
 help:  ## Show this help menu
