@@ -3,16 +3,15 @@ import csv
 import io
 import itertools
 import json
-
 import logging
+
 import structlog
 from nbconvert.preprocessors import Preprocessor
 
-from illusionist import kernel_utils, utils, widgets
-from illusionist.config import settings
-from illusionist.client import IllusionistClient
 import illusionist.widgets_str as W
-
+from illusionist import kernel_utils, utils, widgets
+from illusionist.client import IllusionistClient
+from illusionist.config import settings
 
 log = structlog.get_logger()
 
