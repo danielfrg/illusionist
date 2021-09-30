@@ -66,7 +66,7 @@ jobs:
           key: venv-docs-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Ensure cache is healthy
-        id: cache-reset
+        id: cached-python-env-check
         continue-on-error: true
         if: steps.cached-python-env.outputs.cache-hit == 'true'
         run: |
@@ -74,7 +74,7 @@ jobs:
           poetry run python --version
 
       - name: Install Python dependencies
-        if: steps.cached-python-env.outputs.cache-hit != 'true' || steps.cache-reset.conclusion != 'success'
+        if: steps.cached-python-env.outputs.cache-hit != 'true' || steps.cached-python-env-check.conclusion != 'success'
         run: |
           cd python
           rm -rf .venv || true
