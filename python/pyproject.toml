@@ -2,9 +2,9 @@
 name = "illusionist"
 version = "0.3.0"
 packages = [{ include = "illusionist" }]
-homepage = "https://github.com/danielfrg/mkdocs-jupyter"
-repository = "https://github.com/danielfrg/mkdocs-jupyter"
-documentation = "https://github.com/danielfrg/mkdocs-jupyter"
+homepage = "https://github.com/danielfrg/illusionist"
+repository = "https://github.com/danielfrg/illusionist"
+documentation = "https://github.com/danielfrg/illusionist"
 description = "Interactive Jupyter Widgets without a Kernel"
 authors = ["Daniel Rodriguez"]
 maintainers = ["Daniel Rodriguez"]
