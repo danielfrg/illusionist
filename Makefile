@@ -12,17 +12,17 @@ PYTEST_MARKERS ?= ""
 first: help
 
 
-all: npm-build build-python  ## Build JS and Python
+all: npm-build pkg  ## Build JS and Python
 
 
 # ------------------------------------------------------------------------------
 # Python
 
 env:  ## Create Python env
-	cd $(CURDIR)/python; poetry install
+	cd $(CURDIR)/python; poetry install --with dev --with test --with docs
 
 
-build-python:  ## Build Python package
+pkg:  ## Build package
 	cd $(CURDIR)/python; poetry build
 
 
@@ -37,17 +37,21 @@ fmt:  ## Format source
 	cd $(CURDIR)/python; black .
 
 
-upload-pypi:  ## Upload package to PyPI
-	cd $(CURDIR)/python; twine upload dist/*.tar.gz
+test-%:  ## Run tests
+	cd $(CURDIR)/python; pytest -k $(PYTEST_K) -m $(subst test-,,$@)
 
 
-test:  ## Run tests
+test-all:  ## Run all tests
 	cd $(CURDIR)/python; pytest -k $(PYTEST_K) -m $(PYTEST_MARKERS)
 
 
 report:  ## Generate coverage reports
 	cd $(CURDIR)/python; coverage xml
 	cd $(CURDIR)/python; coverage html
+
+
+upload-pypi:  ## Upload package to PyPI
+	cd $(CURDIR)/python; twine upload dist/*.tar.gz
 
 
 cleanpython:  ## Clean Python build files
@@ -69,32 +73,32 @@ example:  ## Dev: Run nbconvert on one example
 # ------------------------------------------------------------------------------
 # Javascript
 
+npm-install:  ## JS: Install dependencies
+	cd $(CURDIR)/js; npm install
 npm-i: npm-install
-npm-install:  ## Install JS dependencies
-	cd $(CURDIR)/js/; npm install
 
 
-npm-build:  ## Build JS
-	cd $(CURDIR)/js/; npm run build:all
+npm-build:  ## JS: Build
+	cd $(CURDIR)/js; npm run build:all
 
 
-npm-dev:  ## Build JS with watch
-	cd $(CURDIR)/js/; npm run dev
+npm-dev:  ## JS: Build dev mode
+	cd $(CURDIR)/js; npm run dev
 
 
-npm-publish:  ## Publish NPM
-	cd $(CURDIR)/js/; npm version
-	cd $(CURDIR)/js/; npm publish
+npm-publish:  ## JS: Publish to NPM
+	cd $(CURDIR)/js; npm version
+	cd $(CURDIR)/js; npm publish
 
 
-cleanjs:  ## Clean JS build files
-	cd $(CURDIR)/js/; rm -rf .cache dist lib
+cleanjs:  ## JS: Clean build files
+	cd $(CURDIR)/js; npm run clean
 	rm -rf $(CURDIR)/python/illusionist/templates/illusionist/assets/*.js*
 	rm -rf $(CURDIR)/python/illusionist/templates/illusionist/assets/*.css*
 
 
-resetjs: cleanjs  ## Reset JS
-	cd $(CURDIR)/js/; rm -rf node_modules
+resetjs:  ## JS: Reset
+	cd $(CURDIR)/js; npm run reset
 
 
 # ------------------------------------------------------------------------------
@@ -130,7 +134,7 @@ serve-examples:  ## Docs: Serve examples
 # ------------------------------------------------------------------------------
 # Other
 
-cleanall: cleanpython cleanjs  ## Clean everything
+cleanall: cleanjs cleanpython  ## Clean everything
 	rm -rf site
 	rm -f $(CURDIR)/examples/*.html
 	rm -f $(CURDIR)/docs/examples/*.html

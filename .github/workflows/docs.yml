@@ -63,10 +63,10 @@ jobs:
         uses: actions/cache@v2
         with:
           path: python/.venv
-          key: venv-docs-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock', '**/requirements*.txt') }}
+          key: venv-docs-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Ensure cache is healthy
-        id: cache-reset
+        id: cached-python-env-check
         continue-on-error: true
         if: steps.cached-python-env.outputs.cache-hit == 'true'
         run: |
@@ -74,13 +74,11 @@ jobs:
           poetry run python --version
 
       - name: Install Python dependencies
-        if: steps.cached-python-env.outputs.cache-hit != 'true' || steps.cache-reset.conclusion != 'success'
+        if: steps.cached-python-env.outputs.cache-hit != 'true' || steps.cached-python-env-check.conclusion != 'success'
         run: |
           cd python
           rm -rf .venv || true
-          poetry install --no-interaction --no-root
-          source .venv/bin/activate
-          pip install -r requirements-docs.txt
+          poetry install --no-interaction --no-root --with docs
 
       - name: Print Python info
         run: |
@@ -91,10 +89,13 @@ jobs:
           pip --version
           pip freeze
 
+      # ------------------------------------------------------------------------
+      # Docs
+
       - name: Build Python Package
         run: |
           source python/.venv/bin/activate
-          make build-python
+          make pkg
 
       - name: Install package
         run: |
@@ -102,9 +103,6 @@ jobs:
           cd python
           pip install dist/*.tar.gz
           pip freeze
-
-      # ------------------------------------------------------------------------
-      # Docs
 
       - name: Build docs
         run: |
@@ -129,7 +127,7 @@ jobs:
           build_directory: site
 
       - name: Upload docs
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         if: always()
         with:
           name: docs

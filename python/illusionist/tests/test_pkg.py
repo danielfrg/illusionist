@@ -1,7 +1,11 @@
 import os
 
+import pytest
+
 import illusionist
 from illusionist.config import settings
+
+pytestmark = [pytest.mark.pkg]
 
 
 def test_import():

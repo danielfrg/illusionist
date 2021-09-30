@@ -20,31 +20,43 @@ classifiers = [
 ]
 include = ["illusionist/**/assets/*"]
 
-# Poetry dependencies are only used for CI and dev
-# Package is done via Python setuptools to package the data_files
 [tool.poetry.dependencies]
-python = ">=3.7.1,<4"
-nbconvert = ">=6.2.0,<7"
-nbclient = ">=0.5.0"
-nbformat = ">=5.0.7"
+python = ">3.7,<3.11"
+nbconvert = "^6.2.0,<7"
+nbclient = "^0.5.0"
+nbformat = "^5.0.7"
 ipywidgets = "^7.6.5"
 structlog = "^21.1.0"
 
-[tool.poetry.dev-dependencies]
-# [tool.poetry.group.dev]
-# optional = true
-# [tool.poetry.group.dev.dependencies]
-black = "21.9b0"
-flake8 = "^3"
-isort = "^5"
-pylint = "^2.11.1"
+[tool.poetry.group.dev]
+optional = true
+[tool.poetry.group.dev.dependencies]
+pylint = "^2.10.2"
+black = "^21.8b0"
+isort = "^5.9.3"
+flake8 = "^3.9.2"
+twine = "^3.4.2"
 
-# [tool.poetry.group.test]
-# optional = true
-# [tool.poetry.group.test.dependencies]
+[tool.poetry.group.test]
+optional = true
+[tool.poetry.group.test.dependencies]
 pytest = "^6.2.5"
 pytest-cov = "^2.12.1"
 ipykernel = "^6.4.1"
+
+[tool.poetry.group.docs]
+optional = true
+[tool.poetry.group.docs.dependencies]
+mkdocs = "^1.1.0"
+mkdocs-material = "^7.3.0"
+mkdocs-jupyter = "^0.18.0"
+mkdocs-minify-plugin = "^0.4.0"
+Pygments = "^2.10.0"
+pymdown-extensions = "^8.2.0"
+jupyterlab = "^3.1.14"
+ipywidgets = "^7.6.5"
+numpy = "^1.21.2"
+matplotlib = "^3.4.3"
 
 [tool.pytest.ini_options]
 testpaths = ["illusionist/tests"]
@@ -52,7 +64,7 @@ addopts = [
   "-s", "-vv",
   "--ignore=dist",
   "--ignore=site-packages",
-  "--strict-markers",
+  # "--strict-markers",
   "--cov=illusionist",
   "--cov-report=term",
   "--cov-config=pyproject.toml",
@@ -100,6 +112,9 @@ match_dir = "illusionist"
 illusionist = "illusionist:IllusionistHTMLExporter"
 illusionist-nb = "illusionist:IllusionistNotebookExporter"
 
+[tool.poetry-version-plugin]
+source = "init"
+
 [build-system]
-requires = ["poetry>=1.1", "setuptools>=57,<58"]
+requires = ["poetry>=1.2.0a2", "setuptools>=57,<58"]
 build-backend = "poetry.masonry.api"
