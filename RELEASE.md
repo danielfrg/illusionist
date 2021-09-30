@@ -29,6 +29,6 @@ git push
 
 - Update version in `package.json`
 
-```
+```shell
 make npm-publish
 ```

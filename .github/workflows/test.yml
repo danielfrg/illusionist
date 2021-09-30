@@ -81,7 +81,7 @@ jobs:
         run: |
           cd python
           rm -rf .venv || true
-          poetry install --no-interaction --no-root
+          poetry install --no-interaction --no-root --with test
 
       - name: Print Python info
         run: |
@@ -92,10 +92,13 @@ jobs:
           pip --version
           pip freeze
 
+      # ------------------------------------------------------------------------
+      # Test
+
       - name: Build Python Package
         run: |
           source python/.venv/bin/activate
-          make build-python
+          make pkg
 
       - name: Install package
         run: |
@@ -104,20 +107,24 @@ jobs:
           pip install dist/*.tar.gz
           pip freeze
 
-      # ------------------------------------------------------------------------
-      # Test
-
       - name: Run tests
         run: |
           source python/.venv/bin/activate
-          make test
+          make test-all
           make report
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v1
+      - name: Upload package
+        uses: actions/upload-artifact@v2
         if: always()
         with:
-          name: test-results
+          name: pkg-py${{ matrix.python-version }}
+          path: python/dist
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-results-py${{ matrix.python-version }}
           path: python/htmlcov
 
       - name: Codecov
