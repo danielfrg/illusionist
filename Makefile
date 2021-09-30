@@ -86,19 +86,19 @@ npm-dev:  ## JS: Build dev mode
 	cd $(CURDIR)/js; npm run dev
 
 
-npm-publish:  ## Publish NPM
+npm-publish:  ## JS: Publish to NPM
 	cd $(CURDIR)/js; npm version
 	cd $(CURDIR)/js; npm publish
 
 
 cleanjs:  ## JS: Clean build files
-	cd $(CURDIR)/js; rm -rf .cache dist lib
+	cd $(CURDIR)/js; npm run clean
 	rm -rf $(CURDIR)/python/illusionist/templates/illusionist/assets/*.js*
 	rm -rf $(CURDIR)/python/illusionist/templates/illusionist/assets/*.css*
 
 
-resetjs: cleanjs  ## JS: Reset
-	cd $(CURDIR)/js; rm -rf node_modules
+resetjs:  ## JS: Reset
+	cd $(CURDIR)/js; npm run reset
 
 
 # ------------------------------------------------------------------------------
