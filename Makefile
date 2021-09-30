@@ -74,31 +74,31 @@ example:  ## Dev: Run nbconvert on one example
 # Javascript
 
 npm-install:  ## JS: Install dependencies
-	cd $(CURDIR)/js/; npm install
+	cd $(CURDIR)/js; npm install
 npm-i: npm-install
 
 
 npm-build:  ## JS: Build
-	cd $(CURDIR)/js/; npm run build:all
+	cd $(CURDIR)/js; npm run build:all
 
 
 npm-dev:  ## JS: Build dev mode
-	cd $(CURDIR)/js/; npm run dev
+	cd $(CURDIR)/js; npm run dev
 
 
 npm-publish:  ## Publish NPM
-	cd $(CURDIR)/js/; npm version
-	cd $(CURDIR)/js/; npm publish
+	cd $(CURDIR)/js; npm version
+	cd $(CURDIR)/js; npm publish
 
 
 cleanjs:  ## JS: Clean build files
-	cd $(CURDIR)/js/; rm -rf .cache dist lib
+	cd $(CURDIR)/js; rm -rf .cache dist lib
 	rm -rf $(CURDIR)/python/illusionist/templates/illusionist/assets/*.js*
 	rm -rf $(CURDIR)/python/illusionist/templates/illusionist/assets/*.css*
 
 
 resetjs: cleanjs  ## JS: Reset
-	cd $(CURDIR)/js/; rm -rf node_modules
+	cd $(CURDIR)/js; rm -rf node_modules
 
 
 # ------------------------------------------------------------------------------
