@@ -3,7 +3,6 @@ lib/
 dist/
 build/
 .cache/
-docs/
 test/build
 test/coverage
 
