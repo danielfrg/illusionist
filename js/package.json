@@ -1,6 +1,6 @@
 {
     "name": "@danielfrg/illusionist",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "Interactive Jupyter Widgets without a Kernel",
     "author": "Daniel Rodriguez",
     "license": "Apache-2.0",
