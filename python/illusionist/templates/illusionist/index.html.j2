@@ -1,19 +1,17 @@
 {%- extends "lab/index.html.j2" -%}
 
-{%- block html_head_js -%}
-{%- block html_head_js_requirejs -%}
-{# <script src="{{ resources.require_js_url }}"></script> #}
-{%- endblock html_head_js_requirejs -%}
 
+
+{# Change: Remove default Jupyter widgets and add ours #}
+{% block jupyter_widgets %}
 {%- if resources.illusionist_devmode %}
-<script src="./assets/illusionist-embed.j"></script>
+<script src="./assets/illusionist-embed.js"></script>
 <link rel="stylesheet" href="./assets/illusionist-embed.css">
 {%- else -%}
 {{ resources.include_js("illusionist/assets/illusionist-embed.js") }}
 {{ resources.include_css("illusionist/assets/illusionist-embed.css") }}
 {%- endif %}
-{%- endblock html_head_js -%}
-
+{% endblock jupyter_widgets %}
 
 {%- block footer %}
 {%- if "widgets" in nb.metadata %}

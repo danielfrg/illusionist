@@ -109,32 +109,5 @@ dmypy.json
 # setuptools_scm
 _generated_version.py
 
-### JS ###
-
-# Build generated
-lib/
-dist/
-build/
-.cache/
-test/build
-test/coverage
-
-# Dependency directories
-node_modules
-
-# npm
-.npm
-npm-debug.log
-
-# yarn
-.yarn-integrity
-
-# Optional eslint cache
-.eslintcache
-
-# Typescript
-*.tsbuildinfo
-typings/tsd.d.ts
-
 ### Project specific ###
 examples/*.html

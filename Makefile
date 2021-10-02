@@ -19,7 +19,7 @@ all: npm-build pkg  ## Build JS and Python
 # Python
 
 env:  ## Create Python env
-	cd $(CURDIR)/python; poetry install --with dev --with test --with docs
+	cd $(CURDIR)/python; poetry install --with dev --with test
 
 
 pkg:  ## Build package
@@ -67,7 +67,7 @@ resetpython: cleanpython  ## Reset Python
 
 
 example:  ## Dev: Run nbconvert on one example
-	cd $(CURDIR)/examples && ILLUSIONIST_DEV_MODE=1 jupyter nbconvert widget-gallery.ipynb --to illusionist
+	cd $(CURDIR)/examples; ILLUSIONIST_DEV_MODE=0 jupyter nbconvert widget-gallery.ipynb --output-dir=$(CURDIR)/docs/examples/ --to illusionist
 
 
 # ------------------------------------------------------------------------------
@@ -116,19 +116,19 @@ docs-serve:  ## Docs: Serve
 
 
 docs-examples-html:  ## Docs: Convert examples to HTML
-	cd $(CURDIR)/examples && jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/docs/examples/	--to illusionist
+	cd $(CURDIR)/examples; jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/docs/examples/	--to illusionist
 
 
 docs-example-exec-nbs:  ## Docs: Execute examples and output them into docs
-	cd $(CURDIR)/examples && jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/site/examples/notebooks	--to illusionist-nb	--execute
+	cd $(CURDIR)/examples; jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/site/examples/notebooks	--to illusionist-nb	--execute
 
 
 examples-clear-output:  ## Clear output of notebooks
-	cd $(CURDIR)/examples && jupyter nbconvert */*.ipynb --clear-output --inplace
+	cd $(CURDIR)/examples; jupyter nbconvert */*.ipynb --clear-output --inplace
 
 
 serve-examples:  ## Docs: Serve examples
-	cd $(CURDIR)/examples && python -m http.server
+	cd $(CURDIR)/examples; python -m http.server
 
 
 # ------------------------------------------------------------------------------
