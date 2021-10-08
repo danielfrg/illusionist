@@ -106,8 +106,8 @@ resetjs:  ## JS: Reset
 
 docs:  ## Docs: Build
 	$(MAKE) docs-examples-html
-	$(MAKE) docs-example-exec-nbs
 	mkdocs build
+	$(MAKE) docs-example-exec-nbs
 .PHONY: docs
 
 
@@ -120,7 +120,7 @@ docs-examples-html:  ## Docs: Convert examples to HTML
 
 
 docs-example-exec-nbs:  ## Docs: Execute examples inplace
-	cd $(CURDIR)/examples; jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/docs/examples/notebooks	--to illusionist-nb
+	cd $(CURDIR)/examples; jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/site/examples/notebooks	--to illusionist-nb
 
 
 examples-clear-output:  ## Clear output of notebooks
