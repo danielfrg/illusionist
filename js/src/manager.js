@@ -48,7 +48,7 @@ export default class IllusionistWidgetManager extends HTMLManager {
         super();
         this.loader = requireLoader;
         this.onChangeState = null;
-        this.modelIdToViewScriptTag = {};
+        this.modelIdToViewEl = {};
     }
 
     async loadState() {
@@ -57,20 +57,23 @@ export default class IllusionistWidgetManager extends HTMLManager {
     }
 
     /**
-     * Loads the widget initial state from the HTML script tags
+     * Loads the initial widget state from the HTML script tags
      */
     async loadInitialState() {
+        // console.log("loadInitialState()");
+
         const stateTags = document.body.querySelectorAll(
             `script[type="${WIDGET_STATE_MIMETYPE}"]`
         );
         if (stateTags.length == 0) {
-            console.log(
+            console.warn(
                 "IllusionistWidgetManager: Didn't find widget state on the HTML page"
             );
             return;
         }
         for (let stateTag of stateTags) {
             const widgetState = JSON.parse(stateTag.innerHTML);
+            // console.log(widgetState);
             await this.set_state(widgetState);
         }
     }
@@ -79,6 +82,7 @@ export default class IllusionistWidgetManager extends HTMLManager {
      * Loads the onChange widget state from the HTML script tags
      */
     async loadOnChangeState() {
+        // console.log("loadOnChangeState()")
         const onChangeTags = document.body.querySelectorAll(
             `script[type="${WIDGET_ONCHANGE_MIMETYPE}"]`
         );
@@ -87,17 +91,19 @@ export default class IllusionistWidgetManager extends HTMLManager {
         }
         for (let tag of onChangeTags) {
             const onChangeState = JSON.parse(tag.innerHTML);
+            // console.log(onChangeState);
             await this.setOnChangeState(onChangeState);
         }
-        this.widgetAffects = {};
 
+
+        this.widgetAffects = {};
         this.onChangeState.control_widgets.forEach((controlId) => {
             this.widgetAffects[controlId] = [];
-            for (let [outputId, obj] of Object.entries(
+            for (let [valueWidgetID, obj] of Object.entries(
                 this.onChangeState.onchange
             )) {
                 if (obj.affected_by.includes(controlId)) {
-                    this.widgetAffects[controlId].push(outputId);
+                    this.widgetAffects[controlId].push(valueWidgetID);
                 }
             }
         });
@@ -113,18 +119,41 @@ export default class IllusionistWidgetManager extends HTMLManager {
 
         this.onChangeState.control_widgets.forEach((controlId) => {
             this.widgetAffects[controlId] = [];
-            for (let [outputId, obj] of Object.entries(
+            for (let [valueWidgetID, obj] of Object.entries(
                 this.onChangeState.onchange
             )) {
                 if (obj.affected_by.includes(controlId)) {
-                    this.widgetAffects[controlId].push(outputId);
+                    this.widgetAffects[controlId].push(valueWidgetID);
                 }
             }
         });
     }
 
+    /**
+     * Build all the widgets
+     */
+     async renderAllWidgets() {
+        const viewEls = document.body.querySelectorAll(
+            `script[type="${WIDGET_VIEW_MIMETYPE}"]`
+        );
+
+        viewEls.forEach(async (viewEl) => {
+            try {
+                const widgetViewObject = JSON.parse(viewEl.innerHTML);
+                const { model_id } = widgetViewObject;
+
+                // We save this relations so we know where to render the widget
+                this.modelIdToViewEl[model_id] = viewEl;
+
+                await this.renderWidget(model_id);
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    }
+
     /*
-     * Render one widgetd based on a ModelId
+     * Render one widget based on a ModelId
      */
     async renderWidget(modelId) {
         const model = await this.get_model(modelId);
@@ -137,18 +166,15 @@ export default class IllusionistWidgetManager extends HTMLManager {
             widgetEl.innerHTML = "";
         } else {
             // If there is not a div with ID equal to the modelID
-            // We create a div in the parent of the script tag that has that modelID
-            // We look for the viewScriptTag on the this.modelIdToViewScriptTag map
+            // We create a new div in the parent of the script tag that has that modelID
+            // We look for the viewEl on this.modelIdToViewEl
 
-            const viewScriptTag = this.modelIdToViewScriptTag[modelId];
+            const viewEl = this.modelIdToViewEl[modelId];
 
-            if (viewScriptTag) {
+            if (viewEl) {
                 widgetEl = document.createElement("div");
                 widgetEl.id = modelId;
-                viewScriptTag.parentElement.insertBefore(
-                    widgetEl,
-                    viewScriptTag
-                );
+                viewEl.parentElement.insertBefore(widgetEl, viewEl);
             } else {
                 console.error(
                     "Couldn't not find an element where to render the widget: " +
@@ -173,76 +199,51 @@ export default class IllusionistWidgetManager extends HTMLManager {
     }
 
     /**
-     * Build all the widgets
-     */
-    async renderAllWidgets() {
-        const viewScriptTags = document.body.querySelectorAll(
-            `script[type="${WIDGET_VIEW_MIMETYPE}"]`
-        );
-
-        viewScriptTags.forEach(async (viewScriptTag) => {
-            try {
-                const widgetViewObject = JSON.parse(viewScriptTag.innerHTML);
-                const { model_id } = widgetViewObject;
-
-                // We save this map so we know where to render the widget
-                this.modelIdToViewScriptTag[model_id] = viewScriptTag;
-
-                await this.renderWidget(model_id);
-            } catch (error) {
-                console.error(error);
-            }
-        });
-    }
-
-    /**
      * Handles the state update when a Widget changes.
      * It will trigger the update of the Widget Views.
      */
     async onWidgetChange(modelId) {
-        // console.log("onWidgetChange");
-        // console.log(modelId);
+        // console.log("onWidgetChange()");
+        // console.log("ModelID: " + modelId);
         let state = await this.get_state();
         const onChange = this.onChangeState["onchange"];
 
-        const outputsAffected = this.widgetAffects[modelId];
+        const valueWidgetAffectedBy = this.widgetAffects[modelId];
 
-        if (!outputsAffected) {
+        if (!valueWidgetAffectedBy) {
             return;
         }
+        // console.log("valueWidgetAffectedBy: " + valueWidgetAffectedBy)
+        valueWidgetAffectedBy.forEach(async (valueWidgetID) => {
+            const valueWidgetState = state["state"][valueWidgetID]["state"];
+            const valueWidgetChangeData = onChange[valueWidgetID];
+            const widgetIsAffectedBy = valueWidgetChangeData["affected_by"];
 
-        outputsAffected.forEach(async (outputId) => {
-            const outputModel = state["state"][outputId]["state"];
-            const outputOnChangeData = onChange[outputId];
-            const outputAffectedBy = outputOnChangeData["affected_by"];
-
-            // console.log("Affected by:");
-            // console.log(outputAffectedBy);
-
-            // 1. Iterate controlValues and get the values to make the has
-            let controlValues = [];
-            for (let controlId of outputAffectedBy) {
+            // 1. Iterate the control widgets that affect this value widget
+            // and get their values to make the hash
+            let controlWidgetValues = [];
+            for (let controlId of widgetIsAffectedBy) {
                 const inputModel = state["state"][controlId]["state"];
-                const key = this.getWidgetValueKey(inputModel["_model_name"]);
-                let inputValue = inputModel[key];
+                const valueKey = this.getWidgetValueKey(inputModel["_model_name"]);
+                let inputValue = inputModel[valueKey];
 
                 if (inputValue !== undefined) {
                     if (inputValue instanceof Array) {
-                        controlValues.push(`[${inputValue.toString()}]`);
+                        controlWidgetValues.push(`[${inputValue.toString()}]`);
                     } else {
-                        controlValues.push(inputValue);
+                        controlWidgetValues.push(inputValue);
                     }
                 }
             }
 
-            // 2. Make hash based on the controlValues
-            let hash = this.hash_fn(controlValues);
+            // 2. Make hash based on the controlWidgetValues
+            let hash = this.hash_fn(controlWidgetValues);
 
-            // 3. Update affected widgets
-            const outputValue = outputOnChangeData["values"][hash];
-            if (outputValue !== undefined) {
-                const key = this.getWidgetValueKey(outputModel["_model_name"]);
-                state["state"][outputId]["state"][key] = outputValue;
+            // 3. Update value for the widget ()
+            const widgetNewValue = valueWidgetChangeData["values"][hash];
+            if (widgetNewValue !== undefined) {
+                const valueKey = this.getWidgetValueKey(valueWidgetState["_model_name"]);
+                state["state"][valueWidgetID]["state"][valueKey] = widgetNewValue;
 
                 // If it's an OutputModel clear the state
                 // This avoids objects being rendered multiple times
@@ -250,7 +251,7 @@ export default class IllusionistWidgetManager extends HTMLManager {
                 await resolvePromisesDict(this._models).then((models) => {
                     Object.keys(models).forEach((id) => {
                         let model = models[id];
-                        if (model.name == "OutputModel") {
+                        if (valueWidgetID == id && model.name == "OutputModel") {
                             models[id].close();
                             this._models[model.model_id] = null;
                         }
@@ -258,13 +259,20 @@ export default class IllusionistWidgetManager extends HTMLManager {
                 });
 
                 await this.set_state(state);
-                if (outputModel["_model_name"] == "OutputModel") {
-                    this.renderWidget(outputId);
+                if (valueWidgetState["_model_name"] == "OutputModel") {
+                    this.renderWidget(valueWidgetID);
                 }
             }
         });
     }
 
+
+    /**
+     * For a model_name return the field name in the state that contains
+     * the value for a widget
+     *
+     * Use that field name to update the values
+     */
     getWidgetValueKey(model_name) {
         if (SELECTION_WIDGETS.includes(model_name)) {
             return "index";

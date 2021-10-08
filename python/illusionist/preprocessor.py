@@ -3,21 +3,13 @@ import csv
 import io
 import itertools
 import json
-import logging
 
-import structlog
 from nbconvert.preprocessors import Preprocessor
 
 import illusionist.widgets_str as W
 from illusionist import kernel_utils, utils, widgets
 from illusionist.client import IllusionistClient
 from illusionist.config import settings
-
-log = structlog.get_logger()
-
-structlog.configure(
-    wrapper_class=structlog.make_filtering_bound_logger(logging.INFO),
-)
 
 
 WIDGET_ONCHANGE_MIMETYPE = "application/vnd.illusionist.widget-onchange+json"
@@ -56,14 +48,15 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         Preprocessor.__init__(self, nb=nb, **kw)
         IllusionistClient.__init__(self, nb, **kw)
 
-    def preprocess(self, nb, resources=None, km=None):
-        # self.log_level = "DEBUG"
+    def preprocess(self, nb, resources=None, km=None, cleanup=True):
+        self.log_level = "INFO"
         self.nb = nb
         self.km = km
         self.onchange_values = {}
 
         resources = resources if resources else {}
         resources["illusionist_devmode"] = settings.dev_mode
+
         if resources["illusionist_devmode"]:
             self.log.warning(
                 "Illusionist Dev Mode is ON. "
@@ -75,12 +68,14 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
             self.execute(cleanup_kc=False)
 
             # self.widget_onchange_state is created on self.after_notebook
-            self.nb.metadata.widgets.update(
-                {WIDGET_ONCHANGE_MIMETYPE: self.widget_onchange_state}
-            )
+            if "widgets" in self.nb.metadata:
+                self.nb.metadata.widgets.update(
+                    {WIDGET_ONCHANGE_MIMETYPE: self.widget_onchange_state}
+                )
         finally:
             # Clean up
-            self._cleanup_kernel()
+            if cleanup:
+                self._cleanup_kernel()
 
         return nb, resources
 
@@ -95,6 +90,9 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
         Like Next.JS `getStaticPaths`:
         https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation
         """
+        if settings.dev_mode:
+            _ = self.exec_code("# =====\n# Illusionist DEV_MODE cells below\n# =====")
+
         # Load helper code into the kernel
         _ = self.exec_code(utils.get_source(widgets))
         _ = self.exec_code(utils.get_source(kernel_utils))
@@ -107,18 +105,22 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
 
         # 1. Get a list of how value widgets are affected by control widgets
         affected_by = self.get_affected_widgets(control_widgets, value_widgets)
-        # log.msg("Affected by dict", value=affected_by)
 
-        # 2. Iterate affected_by and add matrix (per output widget) to the matrix
+        # 2. Iterate affected_by and generate the matrix
         static_values = self.get_static_values(affected_by)
-        # log.msg("Static values dict", value=static_values)
 
         # Save the onchange state
-        onChangeState = {"version_major": 1, "version_minor": 0}
-        onChangeState["all_widgets"] = value_widgets
-        onChangeState["control_widgets"] = control_widgets
-        onChangeState["onchange"] = static_values
-        self.widget_onchange_state = onChangeState
+        on_change_state = {"version_major": 1, "version_minor": 0}
+        on_change_state["all_widgets"] = value_widgets
+        on_change_state["control_widgets"] = control_widgets
+        on_change_state["onchange"] = static_values
+        self.widget_onchange_state = on_change_state
+
+        if settings.dev_mode:
+            self.log.info("Saving static values to values.json")
+            import json
+            with open("values.json", "w") as fp:
+                json.dump(on_change_state, fp)
 
         # Set the original widget_state back to the original ones
         self.widget_state = base_widget_state
@@ -227,7 +229,7 @@ class IllusionistPreprocessor(Preprocessor, IllusionistClient):
     def get_widget_value(self, widget_id):
         """
         Based on the widget model return the current value for a widget id
-        This value is the one we serialize on the onChangeState
+        This value is the one we serialize on the on_change_state
         """
         widget_state = self.widget_state[widget_id]
         model_name = widget_state["_model_name"]

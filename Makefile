@@ -67,7 +67,7 @@ resetpython: cleanpython  ## Reset Python
 
 
 example:  ## Dev: Run nbconvert on one example
-	cd $(CURDIR)/examples; ILLUSIONIST_DEV_MODE=0 jupyter nbconvert widget-gallery.ipynb --output-dir=$(CURDIR)/docs/examples/ --to illusionist
+	cd $(CURDIR)/examples; ILLUSIONIST_DEV_MODE=1 jupyter nbconvert pandas.ipynb --output-dir=$(CURDIR)/docs/examples/ --to illusionist
 
 
 # ------------------------------------------------------------------------------
@@ -119,16 +119,16 @@ docs-examples-html:  ## Docs: Convert examples to HTML
 	cd $(CURDIR)/examples; jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/docs/examples/	--to illusionist
 
 
-docs-example-exec-nbs:  ## Docs: Execute examples and output them into docs
-	cd $(CURDIR)/examples; jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/site/examples/notebooks	--to illusionist-nb	--execute
+docs-example-exec-nbs:  ## Docs: Execute examples inplace
+	cd $(CURDIR)/examples; jupyter nbconvert *.ipynb	--output-dir=$(CURDIR)/docs/examples/notebooks	--to illusionist-nb
 
 
 examples-clear-output:  ## Clear output of notebooks
-	cd $(CURDIR)/examples; jupyter nbconvert */*.ipynb --clear-output --inplace
+	cd $(CURDIR)/examples; jupyter nbconvert *.ipynb --clear-output --inplace
 
 
 serve-examples:  ## Docs: Serve examples
-	cd $(CURDIR)/examples; python -m http.server
+	python -m http.server
 
 
 # ------------------------------------------------------------------------------
