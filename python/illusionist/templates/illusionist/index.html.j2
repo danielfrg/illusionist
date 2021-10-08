@@ -1,13 +1,11 @@
 {%- extends "lab/index.html.j2" -%}
 
-
-
 {# Change: Remove default Jupyter widgets and add ours #}
 {% block jupyter_widgets %}
-<script src="/js/dist/illusionist-embed.js"></script>
-<link rel="stylesheet" href="/js/dist/illusionist-embed.css">
-{# {{ resources.include_js("illusionist/assets/illusionist-embed.js") }} #}
-{# {{ resources.include_css("illusionist/assets/illusionist-embed.css") }} #}
+{# <script src="/js/dist/illusionist-embed.js"></script> #}
+{# <link rel="stylesheet" href="/js/dist/illusionist-embed.css"> #}
+{{ resources.include_js("illusionist/assets/illusionist-embed.js") }}
+{{ resources.include_css("illusionist/assets/illusionist-embed.css") }}
 {% endblock jupyter_widgets %}
 
 {%- block footer %}
