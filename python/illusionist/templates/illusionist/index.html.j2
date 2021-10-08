@@ -4,13 +4,10 @@
 
 {# Change: Remove default Jupyter widgets and add ours #}
 {% block jupyter_widgets %}
-{%- if resources.illusionist_devmode %}
-<script src="./assets/illusionist-embed.js"></script>
-<link rel="stylesheet" href="./assets/illusionist-embed.css">
-{%- else -%}
-{{ resources.include_js("illusionist/assets/illusionist-embed.js") }}
-{{ resources.include_css("illusionist/assets/illusionist-embed.css") }}
-{%- endif %}
+<script src="/js/dist/illusionist-embed.js"></script>
+<link rel="stylesheet" href="/js/dist/illusionist-embed.css">
+{# {{ resources.include_js("illusionist/assets/illusionist-embed.js") }} #}
+{# {{ resources.include_css("illusionist/assets/illusionist-embed.css") }} #}
 {% endblock jupyter_widgets %}
 
 {%- block footer %}
