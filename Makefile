@@ -106,8 +106,8 @@ resetjs:  ## JS: Reset
 
 docs:  ## Docs: Build
 	$(MAKE) docs-examples-html
-	mkdocs build
 	$(MAKE) docs-example-exec-nbs
+	mkdocs build
 .PHONY: docs
 
 

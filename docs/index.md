@@ -49,9 +49,9 @@ jupyter nbconvert --to illusionist-nb --execute your-notebook.ipynb --output=out
 
 ## Examples
 
-- Linked Widgets: [html](/examples/linked.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#raw.githubusercontent.com/danielfrg/illusionist/master/examples/linked.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/linked.html)
-- Multiplier: [html](/examples/multiplier.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#raw.githubusercontent.com/danielfrg/illusionist/master/examples/multiplier.ipynb)
-- Output Widgets using Matplotlib: [html](/examples/matplotlib.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#raw.githubusercontent.com/danielfrg/illusionist/master/examples/matplotlib.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/matplotlib.html)
-- Pandas DataFrame: [html](/examples/pandas.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#raw.githubusercontent.com/danielfrg/illusionist/master/examples/pandas.ipynb)
-- Widget Galley: [html](/examples/widget-gallery.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#raw.githubusercontent.com/danielfrg/illusionist/master/examples/widget-gallery.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/widget-gallery.html)
+- Linked Widgets: [html](/examples/linked.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#illusionist.danielfrg.com/examples/notebooks/linked.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/linked.html)
+- Multiplier: [html](/examples/multiplier.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#illusionist.danielfrg.com/examples/notebooks/multiplier.ipynb)
+- Output Widgets using Matplotlib: [html](/examples/matplotlib.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#illusionist.danielfrg.com/examples/notebooks/matplotlib.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/matplotlib.html)
+- Pandas DataFrame: [html](/examples/pandas.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#illusionist.danielfrg.com/examples/notebooks/pandas.ipynb)
+- Widget Galley: [html](/examples/widget-gallery.html) - [ipynb](https://nbviewer.danielfrg.com/notebook#illusionist.danielfrg.com/examples/notebooks/widget-gallery.ipynb) - [dashboard](https://jupyter-flex.netlify.app/examples/illusionist/widget-gallery.html)
 
