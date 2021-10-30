@@ -4,12 +4,10 @@ SHELL := bash
 .DELETE_ON_ERROR:
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
+.DEFAULT_GOAL := help
 
 PYTEST_K ?= ""
 PYTEST_MARKERS ?= ""
-
-
-first: help
 
 
 all: npm-build pkg  ## Build JS and Python
@@ -19,7 +17,7 @@ all: npm-build pkg  ## Build JS and Python
 # Python
 
 env:  ## Create Python env
-	cd $(CURDIR)/python; poetry install --with dev --with test
+	cd $(CURDIR)/python; poetry install --with dev --with test --with docs
 
 
 pkg:  ## Build package

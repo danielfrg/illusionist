@@ -27,22 +27,22 @@ Like a regular [static web page](https://en.wikipedia.org/wiki/Static_web_page).
 
 ## Installation
 
-```shell
-pip install illusionist
+```shell title="Terminal"
+$ pip install illusionist
 ```
 
 ## Usage
 
 To generate an HTML report:
 
-```shell
-jupyter nbconvert --to illusionist your-notebook.ipynb
+```shell title="Terminal"
+$ jupyter nbconvert --to illusionist your-notebook.ipynb
 ```
 
 To add execute the Notebook and add the widget the metadata to an `.ipynb` file:
 
-```shell
-jupyter nbconvert --to illusionist-nb --execute your-notebook.ipynb --output=output-notebook.ipynb
+```shell title="Terminal"
+$ jupyter nbconvert --to illusionist-nb --execute your-notebook.ipynb --output=output-notebook.ipynb
 ```
 
 [Learn more](/usage).
