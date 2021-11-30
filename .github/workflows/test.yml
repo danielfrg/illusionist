@@ -68,7 +68,7 @@ jobs:
           path: python/.venv
           key: venv-test-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}-1
 
-       - name: Ensure cache is healthy
+      - name: Ensure cache is healthy
         id: cached-python-env-check
         continue-on-error: true
         if: steps.cached-python-env.outputs.cache-hit == 'true'
