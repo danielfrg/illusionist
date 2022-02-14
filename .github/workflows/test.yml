@@ -118,14 +118,14 @@ jobs:
           make test-all
           make report
 
+      - name: Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          file: python/coverage.xml
+
       - name: Upload test results to GitHub
         uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: test-results-py${{ matrix.python-version }}
           path: python/htmlcov
-
-      - name: Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          file: python/coverage.xml

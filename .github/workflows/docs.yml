@@ -63,7 +63,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: python/.venv
-          key: venv-docs-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          key: venv-docs-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}-1
 
       - name: Ensure cache is healthy
         id: cached-python-env-check
@@ -80,6 +80,12 @@ jobs:
 
       - name: Install Python dependencies
         if: steps.cached-python-env.outputs.cache-hit != 'true' || steps.cached-python-env-check.outcome != 'success'
+        run: |
+          cd python
+          rm -rf .venv || true
+          poetry install --no-interaction --no-root --with docs
+
+      - name: Print Python info
         run: |
           source python/.venv/bin/activate
           which python
