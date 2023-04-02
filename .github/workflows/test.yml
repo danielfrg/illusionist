@@ -9,30 +9,36 @@ on:
     - cron: "0 5 * * *"
   workflow_dispatch:
 
+concurrency:
+  group: test-${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    name: test / py ${{ matrix.python-version }} / node ${{ matrix.node-version }}
 
     strategy:
       matrix:
         python-version: [3.7, 3.8, 3.9]
-        node-version: ["16"]
+        node-version: ["18"]
+
+    runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v2
-      - run: git fetch --prune --unshallow
+      - uses: actions/checkout@v3
+      - uses: arduino/setup-task@v1
 
       # ------------------------------------------------------------------------
       # JS
 
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Load cached node_modules
         id: cached-node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: js/node_modules
           key: node_modules-${{ runner.os }}-node${{ matrix.node-version }}-${{ hashFiles('js/package*.json') }}
@@ -50,7 +56,7 @@ jobs:
       # Python
 
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -63,7 +69,7 @@ jobs:
 
       - name: Load cached venv
         id: cached-python-env
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: python/.venv
           key: venv-test-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}-1

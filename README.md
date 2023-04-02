@@ -1,6 +1,6 @@
 # illusionist
 
-[![pypi](https://badge.fury.io/py/illusionist.svg)](https://pypi.org/project/illusionist/)
+[![pypi](https://img.shields.io/pypi/v/illusionist.svg)](https://pypi.org/project/illusionist/)
 [![build](https://github.com/danielfrg/illusionist/workflows/test/badge.svg)](https://github.com/danielfrg/illusionist/actions/workflows/test.yml)
 [![docs](https://github.com/danielfrg/illusionist/workflows/docs/badge.svg)](https://github.com/danielfrg/illusionist/actions/workflows/docs.yml)
 [![coverage](https://codecov.io/gh/danielfrg/illusionist/branch/master/graph/badge.svg)](https://codecov.io/gh/danielfrg/illusionist?branch=master)
