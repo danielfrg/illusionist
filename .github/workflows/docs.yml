@@ -16,8 +16,8 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.8]
-        node-version: ["18"]
+        python-version: [3.11]
+        node-version: [18]
 
     runs-on: ubuntu-20.04
 
@@ -121,7 +121,7 @@ jobs:
           make docs
 
       # ------------------------------------------------------------------------
-      # Release
+      # Publish
 
       - name: Staging - Upload to Netlify
         uses: netlify/actions/cli@master
