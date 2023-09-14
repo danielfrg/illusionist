@@ -1,15 +1,5 @@
 {
     "projects": {
         "default": "danielfrg-com"
-    },
-    "targets": {
-        "danielfrg-com": {
-            "hosting": {
-                "illusionist": [
-                    "illusionist"
-                ]
-            }
-        }
-    },
-    "etags": {}
+    }
 }

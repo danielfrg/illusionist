@@ -64,7 +64,7 @@ jobs:
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: 1.2.0a2
+          version: 1.6.1
           virtualenvs-create: true
           virtualenvs-in-project: true
 
@@ -135,11 +135,11 @@ jobs:
             ${{ github.run_attempt }}
 
   firebase:
-    uses: ./.github/workflows/deploy-firebase.yml
+    uses: ./.github/workflows/docs-firebase.yml
     needs: [build]
     secrets: inherit
 
   post-deploy:
-    uses: ./.github/workflows/deploy-cloudflare.yml
+    uses: ./.github/workflows/docs-cloudflare.yml
     needs: [firebase]
     secrets: inherit
