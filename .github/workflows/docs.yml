@@ -10,10 +10,14 @@ concurrency:
   group: docs-${{ github.head_ref }}
   cancel-in-progress: true
 
-jobs:
-  docs:
-    name: docs
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+  checks: write
 
+jobs:
+  build:
     strategy:
       matrix:
         python-version: [3.11]
@@ -60,7 +64,7 @@ jobs:
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: 1.2.0a2
+          version: 1.6.1
           virtualenvs-create: true
           virtualenvs-in-project: true
 
@@ -120,21 +124,22 @@ jobs:
           source python/.venv/bin/activate
           make docs
 
-      # ------------------------------------------------------------------------
-      # Publish
-
-      - name: Staging - Upload to Netlify
-        uses: netlify/actions/cli@master
+      - name: Cache website
+        id: cache-build
+        uses: actions/cache@v3
         with:
-          args: deploy --dir=site
-        env:
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          path: dist
+          key: >
+            dist
+            ${{ github.run_id }}
+            ${{ github.run_attempt }}
 
-      - name: Prod - Upload to Netlify
-        uses: netlify/actions/cli@master
-        with:
-          args: deploy --dir=site --prod
-        env:
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+  firebase:
+    uses: ./.github/workflows/docs-firebase.yml
+    needs: [build]
+    secrets: inherit
+
+  post-deploy:
+    uses: ./.github/workflows/docs-cloudflare.yml
+    needs: [firebase]
+    secrets: inherit
