@@ -25,7 +25,7 @@ jobs:
       - name: Restore built website
         uses: actions/cache@v4
         with:
-          path: demo/dist
+          path: dist
           key: >
             website
             ${{ github.run_id }}
@@ -39,7 +39,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: illusionist-danielfrg-com
-          directory: demo/dist
+          directory: dist
 
       - name: Comment deploy url
         uses: mshick/add-pr-comment@v2
