@@ -1,7 +1,0 @@
-{
-  "hosting": {
-    "site": "illusionist",
-    "public": "dist",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
-  }
-}

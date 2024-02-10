@@ -134,12 +134,12 @@ jobs:
             ${{ github.run_id }}
             ${{ github.run_attempt }}
 
-  firebase:
-    uses: ./.github/workflows/docs-firebase.yml
+  cf-pages:
+    uses: ./.github/workflows/docs-cf-pages.yml
     needs: [build]
     secrets: inherit
 
   post-deploy:
-    uses: ./.github/workflows/docs-cloudflare.yml
-    needs: [firebase]
+    uses: ./.github/workflows/docs-post.yml
+    needs: [cf-pages]
     secrets: inherit
